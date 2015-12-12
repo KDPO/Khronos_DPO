@@ -1,4 +1,4 @@
 <?import javafx.scene.layout.GridPane?>
-<GridPane fx:controller="net.etfbl.kdpo.client.Controller"
+<GridPane fx:controller="net.etfbl.kdpo.client.MainController"
           xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10">
 </GridPane>
