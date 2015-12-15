@@ -5,6 +5,6 @@ package net.etfbl.kdpo.server;
  */
 public class Server {
     public static void main(String[] args){
-        
+        System.out.println("Ovo je commit od vladana");
     }
 }
