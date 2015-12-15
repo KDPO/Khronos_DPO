@@ -12,7 +12,17 @@ public class ImageFrame extends ImageView {
 
     public ImageFrame(String name, Image image) {
         super(image);
-        this.name = name;  // ne znam zašto je ovo :D
+        this.name = name;   // ne znam zašto je ovo :D
+                            // ime slike koje će se prikazati dole ispod. možda na hover
     }
 
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
+
