@@ -5,5 +5,8 @@ package net.etfbl.kdpo.server;
  *
  * Klasa za sve statičke funkcije ili objekte koje možda budemo imali ili ne imali
  */
+//
 public class ServerUtil {
+    private static int TCP_PORT;
+    private static String address;
 }
