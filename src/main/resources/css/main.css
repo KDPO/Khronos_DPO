@@ -1,3 +1,11 @@
 #button {
     -fx-background-color: #f98026;
+    -fx-border-color: #2c2c2c;
+    -fx-font-size: 16px;
+    -fx-pref-width: 100px;
+    -fx-pref-height: 20px;
+}
+
+#button:hover {
+    -fx-background-color: #dddddd;
 }
