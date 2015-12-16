@@ -1,8 +1,13 @@
 package net.etfbl.kdpo.client;
 
+import javafx.collections.ObservableArray;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -13,22 +18,18 @@ import java.util.ResourceBundle;
 
 public class MainController {
 
-    @FXML
-    private ResourceBundle resources;
+    private Tab tabVirtualAlbum;
+    private Tab tabFileSystem;
+    private ListView<String> listOfAlbums;
+    private Menu menu;
+    private Button btnSlideshow;
+    private Button btnAdd;
+    private Button btnOK;
+    private FlowPane images;
+    //private ObservableArray<ImageFrame> image;
 
-    @FXML
-    private URL location;
-
-    @FXML
-    private Button button;
-
-    @FXML
-    private AnchorPane anchorPane;
 
     @FXML
     void initialize() {
-        assert button != null : "fx:id=\"button\" was not injected: check your FXML file 'main.fxml'.";
-        assert anchorPane != null : "fx:id=\"anchorPane\" was not injected: check your FXML file 'main.fxml'.";
-
     }
 }
