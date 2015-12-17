@@ -1,16 +1,49 @@
-#button {
-    -fx-background-color: #f98026;
-    -fx-border-color: #2c2c2c;
-    -fx-font-size: 16px;
-    -fx-pref-width: 100px;
-    -fx-pref-height: 20px;
-    -fx-text-fill: #fff;
-}
-
-#button:hover {
-    -fx-background-color: #dddddd;
-}
-
 #anchorPane {
-    -fx-background-color: #fff;
+    -fx-background-color: #000;
+}
+
+#btnSlideshow {
+    -fx-background-color: #2c2c2c;
+}
+
+#btnSlideshow:hover {
+    -fx-background-color: #F98012;
+}
+
+#btnAdd {
+    -fx-background-color: #2c2c2c;
+}
+
+#btnAdd:hover {
+    -fx-background-color: #F98012;
+}
+
+#albumList {
+    -fx-background-color: black;
+}
+
+#btnLine {
+    -fx-background-color: #2c2c2c;
+    -fx-pref-height: 40px;
+}
+
+#btnMenu {
+    -fx-background-color: #2c2c2c;
+}
+
+#btnMenu:hover{
+    -fx-background-color: #f98012;
+}
+
+.btnMenu > .arrow-button {
+    -fx-padding: 0;
+}
+
+.btnMenu > .arrow-button > .arrow {
+    -fx-padding: 0;
+}
+
+.albumList {
+    -fx-text-fill: black ;
+    -fx-background-color: #2c2c2c;
 }

@@ -15,7 +15,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/main.fxml"));
-        primaryStage.setTitle("Hello World!");
+        primaryStage.setTitle("Khronos DPO");
         Scene scene = new Scene(root, 600, 360);
         scene.getStylesheets().add("/css/main.css");
         primaryStage.setScene(scene);
