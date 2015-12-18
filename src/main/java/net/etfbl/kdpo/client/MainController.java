@@ -3,6 +3,7 @@ package net.etfbl.kdpo.client;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,6 +29,9 @@ public class MainController {
     private TreeView<String> treeView;
 
     @FXML
+    private ScrollPane scrollPane;
+
+    @FXML
     private FlowPane flowPane;
 
     @FXML
@@ -35,6 +39,9 @@ public class MainController {
 
     @FXML
     private Label albumDescription;
+
+    @FXML
+    private TabPane tabPane;
 
     @FXML
     private Tab tabAlbumi;
@@ -87,6 +94,15 @@ public class MainController {
         btnAddImage.setFitWidth(60);
         btnAdd.setGraphic(btnAddImage);
 
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        flowPane.prefWidthProperty().bind(scrollPane.widthProperty());
 
+        Image image = new Image("testImages/slika.jpg");
+        for (int i = 0; i < 15; i++) {
+            ImageFrame imageFrame = new ImageFrame(image, "Proba" + (i + 1));
+            imageFrame.getStyleClass().add("imageFrame");
+            flowPane.getChildren().add(imageFrame);
+        }
     }
 }

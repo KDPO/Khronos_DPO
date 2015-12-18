@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.GridPane?>
 
-<AnchorPane id="anchorPane" fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-            minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="anchorPane"
-            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="net.etfbl.kdpo.client.MainController">
+<AnchorPane id="anchorPane" fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0"
+            minWidth="700.0" styleClass="anchorPane" xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.etfbl.kdpo.client.MainController">
     <children>
         <HBox id="hBox" fx:id="hBox" layoutX="200.0" layoutY="139.0" prefHeight="100.0" prefWidth="200.0"
               styleClass="hBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
               AnchorPane.topAnchor="0.0">
             <children>
-                <VBox id="vBoxLeft" fx:id="vBoxLeft" prefWidth="261.0" styleClass="vBoxLeft">
+                <VBox id="vBoxLeft" fx:id="vBoxLeft" minWidth="261.0" prefWidth="261.0" styleClass="vBoxLeft">
                     <children>
                         <AnchorPane VBox.vgrow="ALWAYS">
                             <children>
-                                <TabPane prefHeight="400.0" prefWidth="210.0" tabClosingPolicy="UNAVAILABLE"
-                                         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-                                         AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0"
+                                         AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                         AnchorPane.topAnchor="0.0">
                                     <tabs>
                                         <Tab id="tabAlbumi" fx:id="tabAlbumi" styleClass="tabAlbumi" text="Albumi">
                                             <content>
-                                                <ListView id="albumList" fx:id="albumList" prefWidth="186.0"
-                                                          styleClass="albumList"/>
+                                                <ListView id="albumList" fx:id="albumList" styleClass="albumList"/>
                                             </content>
                                         </Tab>
                                         <Tab id="tabFileSystem" fx:id="tabFileSystem" styleClass="tabFileSystem"
@@ -45,29 +45,43 @@
                 <VBox id="vBoxRight" fx:id="vBoxRight" styleClass="vBoxRight" HBox.hgrow="ALWAYS">
                     <children>
                         <AnchorPane id="btnLine" fx:id="btnLine" prefHeight="31.0" prefWidth="391.0"
-                                    styleClass="btnLine">
+                                    styleClass="btnLine" VBox.vgrow="NEVER">
                             <children>
                                 <MenuButton id="btnMenu" fx:id="btnMenu" mnemonicParsing="false" styleClass="btnMenu"
-                                            AnchorPane.leftAnchor="5.0">
+                                            AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="0.0">
                                     <items>
                                         <MenuItem mnemonicParsing="false" text="Action 1"/>
                                         <MenuItem mnemonicParsing="false" text="Action 2"/>
                                     </items>
                                 </MenuButton>
                                 <Label layoutX="98.0" layoutY="6.0" prefHeight="17.0" prefWidth="91.0"
-                                       text="Opis albuma" textFill="WHITE" AnchorPane.leftAnchor="98.0">
+                                       text="Opis albuma" textFill="WHITE" AnchorPane.bottomAnchor="0.0"
+                                       AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="0.0">
                                     <font>
                                         <Font size="15.0"/>
                                     </font>
                                 </Label>
                                 <Button id="btnAdd" fx:id="btnAdd" layoutX="333.0" mnemonicParsing="false"
-                                        styleClass="btnAdd" AnchorPane.rightAnchor="5.0"/>
+                                        styleClass="btnAdd" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0"/>
                                 <Button id="btnSlideshow" fx:id="btnSlideshow" layoutX="259.0" mnemonicParsing="false"
-                                        styleClass="btnSlideshow" AnchorPane.rightAnchor="80.0"/>
+                                        styleClass="btnSlideshow" AnchorPane.rightAnchor="85.0"
+                                        AnchorPane.topAnchor="0.0"/>
                             </children>
                         </AnchorPane>
-                        <FlowPane id="flowPane" fx:id="flowPane" prefHeight="373.0" prefWidth="391.0"
-                                  styleClass="flowPane"/>
+                        <ScrollPane fx:id="scrollPane" style="-fx-background-color: #000000;" styleClass="scrollPane"
+                                    VBox.vgrow="ALWAYS">
+                            <content>
+                                <FlowPane id="flowPane" fx:id="flowPane" hgap="5.0"
+                                          style="-fx-background-color: #000000;" styleClass="flowPane" vgap="5.0">
+                                    <padding>
+                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                                    </padding>
+                                </FlowPane>
+                            </content>
+                            <VBox.margin>
+                                <Insets/>
+                            </VBox.margin>
+                        </ScrollPane>
                     </children>
                 </VBox>
             </children>
