@@ -2,6 +2,7 @@ package net.etfbl.kdpo.server;
 
 import javafx.scene.image.Image;
 
+import java.net.Socket;
 import java.util.HashMap;
 
 /**
@@ -13,6 +14,7 @@ public class ServerUtility {
     public static int TCP_PORT;
     public static String address;
     public static HashMap<String, User> users;
+    public static HashMap<String, Socket> username_socket;
 
     public static void saveData() {
     }
@@ -26,6 +28,10 @@ public class ServerUtility {
     public static Image[] loadImage() {
         Image[] images = null;
         return images;
+    }
+
+    public static boolean registerUser(User user){
+        return false;
     }
 
 }

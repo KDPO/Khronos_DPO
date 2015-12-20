@@ -5,8 +5,5 @@ package net.etfbl.kdpo.server;
  */
 public class Server {
 	public static void main(String[] args){
-		System.out.println("Ovo je commit od vladana!");
-		System.out.println("Nenad hoće da napravimo konflikt :D");
-        System.out.println("Konflikt!!!!!!!!!!!!!!!!!!");
 	}
 }

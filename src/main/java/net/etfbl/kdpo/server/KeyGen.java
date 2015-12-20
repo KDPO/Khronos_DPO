@@ -12,13 +12,15 @@ public class KeyGen {
     private HashMap<String, Boolean> keyList;
 
 
-    public void checkKey() {
+    public boolean checkKey() {
+        return false;
     }
 
-    public void setKeyAsUsed() {
+    public boolean setKeyAsUsed() {
+        return false;
     }
 
-    public void generateNewKeys(int number) {
+    public void generateNewKeys(int numberOfKeys) {
     }
 
     public String getKey() {

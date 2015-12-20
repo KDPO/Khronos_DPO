@@ -13,8 +13,8 @@ public class User implements Serializable {
     private String username;
     private String key;
     private HashSet<String> blockedUsersList;
-    private boolean blocked, allBlocked;
-    private ArrayList<String> imagesStoredForSending;
+    private boolean allBlocked;
+    private ArrayList<String> imageQueue;
 
     public User(String username, String key) {
         this.username = username;
@@ -22,7 +22,7 @@ public class User implements Serializable {
     }
 
     public boolean areBlockedAll() {
-        return blocked;
+        return allBlocked;
     }
 
     public boolean isBlocked() {
@@ -39,6 +39,10 @@ public class User implements Serializable {
     }
 
     public void unblockAll() {
+    }
+
+    public boolean addImageToImageQueue(String ImageID){
+        return false;
     }
 
     public String getKey() {
