@@ -1,96 +1,82 @@
 package net.etfbl.kdpo.client;
 
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
-import javafx.scene.text.TextAlignment;
+
+import java.io.File;
 
 /**
- * Created by Stijak on 17.12.2015..
+ * Created by Stijak on 19.12.2015..
  */
 public class ImageFrame extends AnchorPane {
-    private String name;
-    private CheckBox checkBox;
     private ImageView imageView;
     private Label label;
-    private Image image;
+    private CheckBox checkBox;
 
-    public ImageFrame(Image image, String name) {
-        this.image = image;
-        this.name = name;
-        createImageFrame();
-    }
-
-    public ImageFrame(Image image, Double height, String name) {
-        this.image = image;
-        this.name = name;
+    public ImageFrame(File file) {
+        this.label = new Label(file.getName());
+        this.imageView = new ImageView(new Image(file.getPath()));
+        checkBox = new CheckBox();
         createImageFrame();
     }
 
     private void createImageFrame() {
-        imageView = new ImageView(this.image);
-        checkBox = new CheckBox();
-        label = new Label(this.name);
         HBox hBox = new HBox(imageView);
-
-        AnchorPane.setTopAnchor(checkBox, 5.0);
-        AnchorPane.setRightAnchor(checkBox, 5.0);
-
-        AnchorPane.setLeftAnchor(label, 0.0);
-        AnchorPane.setBottomAnchor(label, 0.0);
-        AnchorPane.setRightAnchor(label, 0.0);
-
-        AnchorPane.setRightAnchor(hBox, 0.0);
-        AnchorPane.setLeftAnchor(hBox, 0.0);
-        AnchorPane.setBottomAnchor(hBox, 0.0);
-        AnchorPane.setTopAnchor(hBox, 0.0);
-
+        hBox.setAlignment(Pos.CENTER);
         imageView.setPreserveRatio(true);
-        hBox.alignmentProperty().setValue(Pos.CENTER);
         //imageView.fitHeightProperty().bind(hBox.heightProperty());
-        label.alignmentProperty().setValue(Pos.CENTER);
-        label.textFillProperty().setValue(Paint.valueOf("#ffffff"));
-        label.setPrefHeight(50);
-        label.setFont(new Font("Verdana", 20));
+        label.setFont(new Font(16));
+        label.setTextFill(Paint.valueOf("ffffff"));
+        label.setAlignment(Pos.CENTER);
         label.setBackground(new Background(new BackgroundImage(new Image("/images/pozadina.png"), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
-        label.setVisible(false);
-        checkBox.setVisible(false);
-        imageView.setFitHeight(200);
+        this.setAnchor(checkBox, -1, 5, 5, -1);
+        this.setAnchor(label, 0, -1, 0, 0);
+        this.setAnchor(hBox, 0, 0, 0, 0);
+        imageView.setFitHeight(210);
         this.getChildren().addAll(hBox, checkBox, label);
         setEffect();
+        this.getStyleClass().add("image-frame");
+    }
+
+    public void setAnchor(Node node, double left, double top, double right, double bottom) {
+        if (left >= 0)
+            AnchorPane.setLeftAnchor(node, left);
+        if (top >= 0)
+            AnchorPane.setTopAnchor(node, top);
+        if (right >= 0)
+            AnchorPane.setRightAnchor(node, right);
+        if (bottom >= 0)
+            AnchorPane.setBottomAnchor(node, bottom);
     }
 
     public void setEffect() {
         this.setOnMouseEntered((MouseEvent) -> {
-            checkBox.setVisible(true);
-            label.setVisible(true);
+            this.checkBox.setVisible(true);
+            this.label.setVisible(true);
         });
 
         this.setOnMouseExited((MouseEvent) -> {
-            checkBox.setVisible(false);
-            label.setVisible(false);
+            this.checkBox.setVisible(false);
+            this.label.setVisible(false);
         });
     }
 
+    public Image getImage() {
+        return imageView.getImage();
+    }
+
     public String getName() {
-        return name;
+        return label.getText();
     }
 
     public CheckBox getCheckBox() {
         return checkBox;
-    }
-
-    public Image getImage() {
-        return image;
-    }
-
-    public Label getLabel() {
-        return label;
     }
 }

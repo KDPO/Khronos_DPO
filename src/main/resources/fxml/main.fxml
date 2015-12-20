@@ -1,86 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.layout.GridPane?>
 
-<AnchorPane id="anchorPane" fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0"
-            minWidth="700.0" styleClass="anchorPane" xmlns="http://javafx.com/javafx/8"
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+            prefWidth="600.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.etfbl.kdpo.client.MainController">
     <children>
-        <HBox id="hBox" fx:id="hBox" layoutX="200.0" layoutY="139.0" prefHeight="100.0" prefWidth="200.0"
-              styleClass="hBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0">
+        <HBox layoutX="200.0" layoutY="136.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0"
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <VBox id="vBoxLeft" fx:id="vBoxLeft" minWidth="261.0" prefWidth="261.0" styleClass="vBoxLeft">
+                <AnchorPane maxWidth="250.0" minWidth="250.0" prefWidth="250.0">
                     <children>
-                        <AnchorPane VBox.vgrow="ALWAYS">
-                            <children>
-                                <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0"
-                                         AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                                         AnchorPane.topAnchor="0.0">
-                                    <tabs>
-                                        <Tab id="tabAlbumi" fx:id="tabAlbumi" styleClass="tabAlbumi" text="Albumi">
+                        <TabPane id="tabPane" fx:id="tabPane" layoutX="57.0" layoutY="14.0" styleClass="tabPane"
+                                 tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0"
+                                 AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                            <tabs>
+                                <Tab id="tabAlbumi" closable="false" styleClass="tabAlbumi" text="Albumi">
+                                    <content>
+                                        <AnchorPane style="-fx-background-color: #2c2c2c;">
+                                            <children>
+                                                <Button id="buttonAddNewAlbum" fx:id="buttonAddNewAlbum"
+                                                        contentDisplay="CENTER" focusTraversable="false"
+                                                        maxHeight="35.0" minHeight="35.0" mnemonicParsing="false"
+                                                        prefHeight="35.0" styleClass="buttonAddNewAlbum"
+                                                        text="Add new album" AnchorPane.leftAnchor="3.0"
+                                                        AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="3.0"/>
+                                                <ListView id="listView" fx:id="listView" prefHeight="200.0"
+                                                          prefWidth="200.0" style="-fx-background-color: #2c2c2c;"
+                                                          styleClass="listView" AnchorPane.bottomAnchor="3.0"
+                                                          AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0"
+                                                          AnchorPane.topAnchor="41.0"/>
+                                                <Label fx:id="labelMessages" alignment="CENTER" maxHeight="35.0"
+                                                       minHeight="35.0" prefHeight="35.0"
+                                                       style="-fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-background-radius: 30;"
+                                                       text="Messages" textAlignment="CENTER"
+                                                       AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="3.0"
+                                                       AnchorPane.rightAnchor="3.0"/>
+                                            </children>
+                                        </AnchorPane>
+                                    </content>
+                                </Tab>
+                                <Tab id="tabFS" closable="false" styleClass="tabFS" text="File system">
+                                    <content>
+                                        <ScrollPane id="scrollPane" fx:id="scrollPane" hbarPolicy="NEVER"
+                                                    styleClass="scrollPane">
                                             <content>
-                                                <ListView id="albumList" fx:id="albumList" styleClass="albumList"/>
+                                                <AnchorPane maxWidth="250.0" minWidth="250.0" prefWidth="250.0">
+                                                    <children>
+                                                        <TreeView prefHeight="200.0" prefWidth="200.0"
+                                                                  AnchorPane.bottomAnchor="0.0"
+                                                                  AnchorPane.leftAnchor="0.0"
+                                                                  AnchorPane.rightAnchor="0.0"
+                                                                  AnchorPane.topAnchor="0.0"/>
+                                                    </children>
+                                                </AnchorPane>
                                             </content>
-                                        </Tab>
-                                        <Tab id="tabFileSystem" fx:id="tabFileSystem" styleClass="tabFileSystem"
-                                             text="File system">
-                                            <content>
-                                                <TreeView id="treeViewv" fx:id="treeView" prefHeight="200.0"
-                                                          prefWidth="200.0" styleClass="treeViewv"/>
-                                            </content>
-                                        </Tab>
-                                    </tabs>
-                                </TabPane>
-                            </children>
-                        </AnchorPane>
+                                        </ScrollPane>
+                                    </content>
+                                </Tab>
+                            </tabs>
+                        </TabPane>
                     </children>
-                </VBox>
-                <VBox id="vBoxRight" fx:id="vBoxRight" styleClass="vBoxRight" HBox.hgrow="ALWAYS">
+                </AnchorPane>
+                <VBox minWidth="400.0" style="-fx-background-color: #000;" HBox.hgrow="ALWAYS">
                     <children>
-                        <AnchorPane id="btnLine" fx:id="btnLine" prefHeight="31.0" prefWidth="391.0"
-                                    styleClass="btnLine" VBox.vgrow="NEVER">
+                        <AnchorPane maxHeight="40.0" minHeight="40.0" prefHeight="40.0"
+                                    style="-fx-background-color: #2c2c2c;">
                             <children>
-                                <MenuButton id="btnMenu" fx:id="btnMenu" mnemonicParsing="false" styleClass="btnMenu"
-                                            AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="0.0">
+                                <MenuButton fx:id="menu" focusTraversable="false" maxHeight="-Infinity"
+                                            maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                                            mnemonicParsing="false" prefHeight="40.0" prefWidth="60.0"
+                                            styleClass="buttonMenu" textAlignment="CENTER" AnchorPane.bottomAnchor="1.0"
+                                            AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="0.0">
                                     <items>
                                         <MenuItem mnemonicParsing="false" text="Action 1"/>
                                         <MenuItem mnemonicParsing="false" text="Action 2"/>
                                     </items>
                                 </MenuButton>
-                                <Label layoutX="98.0" layoutY="6.0" prefHeight="17.0" prefWidth="91.0"
-                                       text="Opis albuma" textFill="WHITE" AnchorPane.bottomAnchor="0.0"
-                                       AnchorPane.leftAnchor="100.0" AnchorPane.topAnchor="0.0">
+                                <Label fx:id="labelAlbumDescription" layoutX="78.0" layoutY="12.0" minWidth="200.0"
+                                       text="Label" textFill="WHITE" AnchorPane.bottomAnchor="0.0"
+                                       AnchorPane.leftAnchor="80.0" AnchorPane.topAnchor="0.0">
                                     <font>
                                         <Font size="15.0"/>
                                     </font>
                                 </Label>
-                                <Button id="btnAdd" fx:id="btnAdd" layoutX="333.0" mnemonicParsing="false"
-                                        styleClass="btnAdd" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0"/>
-                                <Button id="btnSlideshow" fx:id="btnSlideshow" layoutX="259.0" mnemonicParsing="false"
-                                        styleClass="btnSlideshow" AnchorPane.rightAnchor="85.0"
-                                        AnchorPane.topAnchor="0.0"/>
+                                <Button fx:id="buttonAddNewImages" focusTraversable="false" layoutX="334.0"
+                                        layoutY="8.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                                        minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="60.0"
+                                        styleClass="buttonAddNewImages" AnchorPane.bottomAnchor="1.0"
+                                        AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0"/>
+                                <Button fx:id="buttonSlideShow" focusTraversable="false" layoutX="291.0" layoutY="7.0"
+                                        maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                                        minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="60.0"
+                                        styleClass="buttonSlideShow" AnchorPane.bottomAnchor="1.0"
+                                        AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="0.0"/>
                             </children>
                         </AnchorPane>
-                        <ScrollPane fx:id="scrollPane" style="-fx-background-color: #000000;" styleClass="scrollPane"
-                                    VBox.vgrow="ALWAYS">
+                        <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER"
+                                    style="-fx-background-color: #000;" styleClass="scrollPane">
+                            <VBox.margin>
+                                <Insets left="5.0" top="5.0"/>
+                            </VBox.margin>
                             <content>
-                                <FlowPane id="flowPane" fx:id="flowPane" hgap="5.0"
-                                          style="-fx-background-color: #000000;" styleClass="flowPane" vgap="5.0">
+                                <FlowPane fx:id="flowPane" hgap="5.0" style="-fx-background-color: #000;" vgap="5.0">
                                     <padding>
-                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                                        <Insets bottom="5.0" left="5.0" top="5.0"/>
                                     </padding>
                                 </FlowPane>
                             </content>
-                            <VBox.margin>
-                                <Insets/>
-                            </VBox.margin>
                         </ScrollPane>
                     </children>
                 </VBox>
