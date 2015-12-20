@@ -15,6 +15,7 @@ public class ServerUtility {
     public static String address;
     public static HashMap<String, User> users;
     public static HashMap<String, Socket> username_socket;
+    public static KeyGen keyGen;
 
     public static void saveData() {
     }
