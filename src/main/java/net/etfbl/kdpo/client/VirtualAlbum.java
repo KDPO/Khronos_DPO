@@ -5,6 +5,7 @@ import javafx.collections.ObservableArray;
 import javafx.scene.image.Image;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -13,7 +14,7 @@ import java.util.Date;
  */
 
 // kontejnerska klasa
-public class VirtualAlbum {
+public class VirtualAlbum implements Serializable {
     private String name;
     private Date creationDate;
     private ArrayList<File> images;
