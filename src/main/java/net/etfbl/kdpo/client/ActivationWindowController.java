@@ -25,4 +25,17 @@ public class ActivationWindowController {
     private ImageView icon;
     private Button btnOK;
     private Button btnCancel;
+
+    public void setConnectionTrue() {
+
+    }
+
+    public void sendActivationData() {
+
+    }
+
+    public void showError() {
+
+    }
+ 
 }

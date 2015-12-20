@@ -16,7 +16,7 @@ import java.util.Date;
 public class VirtualAlbum {
     private String name;
     private Date creationDate;
-    private ArrayList<Image> images;
+    private ArrayList<File> images;
     private String description;
 
     public void removeImage(File file) {
@@ -26,6 +26,10 @@ public class VirtualAlbum {
     }
 
     public void addImages(ArrayList<File> files) {
+    }
+
+    public void setStatusMessage(String message) {
+
     }
 }
 

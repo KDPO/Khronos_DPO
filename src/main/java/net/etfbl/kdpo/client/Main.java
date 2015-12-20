@@ -27,4 +27,12 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch();//args);
     }
+
+    public boolean checkConnection() {
+        return false;
+    }
+
+    public boolean checkActivation() {
+        return false;
+    }
 }

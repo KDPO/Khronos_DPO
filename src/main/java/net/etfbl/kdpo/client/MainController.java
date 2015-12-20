@@ -51,4 +51,8 @@ public class MainController {
         data.addAll("Prvi album", "Drugi album", "Treći album", "Četvrti album");
     }
 
+    public void addNewVirtualAlbum() {
+
+    }
+
 }
