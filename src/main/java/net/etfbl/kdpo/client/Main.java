@@ -13,15 +13,20 @@ import javafx.stage.Stage;
  */
 
 public class Main extends Application {
+    private Stage stage;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        this.stage = primaryStage;
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/main.fxml"));
         primaryStage.setTitle("Khronos DPO");
         Scene scene = new Scene(root, 600, 360);
         scene.getStylesheets().add("/css/main.css");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    public static void showNewWindow(String path) {
     }
 
     public static void main(String[] args) {

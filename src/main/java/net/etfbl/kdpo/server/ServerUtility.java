@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 /**
  * Created by User on 12/15/2015.
- * <p>
+ *
  * Klasa za sve statičke funkcije ili objekte koje možda budemo imali ili ne imali
  */
 public class ServerUtility {

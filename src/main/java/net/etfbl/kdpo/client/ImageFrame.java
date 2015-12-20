@@ -45,7 +45,7 @@ public class ImageFrame extends AnchorPane {
         this.getStyleClass().add("image-frame");
     }
 
-    public void setAnchor(Node node, double left, double top, double right, double bottom) {
+    private void setAnchor(Node node, double left, double top, double right, double bottom) {
         if (left >= 0)
             AnchorPane.setLeftAnchor(node, left);
         if (top >= 0)

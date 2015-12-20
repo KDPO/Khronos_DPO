@@ -20,6 +20,12 @@ public class VirtualAlbum implements Serializable {
     private ArrayList<File> images;
     private String description;
 
+    public VirtualAlbum(String name, String description) {
+    }
+
+    public VirtualAlbum(String name, String description, ArrayList<File> images) {
+    }
+
     public void removeImage(File file) {
     }
 
