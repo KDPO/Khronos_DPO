@@ -21,21 +21,9 @@ public class ActivationWindowController {
     @FXML
     private TextField txtKey4;
     @FXML
-    private Label lblUsername;
-    @FXML
     private Label lblKey;
     @FXML
     private Label lblError;
-    @FXML
-    private Label lblMinus1;
-    @FXML
-    private Label lblMinus2;
-    @FXML
-    private Label lblMinus3;
-    @FXML
-    private Label lblKDPO;
-    @FXML
-    private Label lblActivation;
     @FXML
     private ImageView icon;
     @FXML
