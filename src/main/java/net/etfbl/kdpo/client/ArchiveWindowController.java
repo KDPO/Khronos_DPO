@@ -15,6 +15,12 @@ public class ArchiveWindowController {
     private Button btnExport;
 
     @FXML
+    private Button btnOK;
+
+    @FXML
+    private Button btnCancel;
+
+    @FXML
     private FileChooser fileChooser;
 
     @FXML
