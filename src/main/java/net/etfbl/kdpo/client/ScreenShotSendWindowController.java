@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import net.etfbl.kdpo.server.User;
 
 /**
@@ -11,13 +12,20 @@ import net.etfbl.kdpo.server.User;
  */
 public class ScreenShotSendWindowController {
     @FXML
+    private ImageView imageView;
+
+    @FXML
     private ListView<String> users;
 
     @FXML
-    private Button buttonSend;
+    private Button btnSend;
 
     @FXML
-    private Button buttonCancel;
+    private Button btnCancel;
+
+    @FXML
+    void initialize() {
+    }
 
     public void sendImage(Image image) {
     }

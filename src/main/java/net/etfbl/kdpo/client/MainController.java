@@ -24,10 +24,16 @@ import java.util.ResourceBundle;
 
 public class MainController {
     @FXML
-    private Label labelAlbumDescription;
+    private Label lblAlbumDescription;
 
     @FXML
-    private Button buttonAddImages;
+    private Button btnAddImages;
+
+    @FXML
+    private Button btnSlideShow;
+
+    @FXML
+    private Label lblMessages;
 
     @FXML
     private FlowPane flowPane;
@@ -37,6 +43,9 @@ public class MainController {
 
     @FXML
     private ListView<String> listView;
+
+    @FXML
+    private TreeView<String> treeView;
 
     @FXML
     void initialize() {
