@@ -1,7 +1,14 @@
 # Projektni zadatak iz Softverskog inženjerstva 2015
 
-Potrebno je podesiti da je JAVA source folder, a RESOURCE da je resource folder kako bi putanje do fajlova bile ispravne.
+Upustvo za NetBeans:
+1. Team > Git > Clone  >> http://prntscr.com/9gy9vc
+2. Repository url > [Izabrati putanju gdje će projekat biti sačuvan] > Next  >> http://prntscr.com/9gyamw
+3. Next > Clone name > Finish  >> http://prntscr.com/9gybpv
+4. Create project  >> http://prntscr.com/9gyc49
+5. Java > Java with existing source > Next  >> http://prntscr.com/9gycph
+6. Project name > Project directory [Popraviti putanju] > Next  >> http://prntscr.com/9gydix
+7. Add folder java > Add folder resources > Finish  >> http://prntscr.com/9gye50
+8. Run  >> http://prntscr.com/9gyeue
 
-Marko: 16.12.2015
-- dobra stvar je što sam naučio kako se koristi css :)
-- loša stvar je ta što nema baš mnogo opcija kao za html što će biti problem :/
+Upustvo za Intellij za Nenada:
+1. File > Project structure > Podesi source i resource foldere  >> http://prntscr.com/9gyjyy
