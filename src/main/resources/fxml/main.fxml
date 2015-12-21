@@ -35,7 +35,7 @@
                                                           styleClass="listView" AnchorPane.bottomAnchor="3.0"
                                                           AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0"
                                                           AnchorPane.topAnchor="41.0"/>
-                                                <Label fx:id="labelMessages" alignment="CENTER" maxHeight="35.0"
+                                                <Label fx:id="lblMessages" alignment="CENTER" maxHeight="35.0"
                                                        minHeight="35.0" prefHeight="35.0"
                                                        style="-fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-background-radius: 30;"
                                                        text="Messages" textAlignment="CENTER"

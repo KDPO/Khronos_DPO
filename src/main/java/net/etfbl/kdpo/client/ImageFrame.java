@@ -6,10 +6,12 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 
+import java.awt.event.ActionEvent;
 import java.io.File;
 
 /**
@@ -60,11 +62,23 @@ public class ImageFrame extends AnchorPane {
         this.setOnMouseEntered((MouseEvent) -> {
             this.checkBox.setVisible(true);
             this.label.setVisible(true);
+            if (!checkBox.isSelected())
+                this.setStyle("-fx-border-color: #2c2c2c;");
         });
 
         this.setOnMouseExited((MouseEvent) -> {
-            this.checkBox.setVisible(false);
-            this.label.setVisible(false);
+            if (!checkBox.isSelected()) {
+                this.checkBox.setVisible(false);
+                this.label.setVisible(false);
+                this.setStyle("-fx-border-color: transparent;");
+            }
+        });
+
+        checkBox.setOnMouseClicked((MouseEvent) -> {
+            if (checkBox.isSelected())
+                this.setStyle("-fx-border-color: #f98026;");
+            if (!checkBox.isSelected())
+                this.setStyle("-fx-border-color: #2c2c2c;");
         });
     }
 

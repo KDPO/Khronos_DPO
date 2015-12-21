@@ -149,14 +149,9 @@
     -fx-border-color: #f98012;
 }
 
-.image-frame:hover {
+.image-frame {
     -fx-border-width: 2px;
-    -fx-border-color: #2c2c2c;
     -fx-border-insets: -2;
-}
-
-.image-frame:pressed {
-    -fx-border-color: #f98012;
 }
 
 .tabPane > .tab-header-area > .control-buttons-tab {

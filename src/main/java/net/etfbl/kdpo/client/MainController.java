@@ -1,12 +1,21 @@
 package net.etfbl.kdpo.client;
 
+import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -58,6 +67,10 @@ public class MainController {
         ObservableList<String> data = FXCollections.observableArrayList();
         listView.setItems(data);
         data.addAll("Prvi album", "Drugi album", "Treći album", "Četvrti album");
+
+        listView.setOnMouseClicked((MouseEvent) -> {
+            lblMessages.setText("Još uvijek nemam funkciju.");
+        });
     }
 
     public void addNewVirtualAlbum() {
