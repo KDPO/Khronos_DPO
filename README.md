@@ -1,6 +1,7 @@
 # Projektni zadatak iz Softverskog inženjerstva 2015
 
 Upustvo za NetBeans:
+
 1. Team > Git > Clone  >> http://prntscr.com/9gy9vc
 
 2. Repository url > [Izabrati putanju gdje će projekat biti sačuvan] > Next  >> http://prntscr.com/9gyamw
