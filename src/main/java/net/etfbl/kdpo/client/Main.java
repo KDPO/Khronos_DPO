@@ -19,6 +19,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         this.stage = primaryStage;
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/main.fxml"));
+        primaryStage.getIcons().add(new Image("/images/khronos.png"));
         primaryStage.setTitle("Khronos DPO");
         Scene scene = new Scene(root, 600, 360);
         scene.getStylesheets().add("/css/main.css");
