@@ -1,0 +1,107 @@
+.anchorPaneToolsLine {
+    -fx-background-image: url("/images/pozadina.png");
+        -fx-background-repeat: repeat;
+        -fx-background-position: center;
+}
+
+.buttonFullScreen {
+    -fx-background-image: url("/images/fullscreen.png");
+}
+
+.buttonSlideShow {
+    -fx-background-image: url("/images/slideshow.png");
+}
+
+.buttonRotateRight {
+    -fx-background-image: url("/images/rotateRight.png");
+}
+
+.buttonRotateLeft {
+    -fx-background-image: url("/images/rotateLeft.png");
+}
+
+.buttonDelete {
+    -fx-background-image: url("/images/delete.png");
+}
+
+
+.buttonFullScreen, .buttonSlideShow, .buttonRotateRight, .buttonRotateLeft, .buttonDelete {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-size: 60, 40;
+}
+
+.buttonFullScreen:hover, .buttonSlideShow:hover, .buttonRotateRight:hover, .buttonRotateLeft:hover, .buttonDelete:hover {
+    -fx-background-color: #f98012;
+}
+
+.buttonLeft, .buttonRight {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 30, 50;
+    -fx-opacity: 0.5;
+}
+
+.buttonLeft {
+    -fx-background-position: left center;
+    -fx-background-image: url("/images/leftTransparent.png");
+}
+
+.buttonRight {
+    -fx-background-position: right center;
+    -fx-background-image: url("/images/right.png");
+}
+
+.buttonLeft:hover {
+    -fx-opacity: 1;
+    -fx-background-image: url("/images/left.png");
+}
+
+.buttonRight:hover {
+    -fx-opacity: 1;
+    -fx-background-image: url("/images/right.png");
+}
+
+.buttonZoomOut, .buttonZoomIn {
+    -fx-background-color: #000000;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-size: 45, 30;
+    -fx-opacity: 0.5;
+}
+
+.buttonZoomOut {
+    -fx-background-image: url("/images/zoomOut.png");
+}
+
+.buttonZoomIn {
+    -fx-background-image: url("/images/zoomIn.png");
+}
+
+.buttonZoomIn:hover, .buttonZoomOut:hover {
+    -fx-opacity: 1;
+}
+
+.buttonZoomIn:pressed, .buttonZoomOut:pressed {
+    -fx-background-color: #f98012;
+}
+
+.buttonBack {
+    -fx-background-color: transparent;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center;
+    -fx-background-radius: 0px;
+    -fx-background-size: 45, 35;
+    -fx-background-image: url("/images/backArrow.png");
+}
+
+.buttonBack:hover {
+    -fx-background-color: #2c2c2c;
+}
+
+.buttonBack:pressed {
+    -fx-background-color: #f98012;
+}

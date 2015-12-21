@@ -11,7 +11,10 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,6 +24,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URL;
@@ -56,12 +60,18 @@ public class MainController {
     @FXML
     private TreeView<String> treeView;
 
+    private Stage stage;
+
+    public MainController() {
+    }
+
     @FXML
     void initialize() {
-        for (int i = 0; i < 5; i++) {
-            ImageFrame imageFrame = new ImageFrame(new File("/testImages/slika.jpg"));
-            imageFrame.setPrefSize(200, 200);
-            flowPane.getChildren().add(imageFrame);
+        ImageFrame imageFrame = new ImageFrame(new File("/testImages/test.jpg"));
+        flowPane.getChildren().add(imageFrame);
+
+        for (int i = 1; i < 5; i++) {
+            flowPane.getChildren().add(new ImageFrame(new File("/testImages/slika.jpg")));
         }
 
         ObservableList<String> data = FXCollections.observableArrayList();
@@ -71,10 +81,31 @@ public class MainController {
         listView.setOnMouseClicked((MouseEvent) -> {
             lblMessages.setText("Još uvijek nemam funkciju.");
         });
+
+        imageFrame.setOnMouseClicked((MouseEvent) -> {
+            if (!imageFrame.getCheckBox().isSelected())
+                showImageViewController(imageFrame.getImage());
+        });
     }
 
     public void addNewVirtualAlbum() {
 
     }
 
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    private void showImageViewController(Image image) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/imageView.fxml"));
+            Parent root = loader.load();
+            ImageViewController controller = loader.getController();
+            controller.setImage(image);
+            controller.initParams(stage, stage.getScene());
+            stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

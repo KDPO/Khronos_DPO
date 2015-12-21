@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="vBoxMain"
+      stylesheets="@../css/imageView.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="net.etfbl.kdpo.client.ImageViewController">
+    <children>
+        <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" style="-fx-background-color: #000;"
+                    VBox.vgrow="NEVER">
+            <children>
+                <Button focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                        minWidth="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="45.0" text="Close"
+                        AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="0.0"/>
+                <Button focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                        minWidth="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="45.0" text="Max"
+                        AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="0.0"/>
+                <Button focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                        minWidth="-Infinity" mnemonicParsing="false" prefHeight="35.0" prefWidth="45.0" text="Min"
+                        AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="98.0" AnchorPane.topAnchor="0.0"/>
+                <Label text="Neki tekst" textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="75.0"
+                       AnchorPane.topAnchor="0.0"/>
+                <Button fx:id="btnBack" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity"
+                        minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="35.0"
+                        prefWidth="60.0" styleClass="buttonBack" AnchorPane.bottomAnchor="0.0"
+                        AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+            </children>
+        </AnchorPane>
+        <AnchorPane fx:id="anchorPaneImageContainer" style="-fx-background-color: #000;" VBox.vgrow="ALWAYS">
+            <children>
+                <HBox fx:id="hBoxImageContainer" alignment="CENTER" AnchorPane.bottomAnchor="0.0"
+                      AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <children>
+                        <ImageView fx:id="imageView" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS"/>
+                    </children>
+                </HBox>
+                <VBox alignment="CENTER" prefWidth="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0"
+                      AnchorPane.topAnchor="0.0">
+                    <children>
+                        <Button focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity"
+                                minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="150.0"
+                                prefWidth="150.0" styleClass="buttonLeft" VBox.vgrow="ALWAYS"/>
+                    </children>
+                </VBox>
+                <VBox alignment="CENTER" prefWidth="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="5.0"
+                      AnchorPane.topAnchor="0.0">
+                    <children>
+                        <Button focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity"
+                                minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="150.0"
+                                prefWidth="150.0" styleClass="buttonRight" VBox.vgrow="ALWAYS"/>
+                    </children>
+                </VBox>
+                <HBox prefHeight="25.0" prefWidth="103.0" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="10.0">
+                    <children>
+                        <Button focusTraversable="false" mnemonicParsing="false" prefWidth="45.0"
+                                styleClass="buttonZoomOut"/>
+                        <Button focusTraversable="false" mnemonicParsing="false" prefWidth="45.0"
+                                styleClass="buttonZoomIn"/>
+                    </children>
+                </HBox>
+                <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="50.0"
+                            styleClass="anchorPaneToolsLine" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                            AnchorPane.topAnchor="0.0">
+                    <children>
+                        <Button focusTraversable="false" layoutX="534.0" layoutY="13.0" maxHeight="-Infinity"
+                                maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+                                prefHeight="50.0" prefWidth="80.0" AnchorPane.bottomAnchor="0.0"
+                                AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0">
+                            <styleClass>
+                                <String fx:value="buttonDelete"/>
+                                <String fx:value="button"/>
+                            </styleClass>
+                        </Button>
+                        <Button focusTraversable="false" layoutX="476.0" layoutY="13.0" maxHeight="-Infinity"
+                                maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+                                prefHeight="50.0" prefWidth="80.0" AnchorPane.bottomAnchor="0.0"
+                                AnchorPane.rightAnchor="90.0" AnchorPane.topAnchor="0.0">
+                            <styleClass>
+                                <String fx:value="buttonRotateLeft"/>
+                                <String fx:value="button"/>
+                            </styleClass>
+                        </Button>
+                        <Button focusTraversable="false" layoutX="414.0" layoutY="13.0" maxHeight="-Infinity"
+                                maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+                                prefHeight="50.0" prefWidth="80.0" AnchorPane.bottomAnchor="0.0"
+                                AnchorPane.rightAnchor="175.0" AnchorPane.topAnchor="0.0">
+                            <styleClass>
+                                <String fx:value="buttonRotateRight"/>
+                                <String fx:value="button"/>
+                            </styleClass>
+                        </Button>
+                        <Button focusTraversable="false" layoutX="353.0" layoutY="13.0" maxHeight="-Infinity"
+                                maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+                                prefHeight="50.0" prefWidth="80.0" AnchorPane.bottomAnchor="0.0"
+                                AnchorPane.rightAnchor="260.0" AnchorPane.topAnchor="0.0">
+                            <styleClass>
+                                <String fx:value="buttonSlideShow"/>
+                                <String fx:value="button"/>
+                            </styleClass>
+                        </Button>
+                        <Button fx:id="btnFullScreen" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                                minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="80.0"
+                                styleClass="buttonFullScreen" AnchorPane.bottomAnchor="0.0"
+                                AnchorPane.rightAnchor="345.0" AnchorPane.topAnchor="0.0"/>
+                        <Label layoutX="28.0" layoutY="17.0" text="Opis albuma, naziv slike ili nešto treće"
+                               textFill="WHITE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="15.0"
+                               AnchorPane.topAnchor="0.0">
+                            <font>
+                                <Font size="15.0"/>
+                            </font>
+                        </Label>
+                    </children>
+                </AnchorPane>
+            </children>
+        </AnchorPane>
+    </children>
+</VBox>
