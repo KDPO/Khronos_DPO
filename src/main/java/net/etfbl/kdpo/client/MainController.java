@@ -1,41 +1,20 @@
 package net.etfbl.kdpo.client;
 
-import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaView;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.stage.FileChooser;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.FileSystem;
-import java.rmi.server.ExportException;
-import java.util.ArrayList;
-import java.util.ResourceBundle;
 
 /**
  * Created by Stijak on 16.12.2015..
@@ -64,7 +43,7 @@ public class MainController {
     private ListView<String> listView;
 
     @FXML
-    private TreeView<String> treeView;
+    private TreeView<File> treeView;
 
     private Stage stage;
 
@@ -81,12 +60,32 @@ public class MainController {
         listView.setItems(data);
         data.addAll("Prvi album", "Drugi album", "Treći album", "Četvrti album");
 
+        lblMessages.setVisible(false);
+
+        /* TreeView initialization */
         new Thread(() -> {
-            TreeItem<String> root = new TreeItem<>();
+            TreeItem<File> root = new TreeItem<>();
             treeView.setRoot(root);
             treeView.setShowRoot(false);
+            root.getChildren().add(new TreeItem<File>(FileSystemView.getFileSystemView().getHomeDirectory()));
             for (File file : File.listRoots())
-                findChilds(file, root);
+                if (file.isDirectory()) {
+                    TreeItem<File> node = new TreeItem<File>(file);
+                    root.getChildren().add(node);
+                    findChilds(file, node);
+                }
+            // za dinamičko učitavanje
+            root.addEventHandler(TreeItem.branchExpandedEvent(), new EventHandler<TreeItem.TreeModificationEvent<File>>() {
+                public void handle(TreeItem.TreeModificationEvent<File> event) {
+                    TreeItem<File> expandedTreeItem = event.getTreeItem();
+                    for (TreeItem<File> item : expandedTreeItem.getChildren())
+                    /* Možda je bolje da svaki put traži ponovo foldere u slučaju da se napravi neki novi
+                       Problem je u slučaju da se unutar particije napravi novi folder, neće biti vidljiv dok se ne restartuje app
+                        if (item.getChildren().isEmpty()) */
+                            findChilds(item.getValue(), item);
+                }
+            });
+
         }).start();
     }
 
@@ -111,33 +110,12 @@ public class MainController {
         }
     }
 
-    /*
-    // radi ali su performanse loše
-    private void findChilds(File file, TreeItem<File> parent) {
-        if (file.isDirectory()){
-            TreeItem<File> node = new TreeItem<>(file);
-            parent.getChildren().add(node);
-            for (File var : file.listFiles((File pathname) -> {
-                    return pathname.isDirectory() && !pathname.isHidden(); }))
-                findChilds(var, node);
-        }
-    }
-    */
-
-    private void findChilds(File file, TreeItem<String> parent) {
+    private void findChilds(File file, TreeItem<File> node) {
         if (file.isDirectory()) {
-            try {
-                TreeItem<String> node = new TreeItem<>(FileSystemView.getFileSystemView().getSystemDisplayName(file));
-                parent.getChildren().add(node);
-                for (File var : file.listFiles((File pathname) -> {
-                    return pathname.isDirectory() && !pathname.isHidden();
-                }))
-                    node.getChildren().add(new TreeItem<>(var.getName()));
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            for (File var : file.listFiles((File pathname) -> {
+                return pathname.isDirectory() && !pathname.isHidden();
+            }))
+                node.getChildren().add(new TreeItem<>(var));
         }
     }
-
 }
