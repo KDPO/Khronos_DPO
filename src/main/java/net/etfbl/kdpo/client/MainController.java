@@ -24,10 +24,16 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.swing.filechooser.FileSystemView;
 import java.io.File;
+import java.io.FileFilter;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.FileSystem;
+import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -67,9 +73,6 @@ public class MainController {
 
     @FXML
     void initialize() {
-        ImageFrame imageFrame = new ImageFrame(new File("/testImages/test.jpg"));
-        flowPane.getChildren().add(imageFrame);
-
         for (int i = 1; i < 5; i++) {
             flowPane.getChildren().add(new ImageFrame(new File("/testImages/slika.jpg")));
         }
@@ -78,14 +81,13 @@ public class MainController {
         listView.setItems(data);
         data.addAll("Prvi album", "Drugi album", "Treći album", "Četvrti album");
 
-        listView.setOnMouseClicked((MouseEvent) -> {
-            lblMessages.setText("Još uvijek nemam funkciju.");
-        });
-
-        imageFrame.setOnMouseClicked((MouseEvent) -> {
-            if (!imageFrame.getCheckBox().isSelected())
-                showImageViewController(imageFrame.getImage());
-        });
+        new Thread(() -> {
+            TreeItem<String> root = new TreeItem<>();
+            treeView.setRoot(root);
+            treeView.setShowRoot(false);
+            for (File file : File.listRoots())
+                findChilds(file, root);
+        }).start();
     }
 
     public void addNewVirtualAlbum() {
@@ -108,4 +110,34 @@ public class MainController {
             e.printStackTrace();
         }
     }
+
+    /*
+    // radi ali su performanse loše
+    private void findChilds(File file, TreeItem<File> parent) {
+        if (file.isDirectory()){
+            TreeItem<File> node = new TreeItem<>(file);
+            parent.getChildren().add(node);
+            for (File var : file.listFiles((File pathname) -> {
+                    return pathname.isDirectory() && !pathname.isHidden(); }))
+                findChilds(var, node);
+        }
+    }
+    */
+
+    private void findChilds(File file, TreeItem<String> parent) {
+        if (file.isDirectory()) {
+            try {
+                TreeItem<String> node = new TreeItem<>(FileSystemView.getFileSystemView().getSystemDisplayName(file));
+                parent.getChildren().add(node);
+                for (File var : file.listFiles((File pathname) -> {
+                    return pathname.isDirectory() && !pathname.isHidden();
+                }))
+                    node.getChildren().add(new TreeItem<>(var.getName()));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }

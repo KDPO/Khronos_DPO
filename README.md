@@ -12,7 +12,7 @@ Upustvo za NetBeans:
 
 5. Java > Java with existing source > Next  >> http://prntscr.com/9gycph
 
-6. Project name > Project directory [Popraviti putanju] > Next  >> http://prntscr.com/9gydix
+6. Project name > Project folder [Popraviti putanju] > Next  >> http://prntscr.com/9gydix
 
 7. Add folder java > Add folder resources > Finish  >> http://prntscr.com/9gye50
 

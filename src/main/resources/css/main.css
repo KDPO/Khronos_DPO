@@ -3,10 +3,26 @@
     -fx-text-fill: #ffffff;
     -fx-font-size: 15px;
     -fx-pref-height: 37px;
-    -fx-background-radius: 30px;
 }
 
-.listView .list-cell {
+.treeView {
+    -fx-background-color: #2c2c2c;
+}
+
+.treeView .scroll-bar {
+    -fx-background-color: #2c2c2c;
+    -fx-hbar-policy: never;
+}
+
+.treeView .tree-cell {
+    -fx-background-color: #2c2c2c;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-pref-height: 25px;
+}
+
+.listView .list-cell, .treeView .tree-cell {
+    -fx-background-radius: 30px;
     -fx-background-insets: 1px 0px 1px 0px;
 }
 
@@ -14,8 +30,12 @@
     -fx-background-color: #f98012;
 }
 
-.listView .list-cell:filled:selected {
+.listView .list-cell:filled:selected, .treeView .tree-cell:filled:selected {
     -fx-background-color: #f98012;
+}
+
+.treeView .arrow {
+    -fx-background-color: white;
 }
 
 .tabPane .tab-header-area {
@@ -27,21 +47,24 @@
     -fx-background-image: url("/images/tabPaneHeaderBackground.png");
 }
 
+.tabPane .arrow, .tabPane .tab-down-button, .tabPane .control-buttons-tab {
+    -fx-pref-width: 0px;
+}
+
 .tabAlbumi, .tabFS {
     -fx-background-color: #000000;
-    -fx-font-size: 15px;
-    -fx-text-fill: #ffffff;
-    -fx-pref-width: 125px;
     -fx-pref-height: 40px;
     -fx-background-radius: 0px;
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
     -fx-background-insets: 0px 0px 2px 0px;
+    -fx-padding: 0px;
 }
 
-.tabAlbumi .tab-label, .tabFS .tab-label {
+.tabAlbumi, .tabFS, .tabAlbumi .tab-label, .tabFS .tab-label{
+    -fx-font-size: 16px;
     -fx-text-fill: #ffffff;
-    -fx-font-size: 15px;
+    -fx-pref-width: 125px;
     -fx-alignment: center;
 }
 
@@ -68,6 +91,7 @@
 .tabAlbumi:selected, .tabFS:selected {
     -fx-background-color: #f98012;
     -fx-border-color: transparent;
+    -fx-end-margin: 0px;
 }
 
 .tabAlbumi:selected {
@@ -153,8 +177,4 @@
 .image-frame {
     -fx-border-width: 2px;
     -fx-border-insets: -2;
-}
-
-.tabPane > .tab-header-area > .control-buttons-tab {
-    -fx-background-color: #a2a2a2;
 }

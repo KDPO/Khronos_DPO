@@ -23,7 +23,7 @@ public class ImageFrame extends AnchorPane {
     private CheckBox checkBox;
 
     public ImageFrame(File file) {
-        this.label = new Label(file.getName());
+        this.label = new Label(file.getName().substring(0, file.getName().indexOf(".")));
         this.imageView = new ImageView(new Image(file.getPath()));
         checkBox = new CheckBox();
         createImageFrame();
@@ -33,11 +33,11 @@ public class ImageFrame extends AnchorPane {
         HBox hBox = new HBox(imageView);
         hBox.setAlignment(Pos.CENTER);
         imageView.setPreserveRatio(true);
-        //imageView.fitHeightProperty().bind(hBox.heightProperty());
         label.setFont(new Font(16));
         label.setTextFill(Paint.valueOf("ffffff"));
         label.setAlignment(Pos.CENTER);
         label.setBackground(new Background(new BackgroundImage(new Image("/images/pozadina.png"), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
+        label.setVisible(false);
         this.setAnchor(checkBox, -1, 5, 5, -1);
         this.setAnchor(label, 0, -1, 0, 0);
         this.setAnchor(hBox, 0, 0, 0, 0);
