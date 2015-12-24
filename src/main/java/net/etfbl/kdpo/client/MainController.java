@@ -59,6 +59,7 @@ public class MainController {
         listView.setItems(data);
         data.add(new VirtualAlbum("Prvi album", "Prvi album"));
         data.get(0).getImages().addAll(new File("/testImages/slika.jpg"), new File("/testImages/slika.jpg"), new File("/testImages/slika.jpg"));
+
         listView.setOnMouseClicked((MouseEvent) -> {
             setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
         });
@@ -116,6 +117,7 @@ public class MainController {
                 }
             });
 
+            // listener za prikaz slika u flowPane
             treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 ObservableList<File> images = FXCollections.observableArrayList();
                 images.setAll(newValue.getValue().listFiles(new FilenameFilter() {
@@ -129,6 +131,7 @@ public class MainController {
         }).start();
     }
 
+    // pronalazi podfoldere
     private void findChilds(File file, TreeItem<MyFile> node) {
         if (file.isDirectory()) {
             for (File var : file.listFiles((File pathname) -> {
@@ -147,5 +150,29 @@ public class MainController {
                 ImageFrame iFrame = new ImageFrame(file);
                 childs.add(iFrame);
             });
+    }
+
+    public Image[] getImages() {
+        Image[] images = new Image[flowPane.getChildren().size()];
+        int i = 0;
+        for (Node node : flowPane.getChildren()) {
+            images[i++] = ((ImageFrame) node).getImage();
+        }
+        return images;
+    }
+
+    public Image[] getCheckedImages() {
+        Image[] images = new Image[flowPane.getChildren().size()];
+        int i = 0;
+        for (Node node : flowPane.getChildren()) {
+            if (((ImageFrame) node).getCheckBox().isSelected()) {
+                images[i++] = ((ImageFrame) node).getImage();
+            }
+        }
+        Image[] checkedImages = new Image[i--];
+        for (; i >= 0; --i) {
+            checkedImages[i] = images[i];
+        }
+        return checkedImages;
     }
 }
