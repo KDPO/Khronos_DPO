@@ -24,7 +24,10 @@ public class ImageFrame extends AnchorPane {
 
     public ImageFrame(File file) {
         this.label = new Label(file.getName().substring(0, file.getName().indexOf(".")));
-        this.imageView = new ImageView(new Image(file.getPath()));
+        if (file.isAbsolute())
+            this.imageView = new ImageView(new Image("file:" + file.getPath()));
+        else
+            this.imageView = new ImageView(new Image(file.getPath()));
         checkBox = new CheckBox();
         createImageFrame();
     }

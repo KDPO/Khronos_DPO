@@ -1,21 +1,22 @@
 package net.etfbl.kdpo.client;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
-import javafx.scene.Node;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.nio.file.Files;
 
 /**
@@ -42,7 +43,7 @@ public class MainController {
     private MenuButton menu;
 
     @FXML
-    private ListView<String> listView;
+    private ListView<VirtualAlbum> listView;
 
     @FXML
     private TreeView<MyFile> treeView;
@@ -54,33 +55,12 @@ public class MainController {
 
     @FXML
     void initialize() {
-        ObservableList<String> data = FXCollections.observableArrayList();
+        ObservableList<VirtualAlbum> data = FXCollections.observableArrayList();
         listView.setItems(data);
-
-        VirtualAlbum virtualAlbum = new VirtualAlbum("Testni album", "Ovaj album je samo za test");
-        data.add(virtualAlbum.getName());
-        ObservableList<File> files = FXCollections.observableArrayList();
-        files.addAll(new File("/testImages/slika.jpg"), new File("/testImages/test.jpg"), new File("/testImages/slika.jpg"));
-        virtualAlbum.addImages(files);
-
-        VirtualAlbum virtualAlbum2 = new VirtualAlbum("Testni album 2", "Ovaj album je takodje za test");
-        data.add(virtualAlbum2.getName());
-        files.clear();
-        files.addAll(new File("/testImages/test.jpg"), new File("/testImages/slika.jpg"), new File("/testImages/test.jpg"));
-        virtualAlbum2.addImages(files);
-
-        VirtualAlbum[] albums = {virtualAlbum, virtualAlbum2};
-
-        listView.setOnMouseClicked(MouseEvent -> {
-            for(VirtualAlbum va : albums) {
-                if (listView.getSelectionModel().getSelectedItem().equals(va.getName())) {
-                    ObservableList<File> virtualAlbumImages = va.getImages();
-                    flowPane.getChildren().clear();
-                    for (File file : virtualAlbumImages) {
-                        flowPane.getChildren().add(new ImageFrame(file));
-                    }
-                }
-            }
+        data.add(new VirtualAlbum("Prvi album", "Prvi album"));
+        data.get(0).getImages().addAll(new File("/testImages/slika.jpg"), new File("/testImages/slika.jpg"), new File("/testImages/slika.jpg"));
+        listView.setOnMouseClicked((MouseEvent) -> {
+            setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
         });
 
         lblMessages.setVisible(false);
@@ -114,12 +94,12 @@ public class MainController {
             TreeItem<MyFile> root = new TreeItem<>();
             treeView.setRoot(root);
             treeView.setShowRoot(false);
-            root.getChildren().add(new TreeItem<MyFile>(new MyFile(FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath())));
-            //root.getChildren().add(desktop);
-            //findChilds(desktop.getValue(), desktop);
+            TreeItem<MyFile> desktop = new TreeItem<>(new MyFile(FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath()));
+            root.getChildren().add(desktop);
+            findChilds(desktop.getValue(), desktop);
             for (File file : File.listRoots())
                 if (file.isDirectory()) {
-                    TreeItem<MyFile> node = new TreeItem<MyFile>(new MyFile(file.getAbsolutePath()));
+                    TreeItem<MyFile> node = new TreeItem<>(new MyFile(file.getAbsolutePath()));
                     root.getChildren().add(node);
                     findChilds(file, node);
                 }
@@ -128,13 +108,24 @@ public class MainController {
                 public void handle(TreeItem.TreeModificationEvent<MyFile> event) {
                     TreeItem<MyFile> expandedTreeItem = event.getTreeItem();
                     for (TreeItem<MyFile> item : expandedTreeItem.getChildren())
+                        if (item.getChildren().isEmpty())
+                            findChilds(item.getValue(), item);
                     /* Možda je bolje da svaki put traži ponovo foldere u slučaju da se napravi neki novi
                        Problem je u slučaju da se unutar particije napravi novi folder, neće biti vidljiv dok se ne restartuje app
-                        if (item.getChildren().isEmpty()) */
-                        findChilds(item.getValue(), item);
+                        */
                 }
             });
 
+            treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                ObservableList<File> images = FXCollections.observableArrayList();
+                images.setAll(newValue.getValue().listFiles(new FilenameFilter() {
+                    @Override
+                    public boolean accept(File dir, String name) {
+                        return name.endsWith("jpg") || name.endsWith("png") || name.endsWith("jpeg");
+                    }
+                }));
+                setImagesToFlowPane(images);
+            });
         }).start();
     }
 
@@ -147,27 +138,14 @@ public class MainController {
         }
     }
 
-    public Image[] getImages() {
-        Image[] images = new Image[flowPane.getChildren().size()];
-        int i=0;
-        for(Node node : flowPane.getChildren()){
-            images[i++] = ((ImageFrame) node).getImage();
-        }
-        return images;
-    }
-
-    public Image[] getCheckedImages(){
-        Image[] images = new Image[flowPane.getChildren().size()];
-        int i=0;
-        for(Node node : flowPane.getChildren()){
-            if(((ImageFrame) node).getCheckBox().isSelected()) {
-                images[i++] = ((ImageFrame) node).getImage();
-            }
-        }
-        Image[] checkedImages = new Image[i--];
-        for(;i>=0; --i){
-            checkedImages[i] = images[i];
-        }
-        return checkedImages;
+    // dodavanje slika u flowPane
+    private void setImagesToFlowPane(ObservableList<File> images) {
+        ObservableList<Node> childs = flowPane.getChildren();
+        childs.clear();
+        for (File file : images)
+            Platform.runLater(() -> {
+                ImageFrame iFrame = new ImageFrame(file);
+                childs.add(iFrame);
+            });
     }
 }
