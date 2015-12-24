@@ -12,6 +12,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
+import javafx.scene.Node;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
@@ -63,6 +64,7 @@ public class MainController {
 
         lblMessages.setVisible(false);
         setTreeView();
+        System.out.println(flowPane.getChildren().size());
     }
 
     public void addNewVirtualAlbum() {
@@ -123,5 +125,29 @@ public class MainController {
             }))
                 node.getChildren().add(new TreeItem<>(new MyFile(var.getAbsolutePath())));
         }
+    }
+
+    public Image[] getImages() {
+        Image[] images = new Image[flowPane.getChildren().size()];
+        int i=0;
+        for(Node node : flowPane.getChildren()){
+            images[i++] = ((ImageFrame) node).getImage();
+        }
+        return images;
+    }
+
+    public Image[] getCheckedImages(){
+        Image[] images = new Image[flowPane.getChildren().size()];
+        int i=0;
+        for(Node node : flowPane.getChildren()){
+            if(((ImageFrame) node).getCheckBox().isSelected()) {
+                images[i++] = ((ImageFrame) node).getImage();
+            }
+        }
+        Image[] checkedImages = new Image[i];
+        for(;i>=0; --i){
+            checkedImages[i] = images[i];
+        }
+        return checkedImages;
     }
 }
