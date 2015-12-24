@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
+import java.nio.file.Files;
 
 /**
  * Created by Stijak on 16.12.2015..
@@ -43,7 +44,7 @@ public class MainController {
     private ListView<String> listView;
 
     @FXML
-    private TreeView<File> treeView;
+    private TreeView<MyFile> treeView;
 
     private Stage stage;
 
@@ -88,23 +89,23 @@ public class MainController {
     private void setTreeView() {
         /* TreeView initialization */
         new Thread(() -> {
-            TreeItem<File> root = new TreeItem<>();
+            TreeItem<MyFile> root = new TreeItem<>();
             treeView.setRoot(root);
             treeView.setShowRoot(false);
-            TreeItem<File> desktop = new TreeItem<File>(FileSystemView.getFileSystemView().getHomeDirectory());
-            root.getChildren().add(desktop);
-            findChilds(desktop.getValue(), desktop);
+            root.getChildren().add(new TreeItem<MyFile>(new MyFile(FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath())));
+            //root.getChildren().add(desktop);
+            //findChilds(desktop.getValue(), desktop);
             for (File file : File.listRoots())
                 if (file.isDirectory()) {
-                    TreeItem<File> node = new TreeItem<File>(file);
+                    TreeItem<MyFile> node = new TreeItem<MyFile>(new MyFile(file.getAbsolutePath()));
                     root.getChildren().add(node);
                     findChilds(file, node);
                 }
             // za dinamičko učitavanje
-            root.addEventHandler(TreeItem.branchExpandedEvent(), new EventHandler<TreeItem.TreeModificationEvent<File>>() {
-                public void handle(TreeItem.TreeModificationEvent<File> event) {
-                    TreeItem<File> expandedTreeItem = event.getTreeItem();
-                    for (TreeItem<File> item : expandedTreeItem.getChildren())
+            root.addEventHandler(TreeItem.branchExpandedEvent(), new EventHandler<TreeItem.TreeModificationEvent<MyFile>>() {
+                public void handle(TreeItem.TreeModificationEvent<MyFile> event) {
+                    TreeItem<MyFile> expandedTreeItem = event.getTreeItem();
+                    for (TreeItem<MyFile> item : expandedTreeItem.getChildren())
                     /* Možda je bolje da svaki put traži ponovo foldere u slučaju da se napravi neki novi
                        Problem je u slučaju da se unutar particije napravi novi folder, neće biti vidljiv dok se ne restartuje app
                         if (item.getChildren().isEmpty()) */
@@ -112,35 +113,15 @@ public class MainController {
                 }
             });
 
-            // nije dobro, previše sporo
-            treeView.setCellFactory(tv -> {
-                TreeCell<File> cell = new TreeCell<File>() {
-                    @Override
-                    protected void updateItem(File item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (item == null || empty)
-                            setText(null);
-                        else
-                            setText(FileSystemView.getFileSystemView().getSystemDisplayName(item));
-                    }
-                };
-
-                cell.setOnMouseClicked((MouseEvent event) -> {
-                    if (event.getClickCount() == 1)
-                        System.out.println();
-                });
-
-                return cell;
-            });
         }).start();
     }
 
-    private void findChilds(File file, TreeItem<File> node) {
+    private void findChilds(File file, TreeItem<MyFile> node) {
         if (file.isDirectory()) {
             for (File var : file.listFiles((File pathname) -> {
-                return pathname.isDirectory() && !pathname.isHidden();
+                return pathname.isDirectory() && !pathname.isHidden() && Files.isReadable(pathname.toPath()) && !Files.isSymbolicLink(pathname.toPath());
             }))
-                node.getChildren().add(new TreeItem<>(var));
+                node.getChildren().add(new TreeItem<>(new MyFile(var.getAbsolutePath())));
         }
     }
 }
