@@ -54,18 +54,37 @@ public class MainController {
 
     @FXML
     void initialize() {
-        for (int i = 1; i < 5; i++) {
-            flowPane.getChildren().add(new ImageFrame(new File("/testImages/slika.jpg")));
-        }
-
         ObservableList<String> data = FXCollections.observableArrayList();
         listView.setItems(data);
-        data.addAll("Prvi album", "Drugi album", "Treći album", "Četvrti album");
 
+        VirtualAlbum virtualAlbum = new VirtualAlbum("Testni album", "Ovaj album je samo za test");
+        data.add(virtualAlbum.getName());
+        ObservableList<File> files = FXCollections.observableArrayList();
+        files.addAll(new File("/testImages/slika.jpg"), new File("/testImages/test.jpg"), new File("/testImages/slika.jpg"));
+        virtualAlbum.addImages(files);
+
+        VirtualAlbum virtualAlbum2 = new VirtualAlbum("Testni album 2", "Ovaj album je takodje za test");
+        data.add(virtualAlbum2.getName());
+        files.clear();
+        files.addAll(new File("/testImages/test.jpg"), new File("/testImages/slika.jpg"), new File("/testImages/test.jpg"));
+        virtualAlbum2.addImages(files);
+
+        VirtualAlbum[] albums = {virtualAlbum, virtualAlbum2};
+
+        listView.setOnMouseClicked(MouseEvent -> {
+            for(VirtualAlbum va : albums) {
+                if (listView.getSelectionModel().getSelectedItem().equals(va.getName())) {
+                    ObservableList<File> virtualAlbumImages = va.getImages();
+                    flowPane.getChildren().clear();
+                    for (File file : virtualAlbumImages) {
+                        flowPane.getChildren().add(new ImageFrame(file));
+                    }
+                }
+            }
+        });
 
         lblMessages.setVisible(false);
         setTreeView();
-        System.out.println(flowPane.getChildren().size());
     }
 
     public void addNewVirtualAlbum() {

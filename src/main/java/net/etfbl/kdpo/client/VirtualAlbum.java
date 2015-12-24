@@ -24,6 +24,12 @@ public class VirtualAlbum implements Serializable {
         this.images = FXCollections.observableArrayList();
     }
 
+    public void addImages(ObservableList<File> files){
+        for(File file : files){
+            images.add(file);
+        }
+    }
+
     public void setStatusMessage(String message) {
 
     }
