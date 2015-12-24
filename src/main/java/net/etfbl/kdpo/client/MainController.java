@@ -9,9 +9,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
@@ -61,32 +61,7 @@ public class MainController {
         data.addAll("Prvi album", "Drugi album", "Treći album", "Četvrti album");
 
         lblMessages.setVisible(false);
-
-        /* TreeView initialization */
-        new Thread(() -> {
-            TreeItem<File> root = new TreeItem<>();
-            treeView.setRoot(root);
-            treeView.setShowRoot(false);
-            root.getChildren().add(new TreeItem<File>(FileSystemView.getFileSystemView().getHomeDirectory()));
-            for (File file : File.listRoots())
-                if (file.isDirectory()) {
-                    TreeItem<File> node = new TreeItem<File>(file);
-                    root.getChildren().add(node);
-                    findChilds(file, node);
-                }
-            // za dinamičko učitavanje
-            root.addEventHandler(TreeItem.branchExpandedEvent(), new EventHandler<TreeItem.TreeModificationEvent<File>>() {
-                public void handle(TreeItem.TreeModificationEvent<File> event) {
-                    TreeItem<File> expandedTreeItem = event.getTreeItem();
-                    for (TreeItem<File> item : expandedTreeItem.getChildren())
-                    /* Možda je bolje da svaki put traži ponovo foldere u slučaju da se napravi neki novi
-                       Problem je u slučaju da se unutar particije napravi novi folder, neće biti vidljiv dok se ne restartuje app
-                        if (item.getChildren().isEmpty()) */
-                            findChilds(item.getValue(), item);
-                }
-            });
-
-        }).start();
+        setTreeView();
     }
 
     public void addNewVirtualAlbum() {
@@ -108,6 +83,56 @@ public class MainController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void setTreeView() {
+        /* TreeView initialization */
+        new Thread(() -> {
+            TreeItem<File> root = new TreeItem<>();
+            treeView.setRoot(root);
+            treeView.setShowRoot(false);
+            TreeItem<File> desktop = new TreeItem<File>(FileSystemView.getFileSystemView().getHomeDirectory());
+            root.getChildren().add(desktop);
+            findChilds(desktop.getValue(), desktop);
+            for (File file : File.listRoots())
+                if (file.isDirectory()) {
+                    TreeItem<File> node = new TreeItem<File>(file);
+                    root.getChildren().add(node);
+                    findChilds(file, node);
+                }
+            // za dinamičko učitavanje
+            root.addEventHandler(TreeItem.branchExpandedEvent(), new EventHandler<TreeItem.TreeModificationEvent<File>>() {
+                public void handle(TreeItem.TreeModificationEvent<File> event) {
+                    TreeItem<File> expandedTreeItem = event.getTreeItem();
+                    for (TreeItem<File> item : expandedTreeItem.getChildren())
+                    /* Možda je bolje da svaki put traži ponovo foldere u slučaju da se napravi neki novi
+                       Problem je u slučaju da se unutar particije napravi novi folder, neće biti vidljiv dok se ne restartuje app
+                        if (item.getChildren().isEmpty()) */
+                        findChilds(item.getValue(), item);
+                }
+            });
+
+            // nije dobro, previše sporo
+            treeView.setCellFactory(tv -> {
+                TreeCell<File> cell = new TreeCell<File>() {
+                    @Override
+                    protected void updateItem(File item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item == null || empty)
+                            setText(null);
+                        else
+                            setText(FileSystemView.getFileSystemView().getSystemDisplayName(item));
+                    }
+                };
+
+                cell.setOnMouseClicked((MouseEvent event) -> {
+                    if (event.getClickCount() == 1)
+                        System.out.println();
+                });
+
+                return cell;
+            });
+        }).start();
     }
 
     private void findChilds(File file, TreeItem<File> node) {
