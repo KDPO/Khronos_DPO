@@ -112,8 +112,7 @@ public class MainController {
                         if (item.getChildren().isEmpty())
                             findChilds(item.getValue(), item);
                     /* Možda je bolje da svaki put traži ponovo foldere u slučaju da se napravi neki novi
-                       Problem je u slučaju da se unutar particije napravi novi folder, neće biti vidljiv dok se ne restartuje app
-                        */
+                       Problem je u slučaju da se unutar particije napravi novi folder, neće biti vidljiv dok se ne restartuje app */
                 }
             });
 
