@@ -62,6 +62,7 @@ public class MainController {
         listView.setItems(data);
         data.addAll("Prvi album", "Drugi album", "Treći album", "Četvrti album");
 
+
         lblMessages.setVisible(false);
         setTreeView();
         System.out.println(flowPane.getChildren().size());
@@ -144,7 +145,7 @@ public class MainController {
                 images[i++] = ((ImageFrame) node).getImage();
             }
         }
-        Image[] checkedImages = new Image[i];
+        Image[] checkedImages = new Image[i--];
         for(;i>=0; --i){
             checkedImages[i] = images[i];
         }
