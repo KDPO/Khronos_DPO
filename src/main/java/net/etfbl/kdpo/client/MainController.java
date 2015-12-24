@@ -55,11 +55,14 @@ public class MainController {
 
     @FXML
     void initialize() {
+        // lista unutar koje će se nalaziti objekti Virtuelnih albuma za prikaz u ListView i kasnije korišćenje
         ObservableList<VirtualAlbum> data = FXCollections.observableArrayList();
         listView.setItems(data);
+        // test album
         data.add(new VirtualAlbum("Prvi album", "Prvi album"));
         data.get(0).getImages().addAll(new File("/testImages/slika.jpg"), new File("/testImages/slika.jpg"), new File("/testImages/slika.jpg"));
 
+        // listener za prikaz slika albuma u flowPane-u
         listView.setOnMouseClicked((MouseEvent) -> {
             setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
         });
@@ -76,6 +79,7 @@ public class MainController {
         this.stage = stage;
     }
 
+    // još nam nije bitno
     private void showImageViewController(Image image) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/imageView.fxml"));
@@ -116,7 +120,7 @@ public class MainController {
                 }
             });
 
-            // listener za prikaz slika u flowPane
+            // listener za prikaz slika u flowPane na sleketovanje foldera
             treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 ObservableList<File> images = FXCollections.observableArrayList();
                 images.setAll(newValue.getValue().listFiles(new FilenameFilter() {
