@@ -1,22 +1,14 @@
 package net.etfbl.kdpo.client;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-
-import java.io.File;
-import java.lang.reflect.Array;
-import java.security.Key;
-import java.util.ArrayList;
 
 /**
  * Created by Stijak on 18.12.2015..
@@ -55,7 +47,7 @@ public class ImageViewController {
     @FXML
     private ImageView imageView;
 
-    private Image image;
+    private ObservableList<Image> images;
     private Scene scene;
     private Stage stage;
 
@@ -63,15 +55,23 @@ public class ImageViewController {
 
     @FXML
     void initialize() {
+        images = FXCollections.observableArrayList();
+
         btnBack.setOnMouseClicked((MouseEvent) -> {
             stage.setScene(scene);
         });
     }
 
+    public void setImages(Image... image) {
+        images.setAll(image);
+    }
+
+    public void setImages(ObservableList<Image> images) {
+        this.images = images;
+    }
+
     public void setImage(Image image) {
-        this.image = image;
-        imageView.setImage(image);
-        imageView.setFitHeight(500);
+        images.setAll(image);
     }
 
     public void initParams(Stage stage, Scene scene) {

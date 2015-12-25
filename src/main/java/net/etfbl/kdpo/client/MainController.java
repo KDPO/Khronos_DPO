@@ -2,6 +2,7 @@ package net.etfbl.kdpo.client;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -44,35 +45,48 @@ public class MainController {
 
     @FXML
     private ListView<VirtualAlbum> listView;
+    private ObservableList<VirtualAlbum> listViewData;
 
     @FXML
     private TreeView<MyFile> treeView;
 
     private Stage stage;
 
-    public MainController() {
-    }
-
     @FXML
     void initialize() {
         // lista unutar koje će se nalaziti objekti Virtuelnih albuma za prikaz u ListView i kasnije korišćenje
-        ObservableList<VirtualAlbum> data = FXCollections.observableArrayList();
-        listView.setItems(data);
+        listViewData = FXCollections.observableArrayList();
+        listView.setItems(listViewData);
+
         // test album
-        data.add(new VirtualAlbum("Prvi album", "Prvi album"));
-        data.get(0).getImages().addAll(new File("/testImages/slika.jpg"), new File("/testImages/slika.jpg"), new File("/testImages/slika.jpg"));
+        listViewData.add(new VirtualAlbum("Prvi album", "Prvi album"));
+        listViewData.get(0).getImages().addAll(new File("/testImages/slika.jpg"), new File("/testImages/slika.jpg"), new File("/testImages/slika.jpg"));
 
         // listener za prikaz slika albuma u flowPane-u
         listView.setOnMouseClicked((MouseEvent) -> {
             setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
         });
 
+        // prvi album selektovan prilikom pokretanja
+        if (!listViewData.isEmpty()) {
+            listView.getSelectionModel().selectFirst();
+            setImagesToFlowPane(listView.getItems().get(0).getImages());
+        }
+
         lblMessages.setVisible(false);
         setTreeView();
     }
 
-    public void addNewVirtualAlbum() {
+    // dodavanje novog albuma nakon klika na dugne Add new album
+    private void addNewVirtualAlbum(String name, String description) {
+        listViewData.add(new VirtualAlbum(name, description));
+    }
 
+    // dodavanje novog albuma nakon čekiranja slika tokom pregleda fs
+    private void addNewVirtualAlbum(String name, String description, ObservableList<File> images) {
+        VirtualAlbum va = new VirtualAlbum(name, description);
+        va.getImages().setAll(images);
+        listViewData.add(va);
     }
 
     public void setStage(Stage stage) {
@@ -152,30 +166,27 @@ public class MainController {
             Platform.runLater(() -> {
                 ImageFrame iFrame = new ImageFrame(file);
                 childs.add(iFrame);
+                iFrame.setOnMouseClicked((MouseEvent) -> {
+
+                });
             });
     }
 
-    public Image[] getImages() {
-        Image[] images = new Image[flowPane.getChildren().size()];
-        int i = 0;
-        for (Node node : flowPane.getChildren()) {
-            images[i++] = ((ImageFrame) node).getImage();
-        }
+    // objekti slika su već napravljeni pa zašto ih ne iskoristiti
+    private ObservableList<Image> getImagesFromFlowPane() {
+        ObservableList<Image> images = FXCollections.observableArrayList();
+        for (Node node : flowPane.getChildren())
+            images.add(((ImageFrame) node).getImage());
         return images;
     }
 
-    public Image[] getCheckedImages() {
-        Image[] images = new Image[flowPane.getChildren().size()];
-        int i = 0;
-        for (Node node : flowPane.getChildren()) {
-            if (((ImageFrame) node).getCheckBox().isSelected()) {
-                images[i++] = ((ImageFrame) node).getImage();
-            }
-        }
-        Image[] checkedImages = new Image[i--];
-        for (; i >= 0; --i) {
-            checkedImages[i] = images[i];
-        }
-        return checkedImages;
+    // kada budemo dodavali slike u album
+    private ObservableList<Image> getCheckedImagesFromFlowPane() {
+        ObservableList<Image> images = FXCollections.observableArrayList();
+        for (Node node : flowPane.getChildren())
+            if (((ImageFrame) node).getCheckBox().isSelected())
+                images.add(((ImageFrame) node).getImage());
+
+        return images;
     }
 }

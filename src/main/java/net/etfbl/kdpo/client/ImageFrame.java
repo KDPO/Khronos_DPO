@@ -21,8 +21,10 @@ public class ImageFrame extends AnchorPane {
     private ImageView imageView;
     private Label label;
     private CheckBox checkBox;
+    private File file;
 
     public ImageFrame(File file) {
+        this.file = file;
         this.label = new Label(file.getName().substring(0, file.getName().indexOf(".")));
         if (file.isAbsolute())
             this.imageView = new ImageView(new Image("file:" + file.getPath()));
@@ -83,6 +85,10 @@ public class ImageFrame extends AnchorPane {
             if (!checkBox.isSelected())
                 this.setStyle("-fx-border-color: #2c2c2c;");
         });
+    }
+
+    public File getFile() {
+        return this.file;
     }
 
     public Image getImage() {

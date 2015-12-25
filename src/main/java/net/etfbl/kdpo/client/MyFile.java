@@ -1,7 +1,7 @@
 package net.etfbl.kdpo.client;
 
-import java.io.File;
 import javax.swing.filechooser.FileSystemView;
+import java.io.File;
 
 /**
  * @author Vladan
