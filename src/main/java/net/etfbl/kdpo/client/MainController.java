@@ -2,10 +2,8 @@ package net.etfbl.kdpo.client;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -120,24 +118,16 @@ public class MainController {
             TreeItem<MyFile> root = new TreeItem<>();
             treeView.setRoot(root);
             treeView.setShowRoot(false);
-            TreeItem<MyFile> desktop = new TreeItem<>(new MyFile(FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath()));
-            root.getChildren().add(desktop);
-            findChilds(desktop.getValue(), desktop);
+            // desktop
+            setChild(root, new TreeItem<>(new MyFile(FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath())));
+            // particije
             for (File file : File.listRoots())
-                if (file.isDirectory()) {
-                    TreeItem<MyFile> node = new TreeItem<>(new MyFile(file.getAbsolutePath()));
-                    root.getChildren().add(node);
-                    findChilds(file, node);
-                }
+                if (file.isDirectory())
+                    setChild(root, new TreeItem<>(new MyFile(file.getAbsolutePath())));
             // za dinamičko učitavanje
             root.addEventHandler(TreeItem.branchExpandedEvent(), new EventHandler<TreeItem.TreeModificationEvent<MyFile>>() {
                 public void handle(TreeItem.TreeModificationEvent<MyFile> event) {
-                    TreeItem<MyFile> expandedTreeItem = event.getTreeItem();
-                    for (TreeItem<MyFile> item : expandedTreeItem.getChildren())
-                        if (item.getChildren().isEmpty())
-                            findChilds(item.getValue(), item);
-                    /* Možda je bolje da svaki put traži ponovo foldere u slučaju da se napravi neki novi
-                       Problem je u slučaju da se unutar particije napravi novi folder, neće biti vidljiv dok se ne restartuje app */
+                    findChilds(event.getTreeItem().getValue(), event.getTreeItem());
                 }
             });
 
@@ -158,11 +148,18 @@ public class MainController {
     // pronalazi podfoldere
     private void findChilds(File file, TreeItem<MyFile> node) {
         if (file.isDirectory()) {
+            node.getChildren().clear();
             for (File var : file.listFiles((File pathname) -> {
                 return pathname.isDirectory() && !pathname.isHidden() && Files.isReadable(pathname.toPath()) && !Files.isSymbolicLink(pathname.toPath());
             }))
-                node.getChildren().add(new TreeItem<>(new MyFile(var.getAbsolutePath())));
+                setChild(node, new TreeItem<>(new MyFile(var.getAbsolutePath())));
         }
+    }
+
+    // Don't repeat yourself  :D
+    private void setChild(TreeItem<MyFile> parent, TreeItem<MyFile> child) {
+        child.getChildren().add(new TreeItem<>()); // kako bi se pojavlia strelica za expand
+        parent.getChildren().add(child);
     }
 
     // dodavanje slika u flowPane
