@@ -6,12 +6,10 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 
-import java.awt.event.ActionEvent;
 import java.io.File;
 
 /**
@@ -88,7 +86,7 @@ public class ImageFrame extends AnchorPane {
     }
 
     public File getFile() {
-        return this.file;
+        return file;
     }
 
     public Image getImage() {

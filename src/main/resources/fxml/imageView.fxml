@@ -6,9 +6,9 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="vBoxMain"
-      stylesheets="@../css/imageView.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="net.etfbl.kdpo.client.ImageViewController">
+<VBox fx:id="vBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      styleClass="vBoxMain" stylesheets="@../css/imageView.css" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.etfbl.kdpo.client.ImageViewController">
     <children>
         <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" style="-fx-background-color: #000;"
                     VBox.vgrow="NEVER">
@@ -41,7 +41,7 @@
                 <VBox alignment="CENTER" prefWidth="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0"
                       AnchorPane.topAnchor="0.0">
                     <children>
-                        <Button focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity"
+                        <Button fx:id="btnPrevImage" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity"
                                 minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="150.0"
                                 prefWidth="150.0" styleClass="buttonLeft" VBox.vgrow="ALWAYS"/>
                     </children>
@@ -49,7 +49,7 @@
                 <VBox alignment="CENTER" prefWidth="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="5.0"
                       AnchorPane.topAnchor="0.0">
                     <children>
-                        <Button focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity"
+                        <Button fx:id="btnNextImage" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity"
                                 minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="150.0"
                                 prefWidth="150.0" styleClass="buttonRight" VBox.vgrow="ALWAYS"/>
                     </children>

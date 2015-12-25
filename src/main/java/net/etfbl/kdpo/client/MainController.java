@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -12,6 +13,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 
@@ -60,7 +63,7 @@ public class MainController {
 
         // test album
         listViewData.add(new VirtualAlbum("Prvi album", "Prvi album"));
-        listViewData.get(0).getImages().addAll(new File("/testImages/slika.jpg"), new File("/testImages/slika.jpg"), new File("/testImages/slika.jpg"));
+        listViewData.get(0).getImages().addAll(new File("/testImages/slika.jpg"), new File("/testImages/test.jpg"), new File("/testImages/slika.jpg"), new File("/testImages/test.jpg"));
 
         // listener za prikaz slika albuma u flowPane-u
         listView.setOnMouseClicked((MouseEvent) -> {
@@ -68,10 +71,7 @@ public class MainController {
         });
 
         // prvi album selektovan prilikom pokretanja
-        if (!listViewData.isEmpty()) {
-            listView.getSelectionModel().selectFirst();
-            setImagesToFlowPane(listView.getItems().get(0).getImages());
-        }
+        setFirstElementOfListViewSelected();
 
         lblMessages.setVisible(false);
         setTreeView();
@@ -89,17 +89,24 @@ public class MainController {
         listViewData.add(va);
     }
 
+    private void setFirstElementOfListViewSelected() {
+        if (!listViewData.isEmpty()) {
+            listView.getSelectionModel().selectFirst();
+            setImagesToFlowPane(listView.getItems().get(0).getImages());
+        }
+    }
+
     public void setStage(Stage stage) {
         this.stage = stage;
     }
 
     // još nam nije bitno
-    private void showImageViewController(Image image) {
+    private void showImageViewController(ObservableList<Image> images, int index) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/imageView.fxml"));
             Parent root = loader.load();
             ImageViewController controller = loader.getController();
-            controller.setImage(image);
+            controller.setImages(images, index);
             controller.initParams(stage, stage.getScene());
             stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
         } catch (Exception e) {
@@ -166,8 +173,10 @@ public class MainController {
             Platform.runLater(() -> {
                 ImageFrame iFrame = new ImageFrame(file);
                 childs.add(iFrame);
-                iFrame.setOnMouseClicked((MouseEvent) -> {
-
+                /*  onClick na ImageFrame treba da pređe u prikaz slike  */
+                iFrame.setOnMouseClicked((MouseEvent event) -> {
+                    if (event.getButton().equals(MouseButton.PRIMARY))
+                        showImageViewController(getImagesFromFlowPane(), flowPane.getChildren().indexOf(iFrame));
                 });
             });
     }
