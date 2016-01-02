@@ -33,7 +33,7 @@ public class ImageFrame extends AnchorPane {
         this.file = file;
         this.label = new Label(file.getName().substring(0, file.getName().indexOf(".")));
         try {
-            imageView = new ImageView(new Image(new FileInputStream(file), 500, 500, true, false));
+            imageView = new ImageView(new Image(new FileInputStream(file), 600, 600, true, false));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
