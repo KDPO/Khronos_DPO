@@ -9,16 +9,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
-import net.coobird.thumbnailator.Thumbnailator;
-import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.name.Rename;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 /**
  * Created by Stijak on 19.12.2015..
@@ -33,7 +27,7 @@ public class ImageFrame extends AnchorPane {
         this.file = file;
         this.label = new Label(file.getName().substring(0, file.getName().indexOf(".")));
         try {
-            imageView = new ImageView(new Image(new FileInputStream(file), 600, 600, true, false));
+            imageView = new ImageView(new Image(new FileInputStream(file), 500, 500, true, false));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
