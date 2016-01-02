@@ -44,6 +44,7 @@ public class ImageFrame extends AnchorPane {
         label.setAlignment(Pos.CENTER);
         label.setBackground(new Background(new BackgroundImage(new Image("/images/pozadina.png"), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
         label.setVisible(false);
+        checkBox.setVisible(false);
         this.setAnchor(checkBox, -1, 5, 5, -1);
         this.setAnchor(label, 0, -1, 0, 0);
         this.setAnchor(hBox, 0, 0, 0, 0);

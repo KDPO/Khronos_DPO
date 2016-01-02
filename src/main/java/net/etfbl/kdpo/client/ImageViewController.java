@@ -9,9 +9,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -64,8 +61,6 @@ public class ImageViewController {
     private ObservableList<File> images;
     private Scene scene;
     private Stage stage;
-
-    private AnchorPane anchorPaneFullScreen;
 
     @FXML
     void initialize() {

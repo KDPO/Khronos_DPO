@@ -1,4 +1,6 @@
-package net.etfbl.kdpo.client;/*
+package net.etfbl.kdpo.client;
+
+/*
  * Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  */

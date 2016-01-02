@@ -89,6 +89,7 @@ public class MainController {
         listViewData.add(va);
     }
 
+    // u slučaju da postoje VA potrebno je prvi selektovati
     private void setFirstElementOfListViewSelected() {
         if (!listViewData.isEmpty()) {
             listView.getSelectionModel().selectFirst();
