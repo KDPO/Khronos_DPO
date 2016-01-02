@@ -16,6 +16,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.File;
+
 /**
  * Created by Stijak on 18.12.2015..
  */
@@ -59,7 +61,7 @@ public class ImageViewController {
     @FXML
     private ImageView imageView;
     private static int INDEX;
-    private ObservableList<Image> images;
+    private ObservableList<File> images;
     private Scene scene;
     private Stage stage;
 
@@ -68,9 +70,12 @@ public class ImageViewController {
     @FXML
     void initialize() {
         images = FXCollections.observableArrayList();
+        imageView = new ImageView();
         imageView.setPreserveRatio(true);
-        imageView.fitHeightProperty().bind(hBoxImageContainer.heightProperty());
-        imageView.fitWidthProperty().bind(hBoxImageContainer.widthProperty());
+        ImageViewPane ivp = new ImageViewPane(imageView);
+        hBoxImageContainer.getChildren().add(ivp);
+        ivp.prefHeightProperty().bind(hBoxImageContainer.heightProperty());
+        ivp.prefWidthProperty().bind(hBoxImageContainer.widthProperty());
 
         btnNextImage.setOnMouseClicked((MouseEvent) -> {
             nextImage();
@@ -86,18 +91,10 @@ public class ImageViewController {
 
     }
 
-    public void setImages(Image... image) {
-        images.setAll(image);
-    }
-
-    public void setImages(ObservableList<Image> images, int index) {
+    public void setImages(ObservableList<File> images, int index) {
         this.images = images;
         INDEX = index;
         showImage();
-    }
-
-    public void setImage(Image image) {
-        images.setAll(image);
     }
 
     public void initParams(Stage stage, Scene scene) {
@@ -112,20 +109,18 @@ public class ImageViewController {
     }
 
     private void showImage() {
-        imageView.setImage(images.get(INDEX));
+        imageView.setImage(new Image("file:" + images.get(INDEX).getPath()));
     }
 
     private void nextImage() {
         if (++INDEX == images.size())
             INDEX = 0;
-        imageView.setImage(images.get(INDEX));
-        imageView.maxHeight(images.get(INDEX).getHeight());
+        imageView.setImage(new Image("file:" + images.get(INDEX).getPath()));
     }
 
     private void prevImage() {
         if (--INDEX < 0)
             INDEX = images.size() - 1;
-        imageView.setImage(images.get(INDEX));
-        imageView.maxHeight(images.get(INDEX).getHeight());
+        imageView.setImage(new Image("file:" + images.get(INDEX).getPath()));
     }
 }

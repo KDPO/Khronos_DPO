@@ -6,9 +6,9 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox fx:id="vBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      styleClass="vBoxMain" stylesheets="@../css/imageView.css" xmlns="http://javafx.com/javafx/8"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.etfbl.kdpo.client.ImageViewController">
+<VBox fx:id="vBox" minHeight="360.0" minWidth="640.0" styleClass="vBoxMain" stylesheets="@../css/imageView.css"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="net.etfbl.kdpo.client.ImageViewController">
     <children>
         <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" style="-fx-background-color: #000;"
                     VBox.vgrow="NEVER">
@@ -33,11 +33,7 @@
         <AnchorPane fx:id="anchorPaneImageContainer" style="-fx-background-color: #000;" VBox.vgrow="ALWAYS">
             <children>
                 <HBox fx:id="hBoxImageContainer" alignment="CENTER" AnchorPane.bottomAnchor="0.0"
-                      AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <children>
-                        <ImageView fx:id="imageView" pickOnBounds="true" preserveRatio="true" HBox.hgrow="ALWAYS"/>
-                    </children>
-                </HBox>
+                      AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
                 <VBox alignment="CENTER" prefWidth="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0"
                       AnchorPane.topAnchor="0.0">
                     <children>
@@ -75,18 +71,18 @@
                                 <String fx:value="button"/>
                             </styleClass>
                         </Button>
-                        <Button focusTraversable="false" layoutX="476.0" layoutY="13.0" maxHeight="-Infinity"
-                                maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                                prefHeight="50.0" prefWidth="80.0" AnchorPane.bottomAnchor="0.0"
+                        <Button fx:id="btnRotateLeft" focusTraversable="false" layoutX="476.0" layoutY="13.0"
+                                maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                                mnemonicParsing="false" prefHeight="50.0" prefWidth="80.0" AnchorPane.bottomAnchor="0.0"
                                 AnchorPane.rightAnchor="90.0" AnchorPane.topAnchor="0.0">
                             <styleClass>
                                 <String fx:value="buttonRotateLeft"/>
                                 <String fx:value="button"/>
                             </styleClass>
                         </Button>
-                        <Button focusTraversable="false" layoutX="414.0" layoutY="13.0" maxHeight="-Infinity"
-                                maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
-                                prefHeight="50.0" prefWidth="80.0" AnchorPane.bottomAnchor="0.0"
+                        <Button fx:id="btnRotateRight" focusTraversable="false" layoutX="414.0" layoutY="13.0"
+                                maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                                mnemonicParsing="false" prefHeight="50.0" prefWidth="80.0" AnchorPane.bottomAnchor="0.0"
                                 AnchorPane.rightAnchor="175.0" AnchorPane.topAnchor="0.0">
                             <styleClass>
                                 <String fx:value="buttonRotateRight"/>

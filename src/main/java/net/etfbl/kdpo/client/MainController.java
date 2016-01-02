@@ -2,8 +2,10 @@ package net.etfbl.kdpo.client;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -61,7 +63,7 @@ public class MainController {
 
         // test album
         listViewData.add(new VirtualAlbum("Prvi album", "Prvi album"));
-        listViewData.get(0).getImages().addAll(new File("/testImages/slika.jpg"), new File("/testImages/test.jpg"), new File("/testImages/slika.jpg"), new File("/testImages/test.jpg"));
+        //listViewData.get(0).getImages().addAll(new File("/testImages/slika.jpg"), new File("/testImages/test.jpg"), new File("/testImages/slika.jpg"), new File("/testImages/test.jpg"));
 
         // listener za prikaz slika albuma u flowPane-u
         listView.setOnMouseClicked((MouseEvent) -> {
@@ -98,8 +100,8 @@ public class MainController {
         this.stage = stage;
     }
 
-    // još nam nije bitno
-    private void showImageViewController(ObservableList<Image> images, int index) {
+    // prelazak na ImageViewController
+    private void showImageViewController(ObservableList<File> images, int index) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/imageView.fxml"));
             Parent root = loader.load();
@@ -118,16 +120,25 @@ public class MainController {
             TreeItem<MyFile> root = new TreeItem<>();
             treeView.setRoot(root);
             treeView.setShowRoot(false);
-            // desktop
-            setChild(root, new TreeItem<>(new MyFile(FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath())));
-            // particije
+            TreeItem<MyFile> pictures = new TreeItem<>(new MyFile(FileSystemView.getFileSystemView().getHomeDirectory().toString().replace("Desktop", "Pictures")));
+            TreeItem<MyFile> desktop = new TreeItem<>(new MyFile(FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath()));
+            root.getChildren().addAll(pictures, desktop);
+            findChilds(desktop.getValue(), desktop);
             for (File file : File.listRoots())
-                if (file.isDirectory())
-                    setChild(root, new TreeItem<>(new MyFile(file.getAbsolutePath())));
+                if (file.isDirectory()) {
+                    TreeItem<MyFile> node = new TreeItem<>(new MyFile(file.getAbsolutePath()));
+                    root.getChildren().add(node);
+                    findChilds(file, node);
+                }
             // za dinamičko učitavanje
             root.addEventHandler(TreeItem.branchExpandedEvent(), new EventHandler<TreeItem.TreeModificationEvent<MyFile>>() {
                 public void handle(TreeItem.TreeModificationEvent<MyFile> event) {
-                    findChilds(event.getTreeItem().getValue(), event.getTreeItem());
+                    TreeItem<MyFile> expandedTreeItem = event.getTreeItem();
+                    for (TreeItem<MyFile> item : expandedTreeItem.getChildren())
+                        if (item.getChildren().isEmpty())
+                            findChilds(item.getValue(), item);
+                    /* Možda je bolje da svaki put traži ponovo foldere u slučaju da se napravi neki novi
+                       Problem je u slučaju da se unutar particije napravi novi folder, neće biti vidljiv dok se ne restartuje app */
                 }
             });
 
@@ -148,18 +159,11 @@ public class MainController {
     // pronalazi podfoldere
     private void findChilds(File file, TreeItem<MyFile> node) {
         if (file.isDirectory()) {
-            node.getChildren().clear();
             for (File var : file.listFiles((File pathname) -> {
                 return pathname.isDirectory() && !pathname.isHidden() && Files.isReadable(pathname.toPath()) && !Files.isSymbolicLink(pathname.toPath());
             }))
-                setChild(node, new TreeItem<>(new MyFile(var.getAbsolutePath())));
+                node.getChildren().add(new TreeItem<>(new MyFile(var.getAbsolutePath())));
         }
-    }
-
-    // Don't repeat yourself  :D
-    private void setChild(TreeItem<MyFile> parent, TreeItem<MyFile> child) {
-        child.getChildren().add(new TreeItem<>()); // kako bi se pojavlia strelica za expand
-        parent.getChildren().add(child);
     }
 
     // dodavanje slika u flowPane
@@ -179,19 +183,19 @@ public class MainController {
     }
 
     // objekti slika su već napravljeni pa zašto ih ne iskoristiti
-    private ObservableList<Image> getImagesFromFlowPane() {
-        ObservableList<Image> images = FXCollections.observableArrayList();
+    private ObservableList<File> getImagesFromFlowPane() {
+        ObservableList<File> images = FXCollections.observableArrayList();
         for (Node node : flowPane.getChildren())
-            images.add(((ImageFrame) node).getImage());
+            images.add(((ImageFrame) node).getFile());
         return images;
     }
 
     // kada budemo dodavali slike u album
-    private ObservableList<Image> getCheckedImagesFromFlowPane() {
-        ObservableList<Image> images = FXCollections.observableArrayList();
+    private ObservableList<File> getCheckedImagesFromFlowPane() {
+        ObservableList<File> images = FXCollections.observableArrayList();
         for (Node node : flowPane.getChildren())
             if (((ImageFrame) node).getCheckBox().isSelected())
-                images.add(((ImageFrame) node).getImage());
+                images.add(((ImageFrame) node).getFile());
 
         return images;
     }
