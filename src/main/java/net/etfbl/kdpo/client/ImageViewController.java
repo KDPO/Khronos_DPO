@@ -3,12 +3,14 @@ package net.etfbl.kdpo.client;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -57,9 +59,15 @@ public class ImageViewController {
 
     @FXML
     private ImageView imageView;
+
+    @FXML
+    private AnchorPane controlLine;
+
+    private static int CONTROL_LINE_COUNTER = 0;
+
     private static int INDEX;
     private ObservableList<File> images;
-    private Scene scene;
+    private Parent oldRoot;
     private Stage stage;
 
     @FXML
@@ -81,9 +89,20 @@ public class ImageViewController {
         });
 
         btnBack.setOnMouseClicked((MouseEvent) -> {
-            stage.setScene(scene);
+            stage.getScene().setRoot(oldRoot);
         });
 
+        imageView.setOnMouseClicked(event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                if (CONTROL_LINE_COUNTER == 0) {
+                    controlLine.setVisible(false);
+                    CONTROL_LINE_COUNTER = 1;
+                } else {
+                    controlLine.setVisible(true);
+                    CONTROL_LINE_COUNTER = 0;
+                }
+            }
+        });
     }
 
     public void setImages(ObservableList<File> images, int index) {
@@ -92,10 +111,10 @@ public class ImageViewController {
         showImage();
     }
 
-    public void initParams(Stage stage, Scene scene) {
+    public void initParams(Stage stage, Parent root) {
         this.stage = stage;
-        this.scene = scene;
-        scene.getWindow().addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
+        this.oldRoot = root;
+        stage.getScene().getWindow().addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
             if (event.getCode().equals(KeyCode.UP) || (event.getCode().equals(KeyCode.RIGHT)))
                 nextImage();
             else if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.LEFT))
@@ -105,6 +124,10 @@ public class ImageViewController {
 
     private void showImage() {
         imageView.setImage(new Image("file:" + images.get(INDEX).getPath()));
+        if (images.size() == 1) {
+            btnNextImage.setVisible(false);
+            btnPrevImage.setVisible(false);
+        }
     }
 
     private void nextImage() {

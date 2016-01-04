@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import java.lang.*?>
+
 <VBox fx:id="vBox" minHeight="360.0" minWidth="640.0" styleClass="vBoxMain" stylesheets="@../css/imageView.css"
       xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.etfbl.kdpo.client.ImageViewController">
@@ -56,7 +58,7 @@
                                 styleClass="buttonZoomIn"/>
                     </children>
                 </HBox>
-                <AnchorPane maxHeight="-Infinity" minHeight="-Infinity" prefHeight="50.0"
+                <AnchorPane fx:id="controlLine" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="50.0"
                             styleClass="anchorPaneToolsLine" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
                             AnchorPane.topAnchor="0.0">
                     <children>

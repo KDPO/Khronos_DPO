@@ -12,19 +12,17 @@ import javafx.stage.Stage;
  */
 
 public class Main extends Application {
-    private static Stage stage;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        this.stage = primaryStage;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
         Parent root = loader.load();
         MainController controller = loader.getController();
         controller.setStage(primaryStage);
         primaryStage.getIcons().add(new Image("/images/khronos.png"));
         primaryStage.setTitle("Khronos DPO");
-        Scene scene = new Scene(root, 600, 360);
-        primaryStage.setScene(scene);
+        primaryStage.setScene(new Scene(root, 600, 360));
+        //primaryStage.setMaximized(true);
         primaryStage.show();
     }
 

@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+
 <AnchorPane minHeight="360.0" minWidth="640.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.etfbl.kdpo.client.MainController">
     <children>
@@ -16,7 +20,8 @@
                                  tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0"
                                  AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                             <tabs>
-                                <Tab id="tabAlbumi" closable="false" styleClass="tabAlbumi" text="Albumi">
+                                <Tab id="tabAlbumi" fx:id="tabAlbumi" closable="false" styleClass="tabAlbumi"
+                                     text="Albumi">
                                     <content>
                                         <AnchorPane style="-fx-background-color: #2c2c2c;">
                                             <children>
@@ -34,7 +39,7 @@
                                         </AnchorPane>
                                     </content>
                                 </Tab>
-                                <Tab id="tabFS" closable="false" styleClass="tabFS" text="File system">
+                                <Tab id="tabFS" fx:id="tabFS" closable="false" styleClass="tabFS" text="File system">
                                     <content>
                                         <AnchorPane style="-fx-background-color: #2c2c2c;">
                                             <children>
