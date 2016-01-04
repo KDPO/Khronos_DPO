@@ -65,7 +65,7 @@ public class ImageViewController {
 
     private static int CONTROL_LINE_COUNTER = 0;
 
-    private static int INDEX;
+    private int INDEX;
     private ObservableList<File> images;
     private Parent oldRoot;
     private Stage stage;
@@ -108,6 +108,7 @@ public class ImageViewController {
     public void setImages(ObservableList<File> images, int index) {
         this.images = images;
         INDEX = index;
+        System.out.println(INDEX);
         showImage();
     }
 

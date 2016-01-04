@@ -23,6 +23,8 @@ public class Main extends Application {
         primaryStage.setTitle("Khronos DPO");
         primaryStage.setScene(new Scene(root, 600, 360));
         //primaryStage.setMaximized(true);
+        primaryStage.setMinWidth(600);
+        primaryStage.setMinHeight(360);
         primaryStage.show();
     }
 

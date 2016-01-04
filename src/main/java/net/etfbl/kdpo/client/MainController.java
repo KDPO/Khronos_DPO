@@ -84,6 +84,8 @@ public class MainController {
         tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
             if (newTab.equals(tabFS))
                 setTreeView();
+            if (newTab.equals(tabAlbumi))
+                flowPane.getChildren().clear();
         });
 
     }
