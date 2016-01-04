@@ -63,7 +63,7 @@ public class ImageViewController {
     @FXML
     private AnchorPane controlLine;
 
-    private static int CONTROL_LINE_COUNTER = 0;
+    private int CONTROL_LINE_COUNTER = 0;
 
     private int INDEX;
     private ObservableList<File> images;
@@ -108,7 +108,6 @@ public class ImageViewController {
     public void setImages(ObservableList<File> images, int index) {
         this.images = images;
         INDEX = index;
-        System.out.println(INDEX);
         showImage();
     }
 
