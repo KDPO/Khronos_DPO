@@ -79,13 +79,16 @@ public class MainController {
 
         lblMessages.setVisible(false);
 
+        new Thread(this::setTreeView).start();
+
+        /*
         tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
             if (newTab.equals(tabFS))
                 setTreeView();
             if (newTab.equals(tabAlbumi))
                 flowPane.getChildren().clear();
         });
-
+        */
     }
 
     // dodavanje novog albuma nakon klika na dugne Add new album
