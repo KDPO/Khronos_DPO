@@ -3,7 +3,6 @@ package net.etfbl.kdpo.client;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,7 +13,6 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
-import org.omg.CORBA.Object;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
@@ -131,75 +129,60 @@ public class MainController {
 
     private void setTreeView() {
         /* TreeView initialization */
-            TreeItem<MyFile> root = new TreeItem<>();
-            treeView.setRoot(root);
-            treeView.setShowRoot(false);
-            TreeItem<MyFile> pictures = new TreeItem<>(new MyFile(FileSystemView.getFileSystemView().getHomeDirectory().toString().replace("Desktop", "Pictures")));
-            TreeItem<MyFile> desktop = new TreeItem<>(new MyFile(FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath()));
-            root.getChildren().addAll(pictures, desktop);
-            findChilds(desktop.getValue(), desktop);
-            for (File file : File.listRoots())
-                if (file.isDirectory()) {
-                    TreeItem<MyFile> node = new TreeItem<>(new MyFile(file.getAbsolutePath()));
-                    root.getChildren().add(node);
-                    Platform.runLater(() -> {
-                        findChilds(file, node);
-                    });
-                }
-            // za dinamičko učitavanje
-        Platform.runLater(() -> {
-            root.addEventHandler(TreeItem.branchExpandedEvent(), new EventHandler<TreeItem.TreeModificationEvent<MyFile>>() {
-                public void handle(TreeItem.TreeModificationEvent<MyFile> event) {
-                    TreeItem<MyFile> expandedTreeItem = event.getTreeItem();
-                    for (TreeItem<MyFile> item : expandedTreeItem.getChildren())
-                        if (item.getChildren().isEmpty())
-                            findChilds(item.getValue(), item);
-                    /* Možda je bolje da svaki put traži ponovo foldere u slučaju da se napravi neki novi
-                       Problem je u slučaju da se unutar particije napravi novi folder, neće biti vidljiv dok se ne restartuje app */
-                    }
-            });
-            });
+        TreeItem<MyFile> root = new TreeItem<>();
+        treeView.setRoot(root);
+        treeView.setShowRoot(false);
+        // desktop
+        setChild(root, new TreeItem<>(new MyFile(FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath())));
+        // particije
+        for (File file : File.listRoots())
+            if (file.isDirectory())
+                setChild(root, new TreeItem<>(new MyFile(file.getAbsolutePath())));
+        // za dinamičko učitavanje
+        root.addEventHandler(TreeItem.branchExpandedEvent(), new EventHandler<TreeItem.TreeModificationEvent<MyFile>>() {
+            public void handle(TreeItem.TreeModificationEvent<MyFile> event) {
+                findChilds(event.getTreeItem().getValue(), event.getTreeItem());
+            }
+        });
 
         // listener za prikaz slika u flowPane na sleketovanje foldera
+        // treba izbaciti odavde
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             ObservableList<File> images = FXCollections.observableArrayList();
             images.setAll(newValue.getValue().listFiles((dir, name) -> name.endsWith("jpg") || name.endsWith("png") || name.endsWith("jpeg")));
-            Platform.runLater(() -> {
-                setImagesToFlowPane(images);
-            });
+            setImagesToFlowPane(images);
         });
     }
 
     // pronalazi podfoldere
     private void findChilds(File file, TreeItem<MyFile> node) {
         if (file.isDirectory()) {
-            for (File var : file.listFiles((File pathname) -> {
-                return pathname.isDirectory() && !pathname.isHidden() && Files.isReadable(pathname.toPath()) && !Files.isSymbolicLink(pathname.toPath());
-            }))
-                node.getChildren().add(new TreeItem<>(new MyFile(var.getAbsolutePath())));
+            node.getChildren().clear();
+            for (File var : file.listFiles((File pathname) -> pathname.isDirectory() && !pathname.isHidden() && Files.isReadable(pathname.toPath()) && !Files.isSymbolicLink(pathname.toPath())))
+                setChild(node, new TreeItem<>(new MyFile(var.getAbsolutePath())));
         }
+    }
+
+    // Don't repeat yourself  :D
+    private void setChild(TreeItem<MyFile> parent, TreeItem<MyFile> child) {
+        child.getChildren().add(new TreeItem<>()); // kako bi se pojavlia strelica za expand
+        parent.getChildren().add(child);
     }
 
     // dodavanje slika u flowPane
     private void setImagesToFlowPane(ObservableList<File> images) {
         ObservableList<Node> childs = flowPane.getChildren();
         childs.clear();
-        new Thread(new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                for (File file : images)
-                    Platform.runLater(() -> {
-                        ImageFrame iFrame = new ImageFrame(file);
-                        childs.add(iFrame);
+        for (File file : images)
+            Platform.runLater(() -> {
+                ImageFrame iFrame = new ImageFrame(file);
+                childs.add(iFrame);
                 /*  onClick na ImageFrame treba da pređe u prikaz slike */
-                        iFrame.setOnMouseClicked((MouseEvent event) -> {
-                            if (event.getButton().equals(MouseButton.PRIMARY))
-                                showImageViewController(getImagesFromFlowPane(), flowPane.getChildren().indexOf(iFrame));
-                        });
-                    });
-                return null;
-            }
-        }).start();
+                iFrame.setOnMouseClicked((MouseEvent event) -> {
+                    if (event.getButton().equals(MouseButton.PRIMARY))
+                        showImageViewController(getImagesFromFlowPane(), flowPane.getChildren().indexOf(iFrame));
+                });
+            });
     }
 
     // objekti slika su već napravljeni pa zašto ih ne iskoristiti
