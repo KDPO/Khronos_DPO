@@ -3,11 +3,13 @@ package net.etfbl.kdpo.client;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -205,4 +207,27 @@ public class MainController {
 
         return images;
     }
+
+    private void showFullScreenControler() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/fullScreen.fxml"));
+            //loader.setController(new FullScreenController());
+            Parent root = loader.load();
+            FullScreenController fullScreenController = loader.getController();
+            fullScreenController.setVirtualAlbum(listView.getSelectionModel().getSelectedItem());
+            fullScreenController.setSceneAndStage(stage.getScene(), stage);
+            stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
+            stage.setFullScreen(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("OH NO!");
+        }
+
+    }
+
+    @FXML
+    void btnSlideShowOnMouseClickedMethod(ActionEvent event) {
+        showFullScreenControler();
+    }
+
 }
