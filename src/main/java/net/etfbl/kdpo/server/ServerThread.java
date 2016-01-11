@@ -19,6 +19,15 @@ public class ServerThread extends Thread {
     @Override
     public void run() {
         super.run();
+        boolean loggedIn = false;
+        // provjera autentičnosti
+
+        /*
+        while (true) {
+            // opsluživanje klijenta
+            break;
+        }
+        */
     }
 
     public static void sendImageToUser(User user, String imageID){
