@@ -4,6 +4,10 @@
         -fx-background-position: center;
 }
 
+.buttonBack {
+    -fx-background-image: url("/images/backArrow.png");
+}
+
 .buttonFullScreen {
     -fx-background-image: url("/images/fullscreen.png");
 }
@@ -24,16 +28,20 @@
     -fx-background-image: url("/images/delete.png");
 }
 
+.buttonRemove {
+    -fx-background-image: url("/images/zoomOut.png");
+}
 
-.buttonFullScreen, .buttonSlideShow, .buttonRotateRight, .buttonRotateLeft, .buttonDelete {
+
+.buttonFullScreen, .buttonSlideShow, .buttonRotateRight, .buttonRotateLeft, .buttonDelete, .buttonBack, .buttonRemove {
     -fx-background-color: transparent;
     -fx-background-radius: 0px;
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
-    -fx-background-size: 60, 40;
+    -fx-background-size: 50, 35;
 }
 
-.buttonFullScreen:hover, .buttonSlideShow:hover, .buttonRotateRight:hover, .buttonRotateLeft:hover, .buttonDelete:hover {
+.buttonRemove:hover, .buttonBack:hover, .buttonFullScreen:hover, .buttonSlideShow:hover, .buttonRotateRight:hover, .buttonRotateLeft:hover, .buttonDelete:hover {
     -fx-background-color: #f98012;
 }
 
@@ -86,22 +94,5 @@
 }
 
 .buttonZoomIn:pressed, .buttonZoomOut:pressed {
-    -fx-background-color: #f98012;
-}
-
-.buttonBack {
-    -fx-background-color: transparent;
-    -fx-background-repeat: no-repeat;
-    -fx-background-position: center;
-    -fx-background-radius: 0px;
-    -fx-background-size: 45, 35;
-    -fx-background-image: url("/images/backArrow.png");
-}
-
-.buttonBack:hover {
-    -fx-background-color: #2c2c2c;
-}
-
-.buttonBack:pressed {
     -fx-background-color: #f98012;
 }

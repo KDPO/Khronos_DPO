@@ -28,6 +28,9 @@ public class ImageViewController {
     private Button btnBack;
 
     @FXML
+    private Button btnRemove;
+
+    @FXML
     private Button btnFullScreen;
 
     @FXML
@@ -63,19 +66,23 @@ public class ImageViewController {
     @FXML
     private AnchorPane controlLine;
 
+    private ImageViewPane ivp;
+
     private int CONTROL_LINE_COUNTER = 0;
 
     private int INDEX;
     private ObservableList<File> images;
     private Parent oldRoot;
     private Stage stage;
+    private boolean canZoomOut = false;
+    private boolean canZoomIn = true;
 
     @FXML
     void initialize() {
         images = FXCollections.observableArrayList();
         imageView = new ImageView();
         imageView.setPreserveRatio(true);
-        ImageViewPane ivp = new ImageViewPane(imageView);
+        ivp = new ImageViewPane(imageView);
         hBoxImageContainer.getChildren().add(ivp);
         ivp.prefHeightProperty().bind(hBoxImageContainer.heightProperty());
         ivp.prefWidthProperty().bind(hBoxImageContainer.widthProperty());
@@ -88,8 +95,26 @@ public class ImageViewController {
             prevImage();
         });
 
-        btnBack.setOnMouseClicked((MouseEvent) -> {
-            stage.getScene().setRoot(oldRoot);
+        btnBack.setOnMouseClicked((MouseEvent) -> stage.getScene().setRoot(oldRoot));
+
+        btnZoomIn.setOnMouseClicked(event -> {
+            if (canZoomIn) {
+                canZoomOut = true;
+                imageView.setScaleX(imageView.getScaleX() + 0.5);
+                imageView.setScaleY(imageView.getScaleY() + 0.5);
+            }
+            if (imageView.getScaleX() >= 10)
+                canZoomIn = false;
+        });
+
+        btnZoomOut.setOnMouseClicked(event -> {
+            if (canZoomOut) {
+                canZoomIn = true;
+                imageView.setScaleX(imageView.getScaleX() - 0.5);
+                imageView.setScaleY(imageView.getScaleY() - 0.5);
+            }
+            if (imageView.getScaleX() <= 1)
+                canZoomOut = false;
         });
 
         imageView.setOnMouseClicked(event -> {
@@ -103,11 +128,21 @@ public class ImageViewController {
                 }
             }
         });
+
+        // treba popraviti računanje
+        imageView.setOnMouseDragged(event -> {
+            imageView.setTranslateX(event.getX());
+            imageView.setTranslateY(event.getY());
+        });
     }
 
     public void setImages(ObservableList<File> images, int index) {
         this.images = images;
         INDEX = index;
+        if (images.size() == 1) {
+            btnNextImage.setVisible(false);
+            btnPrevImage.setVisible(false);
+        }
         showImage();
     }
 
@@ -115,7 +150,7 @@ public class ImageViewController {
         this.stage = stage;
         this.oldRoot = root;
         stage.getScene().getWindow().addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
-            if (event.getCode().equals(KeyCode.UP) || (event.getCode().equals(KeyCode.RIGHT)))
+            if ((event.getCode().equals(KeyCode.RIGHT) || event.getCode().equals(KeyCode.UP)))
                 nextImage();
             else if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.LEFT))
                 prevImage();
@@ -124,21 +159,22 @@ public class ImageViewController {
 
     private void showImage() {
         imageView.setImage(new Image("file:" + images.get(INDEX).getPath()));
-        if (images.size() == 1) {
-            btnNextImage.setVisible(false);
-            btnPrevImage.setVisible(false);
+        ivp.setMaxHeight(imageView.getImage().getHeight());
+        if (imageView.getScaleX() != 1) {
+            imageView.setScaleX(1);
+            imageView.setScaleY(1);
         }
     }
 
     private void nextImage() {
         if (++INDEX == images.size())
             INDEX = 0;
-        imageView.setImage(new Image("file:" + images.get(INDEX).getPath()));
+        showImage();
     }
 
     private void prevImage() {
         if (--INDEX < 0)
             INDEX = images.size() - 1;
-        imageView.setImage(new Image("file:" + images.get(INDEX).getPath()));
+        showImage();
     }
 }

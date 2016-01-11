@@ -36,9 +36,10 @@ public class ImageFrame extends AnchorPane {
     }
 
     private void createImageFrame() {
+        imageView.setPreserveRatio(true);
         HBox hBox = new HBox(imageView);
         hBox.setAlignment(Pos.CENTER);
-        imageView.setPreserveRatio(true);
+        imageView.setFitHeight(210);
         label.setFont(new Font(16));
         label.setTextFill(Paint.valueOf("ffffff"));
         label.setAlignment(Pos.CENTER);
@@ -48,9 +49,8 @@ public class ImageFrame extends AnchorPane {
         this.setAnchor(checkBox, -1, 5, 5, -1);
         this.setAnchor(label, 0, -1, 0, 0);
         this.setAnchor(hBox, 0, 0, 0, 0);
-        imageView.setFitHeight(210);
         this.getChildren().addAll(hBox, checkBox, label);
-        setEffect();
+        new Thread(this::setEffect).start();
         this.getStyleClass().add("image-frame");
     }
 
