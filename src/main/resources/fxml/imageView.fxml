@@ -69,23 +69,14 @@
                                 <String fx:value="button"/>
                             </styleClass>
                         </Button>
-                        <Button fx:id="btnSlideShow" focusTraversable="false" layoutX="353.0" layoutY="13.0"
-                                maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-                                mnemonicParsing="false" prefHeight="50.0" prefWidth="70.0" AnchorPane.bottomAnchor="0.0"
-                                AnchorPane.rightAnchor="230.0" AnchorPane.topAnchor="0.0">
-                            <styleClass>
-                                <String fx:value="buttonSlideShow"/>
-                                <String fx:value="button"/>
-                            </styleClass>
-                        </Button>
                         <Button fx:id="btnFullScreen" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                                 minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="70.0"
                                 styleClass="buttonFullScreen" AnchorPane.bottomAnchor="0.0"
-                                AnchorPane.rightAnchor="305.0" AnchorPane.topAnchor="0.0"/>
+                                AnchorPane.rightAnchor="230.0" AnchorPane.topAnchor="0.0"/>
                         <Button id="buttonRemove" fx:id="btnRemove" alignment="CENTER" maxHeight="-Infinity"
                                 maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
                                 prefHeight="50.0" prefWidth="70.0" styleClass="buttonRemove"
-                                AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="380.0"
+                                AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="305.0"
                                 AnchorPane.topAnchor="0.0"/>
                         <Button fx:id="btnBack" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity"
                                 minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0"

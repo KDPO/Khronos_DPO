@@ -36,9 +36,6 @@ public class ImageViewController {
     private Button btnFullScreen;
 
     @FXML
-    private Button btnSlideShow;
-
-    @FXML
     private Button btnRotateRight;
 
     @FXML
@@ -105,8 +102,6 @@ public class ImageViewController {
         btnRotateRight.setOnMouseClicked(event -> rotateRight());
 
         btnFullScreen.setOnMouseClicked(event -> showFullScreenControler());
-
-        btnSlideShow.setOnMouseClicked(event -> showFullScreenControler());
 
         btnRemove.setOnMouseClicked(event -> {
             // izbacivanje slike iz Virtuelnog Albuma
