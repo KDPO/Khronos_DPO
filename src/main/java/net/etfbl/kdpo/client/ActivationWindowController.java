@@ -1,50 +1,66 @@
 package net.etfbl.kdpo.client;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 /**
- * Created by Stijak on 16.12.2015..
+ * Created by Stijak on 12.01.2016.
  */
 public class ActivationWindowController {
+
     @FXML
-    private TextField txtUsername;
-    @FXML
-    private TextField txtKey1;
-    @FXML
-    private TextField txtKey2;
-    @FXML
-    private TextField txtKey3;
-    @FXML
-    private TextField txtKey4;
-    @FXML
-    private Label lblKey;
-    @FXML
-    private Label lblError;
-    @FXML
-    private ImageView icon;
-    @FXML
-    private Button btnOK;
+    private TextField txtActivationCodeTwo;
+
     @FXML
     private Button btnCancel;
 
     @FXML
+    private TextField txtUsername;
+
+    @FXML
+    private Label activationErrorText;
+
+    @FXML
+    private TextField txtActivationCodeThree;
+
+    @FXML
+    private Label usernameErrorText;
+
+    @FXML
+    private TextField txtActivationCodeOne;
+
+    @FXML
+    private Button btnActivate;
+
+    @FXML
+    private AnchorPane anchorPane;
+
+    @FXML
+    private VBox vBox;
+
+    @FXML
+    private TextField txtActivationCodeFour;
+
+    private Stage stage;
+
+    @FXML
     void initialize() {
-    }
+        btnCancel.setOnMouseClicked(event -> Platform.exit());
 
-    public void setConnectionTrue() {
+        //usernameErrorText.setVisible(false);
+        //activationErrorText.setVisible(false);
 
-    }
-
-    public void sendActivationData() {
-
-    }
-
-    public void showError() {
+        // TODO
 
     }
- 
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
 }
