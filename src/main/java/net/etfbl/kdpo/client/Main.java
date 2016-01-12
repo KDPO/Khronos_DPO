@@ -22,6 +22,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.getIcons().add(new Image("/images/khronos.png"));
         primaryStage.setTitle("Khronos DPO");
+        //showActivationWindow(primaryStage);
         showMainWindow(primaryStage);
         primaryStage.show();
     }

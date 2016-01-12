@@ -1,17 +1,24 @@
 package net.etfbl.kdpo.client;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -36,6 +43,13 @@ public class FullScreenController {
 
     }
 
+
+    @FXML
+    private Label lblStatus;
+
+	@FXML
+	private Label lblEndOfSlideShow;
+
     /* Pogledaj kako sam ja napravio promjenu slika, isto se može i ovdje uraditi. Ja sam za to
     da se slike vrte u krug umjesto da "postoji" kraj. Nema potrebe da se koristi ArrayList<?>
     kad već postoji ObservableList<?>. Moraš paziti na index slike tako da prebaci na pravu
@@ -56,6 +70,12 @@ public class FullScreenController {
         hBox.getChildren().add(ivp);
         ivp.prefHeightProperty().bind(hBox.heightProperty());
         ivp.prefWidthProperty().bind(hBox.widthProperty());
+        lblStatus.setTextFill(Paint.valueOf("green"));
+        lblStatus.setContentDisplay(ContentDisplay.TOP);
+		progressBar.setOpacity(0.0);
+		lblEndOfSlideShow.setTextFill(Paint.valueOf("green"));
+		lblEndOfSlideShow.setOpacity(0.0);
+		lblEndOfSlideShow.setText("End of Slide Show");
     }
 
     private ImageViewPane ivp;
@@ -79,6 +99,13 @@ public class FullScreenController {
         showImage();
     }
 
+    public void setImages(ObservableList<File> images) {
+        this.images = images;
+        imagesArray = new ArrayList<>(images);
+        showImage();
+        updateStatusLabel();
+    }
+
     public void setSceneAndStage(Scene scene, Stage stage) {
         this.oldRoot = scene.getRoot();
         this.scene = scene;
@@ -94,30 +121,42 @@ public class FullScreenController {
                 // TO DO slide show
                 slideShowOn = !slideShowOn;
                 if (slideShowOn) {
+					lblStatus.setOpacity(0.0);
+					updateProgressBar();
+					progressBar.setOpacity(0.3);
                     FullScreenController fsc = this;
-                    System.out.println("starting slideshow");
-                    thread = new Runnable() {
+					Task<Integer> task = new Task<Integer>() {
+						@Override
+						protected Integer call() throws Exception {
+							try {
+								while (slideShowOn) {
+									Thread.sleep(3500);
+									if(!slideShowOn) {
+										return null;
+									}
+									fsc.nextImage();
+									if (index == (images.size()-1 )) {
+										slideShowOn = false;
+									}
+								}
+								Thread.sleep(3500);
+								imageView.setImage(null);
+								lblEndOfSlideShow.setOpacity(1.0);
+								progressBar.setOpacity(0.0);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+							return null;
+						}
+					};
 
-                        private FullScreenController fullScreenController = fsc;
-
-                        @Override
-                        public void run() { // DO NOT LOOK HERE
-                            try {
-                                while (slideShowOn) {
-                                    Thread.sleep(3500);
-                                    // if (!fsc.nextImage()) {
-                                    //    slideShowOn = false;
-                                    // }
-                                }
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-                    };
-                    new Thread(thread).start(); // OR ANYWHERE ELSE
+					Thread th = new Thread(task);
+					th.setDaemon(true);
+					th.start();
                 } else {
-                    //TO DO something
+					updateStatusLabel();
+					lblStatus.setOpacity(1.0);
+					progressBar.setOpacity(0.0);
                 }
             }
 
@@ -136,16 +175,64 @@ public class FullScreenController {
     }
 
     private void nextImage() {
+		if(imageView.getImage() == null) {
+			lblEndOfSlideShow.setOpacity(0.0);
+			lblStatus.setOpacity(1.0);
+			showImage();
+			updateStatusLabel();
+		}
         if ((index + 1) < imagesArray.size()) {
             index++;
             showImage();
-        }
+			if (slideShowOn) {
+				updateProgressBar();
+			} else {
+				updateStatusLabel();
+			}
+		}
     }
 
     private void prevImage() {
+		if(imageView.getImage() == null) {
+			lblEndOfSlideShow.setOpacity(0.0);
+			lblStatus.setOpacity(1.0);
+		}
         if ((index - 1) >= 0) {
             index--;
             showImage();
+			updateStatusLabel();
         }
     }
+
+	private void updateProgressBar() {
+		progressBar.setProgress((index+1)/(double)imagesArray.size());
+	}
+
+    private void updateStatusLabel() {
+        lblStatus.setText( imagesArray.get(index).getName() + " "  + (index+1) + "/" + imagesArray.size());
+    }
+    /* Maybe Later
+    private void startTimer() {
+        Task<Integer> task = new Task<Integer>() {
+            @Override
+            protected Integer call() throws Exception {
+                return null;
+            }
+        }
+    }
+    */
+
+    @FXML
+    private void lblStatusMouseEnteredFunction(MouseEvent event) {
+        lblStatus.setOpacity(1.0);
+    }
+
+    @FXML
+    private void lblStatusMouseExitedFunction(MouseEvent event) {
+        lblStatus.setOpacity(0.0);
+    }
+
+	@FXML
+	private ProgressBar progressBar;
+
 }
