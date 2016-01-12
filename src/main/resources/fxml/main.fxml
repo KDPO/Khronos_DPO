@@ -86,7 +86,27 @@
                                         maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                                         minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="60.0"
                                         styleClass="buttonAddNewImages" AnchorPane.bottomAnchor="1.0"
-                                        AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0"/>
+                                        AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0"/>
+                                <Button fx:id="btnCheck" focusTraversable="false" layoutX="344.0" layoutY="18.0"
+                                        maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                                        minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="60.0"
+                                        styleClass="buttonCheck" AnchorPane.bottomAnchor="1.0"
+                                        AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0"/>
+                                <Button fx:id="btnAbort" focusTraversable="false" layoutX="354.0" layoutY="28.0"
+                                        maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                                        minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="60.0"
+                                        styleClass="buttonAbort" AnchorPane.bottomAnchor="1.0"
+                                        AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="0.0"/>
+                                <Button fx:id="btnRemove" focusTraversable="false" layoutX="364.0" layoutY="38.0"
+                                        maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                                        minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="60.0"
+                                        styleClass="buttonRemove" AnchorPane.bottomAnchor="1.0"
+                                        AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="0.0"/>
+                                <Button fx:id="btnDelete" focusTraversable="false" layoutX="374.0" layoutY="48.0"
+                                        maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+                                        minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="60.0"
+                                        styleClass="buttonDelete" AnchorPane.bottomAnchor="1.0"
+                                        AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="0.0"/>
                                  </children>
                         </AnchorPane>
                         <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER"

@@ -124,25 +124,36 @@
   -fx-background-color: #2c2c2c;
 }
 
-.buttonAddNewImages {
-    -fx-background-image: url("/images/addImages.png");
+.buttonAddNewImages, .buttonCheck, .buttonMenu, .buttonAbort, .buttonRemove, .buttonDelete {
     -fx-background-repeat: no-repeat;
     -fx-background-position: center;
     -fx-background-size: 60, 40;
+    -fx-background-color: transparent;
+    -fx-background-radius: 0px;
 }
 
-.buttonSlideShow {
-    -fx-background-image: url("/images/slideshow.png");
-    -fx-background-repeat: no-repeat;
-    -fx-background-position: center;
-    -fx-background-size: 60, 40;
+.buttonDelete {
+    -fx-background-image: url("/images/delete.png");
+}
+
+.buttonRemove {
+    -fx-background-image: url("/images/zoomOut.png");
+}
+
+.buttonAddNewImages {
+    -fx-background-image: url("/images/addImages.png");
+}
+
+.buttonCheck {
+    -fx-background-image: url("/images/check.png");
 }
 
 .buttonMenu {
     -fx-background-image: url("/images/menu.png");
-    -fx-background-repeat: no-repeat;
-    -fx-background-position: center;
-    -fx-background-size: 60, 40;
+}
+
+.buttonAbort {
+    -fx-background-image: url("/images/abort.png");
 }
 
 .buttonMenu > .arrow-button {
@@ -153,12 +164,7 @@
     -fx-padding: 0;
 }
 
-.buttonAddNewImages, .buttonSlideShow, .buttonMenu {
-    -fx-background-color: transparent;
-    -fx-background-radius: 0px;
-}
-
-.buttonAddNewImages:hover, .buttonSlideShow:hover, .buttonMenu:hover {
+.buttonAddNewImages:hover, .buttonCheck:hover, .buttonMenu:hover, .buttonAbort:hover, .buttonRemove:hover, .buttonDelete:hover {
     -fx-background-color: #f98012;
 }
 

@@ -23,14 +23,19 @@ public class AddImagesToAlbumWindowController {
 
     private Stage stage;
     private ObservableList<File> images;
+    private boolean cancel = false;
 
     @FXML
     void initialize() {
         btnCancel.setOnMouseClicked(event -> {
             stage.close();
+            cancel = true;
         });
 
-        btnSave.setOnMouseClicked(event -> selectAlbum());
+        btnSave.setOnMouseClicked(event -> {
+            cancel = false;
+            selectAlbum();
+        });
 
     }
 
@@ -38,15 +43,19 @@ public class AddImagesToAlbumWindowController {
         this.stage = stage;
     }
 
+    public boolean isCancel() {
+        return cancel;
+    }
+
     public void setAlbumList(ObservableList<VirtualAlbum> albums) {
         this.albums.setItems(albums);
     }
 
-    public void setImagesList(ObservableList<File> images){
-        this.images=images;
+    public void setImagesList(ObservableList<File> images) {
+        this.images = images;
     }
 
-    private void selectAlbum(){
+    private void selectAlbum() {
         albums.getValue().setImages(images);
         stage.close();
     }
