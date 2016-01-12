@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
@@ -99,6 +100,10 @@ public class FullScreenController {
         showImage();
     }
 
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
     public void setImages(ObservableList<File> images) {
         this.images = images;
         imagesArray = new ArrayList<>(images);
@@ -161,6 +166,15 @@ public class FullScreenController {
             }
 
         });
+		scene.getWindow().addEventHandler(MouseEvent.MOUSE_CLICKED, event -> nextImage());
+		scene.getWindow().addEventHandler(ScrollEvent.SCROLL, event -> {
+			double value = event.getDeltaY();
+			if(value < 0) {
+				nextImage();
+			} else {
+				prevImage();
+			}
+		});
     }
 
     // Don't repeat yourself Nenad! :P
@@ -224,15 +238,21 @@ public class FullScreenController {
 
     @FXML
     private void lblStatusMouseEnteredFunction(MouseEvent event) {
-        lblStatus.setOpacity(1.0);
+        // lblStatus.setOpacity(1.0);
     }
 
     @FXML
     private void lblStatusMouseExitedFunction(MouseEvent event) {
-        lblStatus.setOpacity(0.0);
+        // lblStatus.setOpacity(0.0);
     }
 
 	@FXML
 	private ProgressBar progressBar;
+
+
+
+	@FXML
+	void hBoxOnMouseScroll(MouseEvent event) {
+	}
 
 }

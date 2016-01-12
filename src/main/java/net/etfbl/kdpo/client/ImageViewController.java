@@ -234,6 +234,7 @@ public class ImageViewController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/fullScreen.fxml"));
             Parent root = loader.load();
             FullScreenController fullScreenController = loader.getController();
+            fullScreenController.setIndex(INDEX);
             fullScreenController.setImages(images);
             fullScreenController.setSceneAndStage(stage.getScene(), stage);
             stage.getScene().setRoot(root);

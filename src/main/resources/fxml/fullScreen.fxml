@@ -6,9 +6,9 @@
 
 <AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyTyped="#onKeyTyped" prefHeight="360.0" prefWidth="640.0" style="-fx-background-color: #000;" styleClass="anchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.etfbl.kdpo.client.FullScreenController">
    <children>
-      <HBox fx:id="hBox" alignment="CENTER" styleClass="hBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+      <HBox fx:id="hBox" alignment="CENTER" onScroll="#hBoxOnMouseScroll" styleClass="hBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <Label fx:id="lblStatus" onMouseEntered="#lblStatusMouseEnteredFunction" onMouseExited="#lblStatusMouseExitedFunction" text="Label" AnchorPane.leftAnchor="2.0" AnchorPane.topAnchor="2.0" />
       <ProgressBar fx:id="progressBar" prefWidth="200.0" progress="0.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="2.0" />
-      <Label fx:id="lblEndOfSlideShow" text="Label" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="100.0" />
+      <Label fx:id="lblEndOfSlideShow" alignment="CENTER" contentDisplay="CENTER" text="Label" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="100.0" />
    </children>
 </AnchorPane>
