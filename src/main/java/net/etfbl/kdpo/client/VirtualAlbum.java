@@ -50,5 +50,13 @@ public class VirtualAlbum implements Serializable {
     public boolean isTemporary() {
         return temporary;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof VirtualAlbum ){
+            return name.equals(((VirtualAlbum) obj).getName());
+        }
+        return false;
+    }
 }
 

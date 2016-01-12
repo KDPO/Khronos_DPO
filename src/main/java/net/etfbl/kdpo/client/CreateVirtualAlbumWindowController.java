@@ -49,6 +49,10 @@ public class CreateVirtualAlbumWindowController {
 
     private void addNewAlbum() {
         if("".equals(txtAlbumName.getText())) {
+            lblErrorText.setText("Album name must not be empty");
+            lblErrorText.setOpacity(1.0);
+        } else if(albums.contains(new VirtualAlbum(txtAlbumName.getText(),""))) {
+            lblErrorText.setText("Album with that name already exists");
             lblErrorText.setOpacity(1.0);
         } else {
             albums.add(new VirtualAlbum(txtAlbumName.getText(), txtAlbumDescription.getText()));
