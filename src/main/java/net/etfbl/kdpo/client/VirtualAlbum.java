@@ -58,5 +58,9 @@ public class VirtualAlbum implements Serializable {
         }
         return false;
     }
+
+    public void setImages(ObservableList<File> images){
+        this.images.addAll(images);
+    }
 }
 

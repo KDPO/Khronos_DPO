@@ -74,6 +74,9 @@ public class MainController {
 
     private Stage stage;
 
+    //Pomocna promjenjliva koja samo pamti stanje da li se do FS doslo preko + dugmeta u VA
+    private boolean fromAlbum=false;
+
 
     @FXML
     void initialize() {
@@ -93,15 +96,17 @@ public class MainController {
 
         menuSendSS.setOnAction(event -> showScreenShotSendWindow());
 
-        tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
+        /*tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
             if (newTab.equals(tabFS))
                 btnAddImages.setVisible(false);
             if (newTab.equals(tabAlbumi))
                 btnAddImages.setVisible(true);
 
-        });
+        });*/
 
         btnAddNewAlbum.setOnMouseClicked(event -> showCreateNewAlbumWindow());
+
+        btnAddImages.setOnMouseClicked(event -> addImages());
 
     }
 
@@ -255,6 +260,47 @@ public class MainController {
             Stage stage = new Stage();
             controller.setStage(stage);
             stage.setScene(new Scene(root, 531, 367));
+            stage.setResizable(false);
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //provjerava na kojem se tabu nalazi i na osnovu toka vrsi potrebne akcije da dodavanje slika u album
+    private void addImages(){
+        if(tabPane.getSelectionModel().getSelectedItem().equals(tabAlbumi)) {
+            tabPane.getSelectionModel().select(tabFS);
+            fromAlbum=true;
+        }
+        else{
+            if(fromAlbum) {
+                listView.getSelectionModel().getSelectedItem().setImages(getCheckedImagesFromFlowPane());
+                tabPane.getSelectionModel().select(tabAlbumi);
+                setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
+                fromAlbum=false;
+            }
+            else{
+                showAlbumList(getCheckedImagesFromFlowPane());
+                tabPane.getSelectionModel().select(tabAlbumi);
+                setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
+                fromAlbum=false;
+            }
+        }
+    }
+
+    //otvara onovi prozor u kojem se bira album u koji je potrebno dodati slike ukoliko je izabrano dodavanje sa FS
+    private void showAlbumList(ObservableList<File> images){
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/albumsList.fxml"));
+            Parent root = loader.load();
+            AddImagesToAlbumWindowController controller = loader.getController();
+            Stage stage = new Stage();
+            controller.setStage(stage);
+            controller.setAlbumList(listViewData);
+            controller.setImagesList(images);
+            stage.setScene(new Scene(root, 319, 208));
             stage.setResizable(false);
             stage.initStyle(StageStyle.UNDECORATED);
             stage.showAndWait();
