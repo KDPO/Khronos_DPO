@@ -40,6 +40,8 @@ public class ImageFrame extends AnchorPane {
         HBox hBox = new HBox(imageView);
         hBox.setAlignment(Pos.CENTER);
         imageView.setFitHeight(210);
+        if (imageView.getImage().getHeight() < imageView.getFitHeight())
+            imageView.setFitWidth(300);
         label.setFont(new Font(16));
         label.setTextFill(Paint.valueOf("ffffff"));
         label.setAlignment(Pos.CENTER);
