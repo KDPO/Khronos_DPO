@@ -3,6 +3,7 @@ package net.etfbl.kdpo.client;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -23,6 +24,9 @@ public class CreateVirtualAlbumWindowController {
     @FXML
     private TextField txtAlbumName;
 
+    @FXML
+    private Label lblErrorText;
+
     private Stage stage;
     private ObservableList<VirtualAlbum> albums;
 
@@ -31,9 +35,8 @@ public class CreateVirtualAlbumWindowController {
         btnCancel.setOnMouseClicked(event -> {
             stage.close();
         });
-
         btnSave.setOnMouseClicked(event -> addNewAlbum());
-
+        lblErrorText.setOpacity(0.0);
     }
 
     public void setStage(Stage stage) {
@@ -45,7 +48,11 @@ public class CreateVirtualAlbumWindowController {
     }
 
     private void addNewAlbum() {
-        albums.add(new VirtualAlbum(txtAlbumName.getText(), txtAlbumDescription.getText()));
-        stage.close();
+        if("".equals(txtAlbumName.getText())) {
+            lblErrorText.setOpacity(1.0);
+        } else {
+            albums.add(new VirtualAlbum(txtAlbumName.getText(), txtAlbumDescription.getText()));
+            stage.close();
+        }
     }
 }

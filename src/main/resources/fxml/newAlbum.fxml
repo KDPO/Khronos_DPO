@@ -31,7 +31,7 @@
                           maxWidth="-Infinity" prefHeight="56.0" prefWidth="289.0"
                           style="-fx-background-color: #2c2c2c; -fx-border-color: #f98012; -fx-border-radius: 5px;"
                           styleClass="albumDescription" text="Album description"/>
-                <Label layoutX="17.0" layoutY="35.0" prefHeight="17.0" prefWidth="383.0" text="Error text"
+                <Label fx:id="lblErrorText" layoutX="17.0" layoutY="35.0" prefHeight="17.0" prefWidth="383.0" text="Album name must not be empty"
                        textFill="RED">
                     <font>
                         <Font size="10.0"/>
