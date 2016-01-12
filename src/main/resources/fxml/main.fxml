@@ -70,8 +70,8 @@
                                             styleClass="buttonMenu" textAlignment="CENTER" AnchorPane.bottomAnchor="1.0"
                                             AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="0.0">
                                     <items>
-                                        <MenuItem mnemonicParsing="false" text="Action 1"/>
-                                        <MenuItem mnemonicParsing="false" text="Action 2"/>
+                                        <MenuItem fx:id="menuSendSS" mnemonicParsing="false" text="Send a Screenshot"/>
+                                        <MenuItem mnemonicParsing="false" text="Preferences"/>
                                     </items>
                                 </MenuButton>
                                 <Label fx:id="labelAlbumDescription" layoutX="78.0" layoutY="12.0" minWidth="200.0"

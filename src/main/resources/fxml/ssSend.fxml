@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox prefHeight="367.0" prefWidth="531.0" style="-fx-background-color: #000; -fx-border-color: #f98012;"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="net.etfbl.kdpo.client.ScreenShotSendWindowController">
+    <children>
+        <AnchorPane prefHeight="54.0" prefWidth="557.0" style="-fx-background-color: #2c2c2c;">
+            <children>
+                <Label layoutX="14.0" layoutY="14.0" text="Send a Screenshot to" textFill="WHITE"
+                       AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0">
+                    <font>
+                        <Font size="15.0"/>
+                    </font>
+                </Label>
+                <ComboBox fx:id="dropDownList" layoutX="173.0" layoutY="18.0" prefHeight="25.0" prefWidth="298.0"
+                          AnchorPane.bottomAnchor="20.0" AnchorPane.topAnchor="20.0"/>
+                <ProgressIndicator fx:id="progressBar" layoutX="516.0" layoutY="15.0" progress="0.0"
+                                   AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0"/>
+            </children>
+        </AnchorPane>
+        <AnchorPane VBox.vgrow="ALWAYS">
+            <children>
+                <HBox fx:id="hBoxImageContainer" alignment="CENTER" layoutY="14.0" AnchorPane.bottomAnchor="45.0"
+                      AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0"/>
+                <Button fx:id="btnCancel" focusTraversable="false" layoutX="409.0" layoutY="272.0"
+                        mnemonicParsing="false" prefWidth="100.0" style="-fx-background-color: #f98012;" text="Cancel"
+                        textFill="WHITE" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="20.0"/>
+                <Button fx:id="btnSend" focusTraversable="false" layoutX="294.0" layoutY="272.0" mnemonicParsing="false"
+                        prefWidth="100.0" style="-fx-background-color: #f98012;" text="Send" textFill="WHITE"
+                        AnchorPane.bottomAnchor="10.0"/>
+            </children>
+        </AnchorPane>
+    </children>
+</VBox>

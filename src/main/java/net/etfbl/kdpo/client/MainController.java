@@ -1,5 +1,6 @@
 package net.etfbl.kdpo.client;
 
+import com.sun.javafx.robot.FXRobot;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,6 +12,11 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
@@ -18,6 +24,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import javax.swing.filechooser.FileSystemView;
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -65,7 +72,11 @@ public class MainController {
     @FXML
     private Button btnAddNewAlbum;
 
+    @FXML
+    private MenuItem menuSendSS;
+
     private Stage stage;
+
 
     @FXML
     void initialize() {
@@ -73,14 +84,8 @@ public class MainController {
         listViewData = FXCollections.observableArrayList();
         listView.setItems(listViewData);
 
-        // test album
-        listViewData.add(new VirtualAlbum("Prvi album", "Prvi album"));
-        //listViewData.get(0).getImages().addAll(new File("/testImages/slika.jpg"), new File("/testImages/test.jpg"), new File("/testImages/slika.jpg"), new File("/testImages/test.jpg"));
-
         // listener za prikaz slika albuma u flowPane-u
-        listView.setOnMouseClicked((MouseEvent) -> {
-            setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
-        });
+        listView.setOnMouseClicked((MouseEvent) -> setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages()));
 
         // prvi album selektovan prilikom pokretanja
         setFirstElementOfListViewSelected();
@@ -88,6 +93,8 @@ public class MainController {
         lblMessages.setVisible(false);
 
         new Thread(this::setTreeView).start();
+
+        menuSendSS.setOnAction(event -> showScreenShotSendWindow());
 
         /*
         tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
@@ -124,6 +131,12 @@ public class MainController {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+        Platform.runLater(() -> {
+            stage.getScene().getWindow().addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
+                if (event.getCode().equals(KeyCode.PRINTSCREEN))
+                    showScreenShotSendWindow();
+            });
+        });
     }
 
     // prelazak na ImageViewController
@@ -229,6 +242,23 @@ public class MainController {
             controller.setStage(stage);
             controller.setAlbumList(listViewData);
             stage.setScene(new Scene(root, 319, 208));
+            stage.setResizable(false);
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // prikaz prozora za slanje SS
+    private void showScreenShotSendWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ssSend.fxml"));
+            Parent root = loader.load();
+            ScreenShotSendWindowController controller = loader.getController();
+            Stage stage = new Stage();
+            controller.setStage(stage);
+            stage.setScene(new Scene(root, 531, 367));
             stage.setResizable(false);
             stage.initStyle(StageStyle.UNDECORATED);
             stage.showAndWait();
