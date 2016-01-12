@@ -42,9 +42,6 @@ public class MainController {
     private Button btnAddImages;
 
     @FXML
-    private Button btnSlideShow;
-
-    @FXML
     private Label lblMessages;
 
     @FXML
@@ -96,14 +93,13 @@ public class MainController {
 
         menuSendSS.setOnAction(event -> showScreenShotSendWindow());
 
-        /*
         tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
             if (newTab.equals(tabFS))
-                setTreeView();
+                btnAddImages.setVisible(false);
             if (newTab.equals(tabAlbumi))
-                flowPane.getChildren().clear();
+                btnAddImages.setVisible(true);
+
         });
-        */
 
         btnAddNewAlbum.setOnMouseClicked(event -> showCreateNewAlbumWindow());
 
@@ -146,7 +142,7 @@ public class MainController {
             Parent root = loader.load();
             ImageViewController controller = loader.getController();
             // privremeno
-            VirtualAlbum va = new VirtualAlbum("Privremeni", "Privremeni", true);
+            VirtualAlbum va = new VirtualAlbum("", "", true);
             va.getImages().setAll(images);
             controller.setVirtualAlbum(va, index);
             controller.initParams(stage, stage.getScene().getRoot());
