@@ -4,4 +4,13 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onKeyTyped="#onKeyTyped" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.etfbl.kdpo.client.FullScreenController" />
+
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+            onKeyTyped="#onKeyTyped" prefHeight="360.0" prefWidth="640.0" style="-fx-background-color: #000;"
+            styleClass="anchorPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="net.etfbl.kdpo.client.FullScreenController">
+   <children>
+      <HBox fx:id="hBox" alignment="CENTER" styleClass="hBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+            AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+   </children>
+</AnchorPane>

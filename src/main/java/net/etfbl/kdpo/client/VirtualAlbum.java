@@ -17,11 +17,18 @@ public class VirtualAlbum implements Serializable {
     private Date creationDate;
     private ObservableList<File> images;
     private String description;
+    private boolean temporary;
 
     public VirtualAlbum(String name, String description) {
         this.name = name;
         this.description = description;
         this.images = FXCollections.observableArrayList();
+        temporary = false;
+    }
+
+    public VirtualAlbum(String name, String description, boolean temporary) {
+        this(name, description);
+        this.temporary = temporary;
     }
 
     public String getName() {
@@ -38,6 +45,10 @@ public class VirtualAlbum implements Serializable {
 
     public String toString() {
         return this.name;
+    }
+
+    public boolean isTemporary() {
+        return temporary;
     }
 }
 

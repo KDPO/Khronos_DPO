@@ -87,8 +87,7 @@
                                         maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
                                         minWidth="-Infinity" mnemonicParsing="false" prefHeight="40.0" prefWidth="60.0"
                                         styleClass="buttonSlideShow" AnchorPane.bottomAnchor="1.0"
-                                        AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="0.0"
-                                        onAction="#btnSlideShowOnMouseClickedMethod"/>
+                                        AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="0.0"/>
                                  </children>
                         </AnchorPane>
                         <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER"

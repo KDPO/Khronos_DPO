@@ -3,7 +3,9 @@ package net.etfbl.kdpo.client;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -16,13 +18,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 /**
  * Created by Stijak on 18.12.2015..
  */
 public class ImageViewController {
-    @FXML
-    private VBox vBox;
 
     @FXML
     private Button btnBack;
@@ -76,6 +78,7 @@ public class ImageViewController {
     private Stage stage;
     private boolean canZoomOut = false;
     private boolean canZoomIn = true;
+    private VirtualAlbum virtualAlbum;
 
     @FXML
     void initialize() {
@@ -87,34 +90,41 @@ public class ImageViewController {
         ivp.prefHeightProperty().bind(hBoxImageContainer.heightProperty());
         ivp.prefWidthProperty().bind(hBoxImageContainer.widthProperty());
 
-        btnNextImage.setOnMouseClicked((MouseEvent) -> {
-            nextImage();
-        });
+        btnNextImage.setOnMouseClicked((MouseEvent) -> nextImage());
 
-        btnPrevImage.setOnMouseClicked((MouseEvent) -> {
-            prevImage();
-        });
+        btnPrevImage.setOnMouseClicked((MouseEvent) -> prevImage());
 
         btnBack.setOnMouseClicked((MouseEvent) -> stage.getScene().setRoot(oldRoot));
 
-        btnZoomIn.setOnMouseClicked(event -> {
-            if (canZoomIn) {
-                canZoomOut = true;
-                imageView.setScaleX(imageView.getScaleX() + 0.5);
-                imageView.setScaleY(imageView.getScaleY() + 0.5);
-            }
-            if (imageView.getScaleX() >= 10)
-                canZoomIn = false;
+        btnZoomIn.setOnMouseClicked(event -> zoomIn());
+
+        btnZoomOut.setOnMouseClicked(event -> zoomOut());
+
+        btnRotateLeft.setOnMouseClicked(event -> rotateLeft());
+
+        btnRotateRight.setOnMouseClicked(event -> rotateRight());
+
+        btnFullScreen.setOnMouseClicked(event -> showFullScreenControler());
+
+        btnSlideShow.setOnMouseClicked(event -> showFullScreenControler());
+
+        btnRemove.setOnMouseClicked(event -> {
+            // izbacivanje slike iz Virtuelnog Albuma
+            File file = images.get(INDEX);
+            nextImage();
+            new Thread(() -> {
+                images.remove(file);
+            }).start();
         });
 
-        btnZoomOut.setOnMouseClicked(event -> {
-            if (canZoomOut) {
-                canZoomIn = true;
-                imageView.setScaleX(imageView.getScaleX() - 0.5);
-                imageView.setScaleY(imageView.getScaleY() - 0.5);
-            }
-            if (imageView.getScaleX() <= 1)
-                canZoomOut = false;
+        btnDelete.setOnMouseClicked(event -> {
+            // brisanje slike sa diska
+            File file = images.get(INDEX);
+            nextImage();
+            new Thread(() -> {
+                images.remove(file);
+                file.deleteOnExit();
+            }).start();
         });
 
         imageView.setOnMouseClicked(event -> {
@@ -146,6 +156,13 @@ public class ImageViewController {
         showImage();
     }
 
+    public void setVirtualAlbum(VirtualAlbum virtualAlbum, int index) {
+        this.virtualAlbum = virtualAlbum;
+        setImages(virtualAlbum.getImages(), index);
+        if (virtualAlbum.isTemporary())
+            btnRemove.setVisible(false);
+    }
+
     public void initParams(Stage stage, Parent root) {
         this.stage = stage;
         this.oldRoot = root;
@@ -154,6 +171,10 @@ public class ImageViewController {
                 nextImage();
             else if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.LEFT))
                 prevImage();
+            else if (event.getCode().equals(KeyCode.PLUS) || event.getCode().equals(KeyCode.ADD))
+                zoomIn();
+            else if (event.getCode().equals(KeyCode.MINUS) || event.getCode().equals(KeyCode.SUBTRACT))
+                zoomOut();
         });
     }
 
@@ -164,10 +185,12 @@ public class ImageViewController {
             imageView.setScaleX(1);
             imageView.setScaleY(1);
         }
+        if (imageView.getRotate() != 0)
+            imageView.setRotate(0);
     }
 
     private void nextImage() {
-        if (++INDEX == images.size())
+        if (++INDEX >= images.size())
             INDEX = 0;
         showImage();
     }
@@ -176,5 +199,50 @@ public class ImageViewController {
         if (--INDEX < 0)
             INDEX = images.size() - 1;
         showImage();
+    }
+
+    private void zoomIn() {
+        if (canZoomIn) {
+            canZoomOut = true;
+            imageView.setScaleX(imageView.getScaleX() + 0.5);
+            imageView.setScaleY(imageView.getScaleY() + 0.5);
+        }
+        if (imageView.getScaleX() >= 10)
+            canZoomIn = false;
+    }
+
+    private void zoomOut() {
+        if (canZoomOut) {
+            canZoomIn = true;
+            imageView.setScaleX(imageView.getScaleX() - 0.5);
+            imageView.setScaleY(imageView.getScaleY() - 0.5);
+        }
+        if (imageView.getScaleX() <= 1)
+            canZoomOut = false;
+    }
+
+    private void rotateLeft() {
+        imageView.setRotate(imageView.getRotate() - 90);
+    }
+
+    private void rotateRight() {
+        imageView.setRotate(imageView.getRotate() + 90);
+    }
+
+    private void showFullScreenControler() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/fullScreen.fxml"));
+            Parent root = loader.load();
+            FullScreenController fullScreenController = loader.getController();
+            fullScreenController.setVirtualAlbum(virtualAlbum);
+            fullScreenController.setSceneAndStage(stage.getScene(), stage);
+            stage.getScene().setRoot(root);
+            stage.setFullScreenExitHint("");
+            stage.setFullScreen(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("OH NO!");
+        }
+
     }
 }

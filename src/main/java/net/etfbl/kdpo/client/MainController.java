@@ -125,7 +125,10 @@ public class MainController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/imageView.fxml"));
             Parent root = loader.load();
             ImageViewController controller = loader.getController();
-            controller.setImages(images, index);
+            // privremeno
+            VirtualAlbum va = new VirtualAlbum("Privremeni", "Privremeni", true);
+            va.getImages().setAll(images);
+            controller.setVirtualAlbum(va, index);
             controller.initParams(stage, stage.getScene().getRoot());
             stage.getScene().setRoot(root);
 
@@ -208,28 +211,6 @@ public class MainController {
                 images.add(((ImageFrame) node).getFile());
 
         return images;
-    }
-
-    private void showFullScreenControler() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/fullScreen.fxml"));
-            //loader.setController(new FullScreenController());
-            Parent root = loader.load();
-            FullScreenController fullScreenController = loader.getController();
-            fullScreenController.setVirtualAlbum(listView.getSelectionModel().getSelectedItem());
-            fullScreenController.setSceneAndStage(stage.getScene(), stage);
-            stage.setScene(new Scene(root, stage.getWidth(), stage.getHeight()));
-            stage.setFullScreen(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("OH NO!");
-        }
-
-    }
-
-    @FXML
-    void btnSlideShowOnMouseClickedMethod(ActionEvent event) {
-        showFullScreenControler();
     }
 
 }
