@@ -1,0 +1,7 @@
+.albumName, .albumDescription {
+    -fx-text-fill: #fff;
+}
+
+.text-area .content {
+   -fx-background-color: #2c2c2c ;
+}

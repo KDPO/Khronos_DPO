@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+
 <AnchorPane minHeight="360.0" minWidth="640.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.etfbl.kdpo.client.MainController">
     <children>
@@ -22,7 +25,7 @@
                                     <content>
                                         <AnchorPane style="-fx-background-color: #2c2c2c;">
                                             <children>
-                                                <Button id="buttonAddNewAlbum" fx:id="buttonAddNewAlbum"
+                                                <Button id="buttonAddNewAlbum" fx:id="btnAddNewAlbum"
                                                         contentDisplay="CENTER" focusTraversable="false"
                                                         maxHeight="35.0" minHeight="35.0" mnemonicParsing="false"
                                                         prefHeight="35.0" styleClass="buttonAddNewAlbum"

@@ -1,12 +1,16 @@
 package net.etfbl.kdpo.client;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 
 /**
  * Created by Stijak on 12.12.2015..
@@ -18,7 +22,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.getIcons().add(new Image("/images/khronos.png"));
         primaryStage.setTitle("Khronos DPO");
-        showActivationWindow(primaryStage);
+        showMainWindow(primaryStage);
         primaryStage.show();
     }
 

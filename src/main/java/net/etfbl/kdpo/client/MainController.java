@@ -15,6 +15,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.File;
@@ -61,6 +62,9 @@ public class MainController {
     @FXML
     private TabPane tabPane;
 
+    @FXML
+    private Button btnAddNewAlbum;
+
     private Stage stage;
 
     @FXML
@@ -93,6 +97,9 @@ public class MainController {
                 flowPane.getChildren().clear();
         });
         */
+
+        btnAddNewAlbum.setOnMouseClicked(event -> showCreateNewAlbumWindow());
+
     }
 
     // dodavanje novog albuma nakon klika na dugne Add new album
@@ -211,6 +218,23 @@ public class MainController {
                 images.add(((ImageFrame) node).getFile());
 
         return images;
+    }
+
+    private void showCreateNewAlbumWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/newAlbum.fxml"));
+            Parent root = loader.load();
+            CreateVirtualAlbumWindowController controller = loader.getController();
+            Stage stage = new Stage();
+            controller.setStage(stage);
+            controller.setAlbumList(listViewData);
+            stage.setScene(new Scene(root, 319, 208));
+            stage.setResizable(false);
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.showAndWait();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
