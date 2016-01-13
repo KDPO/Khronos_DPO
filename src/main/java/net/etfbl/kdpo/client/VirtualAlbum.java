@@ -1,10 +1,10 @@
 package net.etfbl.kdpo.client;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -18,6 +18,8 @@ public class VirtualAlbum implements Serializable {
     private ObservableList<File> images;
     private String description;
     private boolean temporary;
+
+    static final long serialVersionUID = 1L;
 
     public VirtualAlbum(){
         this.images=FXCollections.observableArrayList();
@@ -73,28 +75,17 @@ public class VirtualAlbum implements Serializable {
         oos.writeObject(creationDate);
         oos.writeObject(description);
         oos.writeBoolean(temporary);
-        if(images!=null) {
-            oos.writeInt(images.size());
-            for (File f : images) {
-                oos.writeObject(f);
-            }
-        }
-        else {
-            oos.writeInt(0);
-        }
+        ArrayList<File> list = new ArrayList<>(images);
+        oos.writeObject(list);
     }
 
     private void readObject(ObjectInputStream ois) throws IOException{
         try {
-            images=FXCollections.observableArrayList();
             name = (String) ois.readObject();
             creationDate=(Date) ois.readObject();
             description=(String) ois.readObject();
             temporary=ois.readBoolean();
-            int n=ois.readInt();
-            for(int i=0;i<n;++i){
-                images.add((File)ois.readObject());
-            }
+            images=FXCollections.observableArrayList(((ArrayList<File>)ois.readObject()));
         }catch (ClassNotFoundException ex){
             //System.out.println("Greska u read");
         }
