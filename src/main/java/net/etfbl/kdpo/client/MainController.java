@@ -10,14 +10,12 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.input.*;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
@@ -87,13 +85,33 @@ public class MainController {
 
     private boolean buttonsVisibleControl = true;
 
+    //menu na desni klik
+    private MenuItem menuNewTreeView;
+    private MenuItem menuCopyTreeView;
+    private MenuItem menuCutTreeView;
+    private MenuItem menuPasteTreeView;
+    private MenuItem menuDeleteTreeView;
+    private MenuItem menuRenameTreeView;
+
+    private MenuItem menuRemoveListView;
+    private MenuItem menuRenameListView;
 
     @FXML
     void initialize() {
+        menuNewTreeView = new MenuItem("New");
+        menuCopyTreeView = new MenuItem("Copy");
+        menuCutTreeView = new MenuItem("Cut");
+        menuPasteTreeView = new MenuItem("Paste");
+        menuDeleteTreeView = new MenuItem("Delete");
+        menuRenameTreeView = new MenuItem("Rename");
+        menuRemoveListView = new MenuItem("Remove");
+        menuRenameListView = new MenuItem("Rename");
         // lista unutar koje će se nalaziti objekti Virtuelnih albuma za prikaz u ListView i kasnije korišćenje
         listViewData = FXCollections.observableArrayList();
+        listView.setEditable(true);
         listView.setItems(listViewData);
         listView.setOnMouseClicked((MouseEvent) -> setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages()));
+        listView.setContextMenu(new ContextMenu(menuRenameListView, menuRemoveListView));
 
         //ucitavanje serijalizovanih VA
         readSerializedAlbums();
@@ -122,7 +140,7 @@ public class MainController {
                 }
             }
             if (newTab.equals(tabAlbumi)) {
-                btnAddImages.setVisible(true);
+                //btnAddImages.setVisible(true);
                 if (listViewData.isEmpty()) {
                     flowPane.getChildren().clear();
                 } else {
@@ -211,6 +229,7 @@ public class MainController {
 
     private void setTreeView() {
         /* TreeView initialization */
+        treeView.setContextMenu(new ContextMenu(menuNewTreeView, menuCopyTreeView, menuCutTreeView, menuPasteTreeView, menuDeleteTreeView, menuRenameTreeView));
         TreeItem<MyFile> root = new TreeItem<>();
         treeView.setRoot(root);
         treeView.setShowRoot(false);
@@ -265,6 +284,7 @@ public class MainController {
                     if (event.getButton().equals(MouseButton.PRIMARY))
                         showImageViewController(getImagesFromFlowPane(), flowPane.getChildren().indexOf(iFrame));
                 });
+
                 iFrame.getCheckBox().setOnAction(event -> {
                     if (buttonsVisibleControl) {
                         if (iFrame.getCheckBox().isSelected()) {

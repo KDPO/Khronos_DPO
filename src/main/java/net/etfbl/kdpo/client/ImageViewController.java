@@ -150,9 +150,8 @@ public class ImageViewController {
         });
 
         imageView.setOnMouseClicked(event -> {
-            System.out.println(event.getClickCount());
             if (event.getClickCount() == 2) {
-                if (imageView.getScaleX() == 1) {
+                if (imageView.getScaleX() == 1 && imageView.getScaleY() == 1 && imageView.getTranslateX() == 0 && imageView.getTranslateY() == 0) {
                     imageView.setScaleX(2);
                     imageView.setScaleY(2);
                     canZoomOut = true;
