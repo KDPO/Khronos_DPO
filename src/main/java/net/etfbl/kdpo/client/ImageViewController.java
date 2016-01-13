@@ -5,21 +5,18 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 
 /**
  * Created by Stijak on 18.12.2015..
@@ -60,22 +57,26 @@ public class ImageViewController {
     private HBox hBoxImageContainer;
 
     @FXML
-    private ImageView imageView;
+    private AnchorPane controlLine;
 
     @FXML
-    private AnchorPane controlLine;
+    private AnchorPane anchorPaneImageContainer;
 
     private ImageViewPane ivp;
 
     private int CONTROL_LINE_COUNTER = 0;
-
+    private ImageView imageView;
     private int INDEX;
     private ObservableList<File> images;
     private Parent oldRoot;
     private Stage stage;
     private boolean canZoomOut = false;
     private boolean canZoomIn = true;
+    private boolean hide = true;
     private VirtualAlbum virtualAlbum;
+    private double x = 0;
+    private double y = 0;
+    private final double STEP = 0.2;
 
     @FXML
     void initialize() {
@@ -122,8 +123,21 @@ public class ImageViewController {
             }).start();
         });
 
-        imageView.setOnMouseClicked(event -> {
-            if (event.getButton().equals(MouseButton.PRIMARY)) {
+        // za pomijeranje prozora
+        imageView.setOnMousePressed(event -> {
+            this.x = imageView.getTranslateX() - event.getScreenX();
+            this.y = imageView.getTranslateY() - event.getScreenY();
+        });
+        // za pomijeranje prozora
+        imageView.setOnMouseDragged(event -> {
+            imageView.setTranslateX(event.getScreenX() + this.x);
+            imageView.setTranslateY(event.getScreenY() + this.y);
+        });
+
+        imageView.setOnDragDetected(event -> hide = false);
+
+        anchorPaneImageContainer.setOnMouseReleased(event -> {
+            if (hide && event.getButton().equals(MouseButton.PRIMARY)) {
                 if (CONTROL_LINE_COUNTER == 0) {
                     controlLine.setVisible(false);
                     CONTROL_LINE_COUNTER = 1;
@@ -132,12 +146,24 @@ public class ImageViewController {
                     CONTROL_LINE_COUNTER = 0;
                 }
             }
+            hide = true;
         });
 
-        // treba popraviti računanje
-        imageView.setOnMouseDragged(event -> {
-            imageView.setTranslateX(event.getX());
-            imageView.setTranslateY(event.getY());
+        imageView.setOnMouseClicked(event -> {
+            System.out.println(event.getClickCount());
+            if (event.getClickCount() == 2) {
+                if (imageView.getScaleX() == 1) {
+                    imageView.setScaleX(2);
+                    imageView.setScaleY(2);
+                    canZoomOut = true;
+                } else {
+                    imageView.setTranslateX(0);
+                    imageView.setTranslateY(0);
+                    imageView.setScaleX(1);
+                    imageView.setScaleY(1);
+                    canZoomOut = false;
+                }
+            }
         });
     }
 
@@ -171,6 +197,15 @@ public class ImageViewController {
             else if (event.getCode().equals(KeyCode.MINUS) || event.getCode().equals(KeyCode.SUBTRACT))
                 zoomOut();
         });
+
+        stage.getScene().getWindow().addEventHandler(ScrollEvent.SCROLL, event -> {
+            double value = event.getDeltaY();
+            if (value < 0) {
+                zoomOut();
+            } else {
+                zoomIn();
+            }
+        });
     }
 
     private void showImage() {
@@ -180,8 +215,14 @@ public class ImageViewController {
             imageView.setScaleX(1);
             imageView.setScaleY(1);
         }
+
         if (imageView.getRotate() != 0)
             imageView.setRotate(0);
+
+        if (imageView.getTranslateX() != 0) {
+            imageView.setTranslateX(0);
+            imageView.setTranslateY(0);
+        }
     }
 
     private void nextImage() {
@@ -199,8 +240,8 @@ public class ImageViewController {
     private void zoomIn() {
         if (canZoomIn) {
             canZoomOut = true;
-            imageView.setScaleX(imageView.getScaleX() + 0.5);
-            imageView.setScaleY(imageView.getScaleY() + 0.5);
+            imageView.setScaleX(imageView.getScaleX() + STEP);
+            imageView.setScaleY(imageView.getScaleY() + STEP);
         }
         if (imageView.getScaleX() >= 10)
             canZoomIn = false;
@@ -209,8 +250,8 @@ public class ImageViewController {
     private void zoomOut() {
         if (canZoomOut) {
             canZoomIn = true;
-            imageView.setScaleX(imageView.getScaleX() - 0.5);
-            imageView.setScaleY(imageView.getScaleY() - 0.5);
+            imageView.setScaleX(imageView.getScaleX() - STEP);
+            imageView.setScaleY(imageView.getScaleY() - STEP);
         }
         if (imageView.getScaleX() <= 1)
             canZoomOut = false;

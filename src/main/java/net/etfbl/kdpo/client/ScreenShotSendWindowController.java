@@ -16,6 +16,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
@@ -38,8 +39,13 @@ public class ScreenShotSendWindowController {
     @FXML
     private Button btnSend;
 
+    @FXML
+    private AnchorPane anchorPane;
+
     private ImageView imageView;
     private Stage stage;
+    private double x = 0;
+    private double y = 0;
 
     @FXML
     void initialize() {
@@ -50,6 +56,17 @@ public class ScreenShotSendWindowController {
         ivp.prefWidthProperty().bind(hBoxImageContainer.widthProperty());
         btnCancel.setOnMouseClicked(event -> stage.close());
         new Thread(this::createImage).start();
+
+        // za pomijeranje prozora
+        anchorPane.setOnMousePressed(event -> {
+            this.x = anchorPane.getScene().getWindow().getX() - event.getScreenX();
+            this.y = anchorPane.getScene().getWindow().getY() - event.getScreenY();
+        });
+
+        anchorPane.setOnMouseDragged(event -> {
+            stage.setX(event.getScreenX() + this.x);
+            stage.setY(event.getScreenY() + this.y);
+        });
     }
 
     public void setStage(Stage stage) {
