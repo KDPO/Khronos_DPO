@@ -137,6 +137,7 @@ public class MainController {
             }
         });
 
+        //listener koji prikazuje ikonicu za dodavanje slika samo kad je selektovan neki album
         listView.getSelectionModel().selectedItemProperty().addListener((ov, oldAlbum, newAlbum) -> {
             if((listView.getSelectionModel().getSelectedItem()!=null)&&(tabPane.getSelectionModel().getSelectedItem().equals(tabAlbumi))){
                 btnAddImages.setVisible(true);
@@ -353,6 +354,7 @@ public class MainController {
         }
     }
 
+    //vrsi ubacivanje slika u selektovani album
     private void addImagesToAlbum() {
         buttonsVisibleControl = true;
         listView.getSelectionModel().getSelectedItem().setImages(getCheckedImagesFromFlowPane());
@@ -363,6 +365,7 @@ public class MainController {
         //btnAddImages.setVisible(true);
     }
 
+    //omogucava abort
     private void abortAddingImages(){
         buttonsVisibleControl = true;
         tabPane.getSelectionModel().select(tabAlbumi);
