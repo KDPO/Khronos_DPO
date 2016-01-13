@@ -85,7 +85,13 @@ public class VirtualAlbum implements Serializable {
             creationDate=(Date) ois.readObject();
             description=(String) ois.readObject();
             temporary=ois.readBoolean();
-            images=FXCollections.observableArrayList(((ArrayList<File>)ois.readObject()));
+            ArrayList<File> list=(ArrayList<File>)ois.readObject();
+            for(int i=0;i<list.size();++i) {
+                if (!list.get(i).exists()){
+                    list.remove(i);
+                }
+            }
+            images=FXCollections.observableArrayList(list);
         }catch (ClassNotFoundException ex){
             //System.out.println("Greska u read");
         }
