@@ -97,6 +97,7 @@ public class MainController {
         setFirstElementOfListViewSelected();
 
         lblMessages.setVisible(false);
+        btnAddImages.setVisible(false);
         btnCheck.setVisible(false);
         btnAbort.setVisible(false);
         btnRemove.setVisible(false);
@@ -118,10 +119,17 @@ public class MainController {
             }
             if (newTab.equals(tabAlbumi)) {
                 btnAddImages.setVisible(true);
-                if (listViewData.isEmpty())
+                if (listViewData.isEmpty()) {
                     flowPane.getChildren().clear();
-                else
-                    setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
+                }
+                else {
+                    if(listView.getSelectionModel().getSelectedItem()!=null) {
+                        setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
+                    }
+                    else{
+                        flowPane.getChildren().clear();
+                    }
+                }
                 if (checked != 0) {
                     checked = 0;
                     btnDelete.setVisible(false);
@@ -129,11 +137,19 @@ public class MainController {
             }
         });
 
+        listView.getSelectionModel().selectedItemProperty().addListener((ov, oldAlbum, newAlbum) -> {
+            if((listView.getSelectionModel().getSelectedItem()!=null)&&(tabPane.getSelectionModel().getSelectedItem().equals(tabAlbumi))){
+                btnAddImages.setVisible(true);
+            }
+        });
+
         btnAddNewAlbum.setOnMouseClicked(event -> showCreateNewAlbumWindow());
 
         btnAddImages.setOnMouseClicked(event -> addImages());
 
-        btnCheck.setOnMouseClicked(event -> addImagesTest());
+        btnCheck.setOnMouseClicked(event -> addImagesToAlbum());
+
+        btnAbort.setOnMouseClicked(event -> abortAddingImages());
     }
 
     // dodavanje novog albuma nakon klika na dugne Add new album
@@ -328,33 +344,31 @@ public class MainController {
             btnAddImages.setVisible(false);
             fromAlbum = true;
         } else {
-            if (fromAlbum) {
-                buttonsVisibleControl = true;
-                listView.getSelectionModel().getSelectedItem().setImages(getCheckedImagesFromFlowPane());
+            buttonsVisibleControl = true;
+            // u slučaju prekida da ne prebaci na Tab Albumi
+            if (!showAlbumList(getCheckedImagesFromFlowPane())) {
                 tabPane.getSelectionModel().select(tabAlbumi);
-                setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
                 fromAlbum = false;
-            } else {
-                buttonsVisibleControl = true;
-                // u slučaju prekida da ne prebaci na Tab Albumi
-                if (!showAlbumList(getCheckedImagesFromFlowPane())) {
-                    tabPane.getSelectionModel().select(tabAlbumi);
-                    setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
-                    fromAlbum = false;
-                }
             }
         }
     }
 
-    private void addImagesTest() {
+    private void addImagesToAlbum() {
         buttonsVisibleControl = true;
         listView.getSelectionModel().getSelectedItem().setImages(getCheckedImagesFromFlowPane());
         tabPane.getSelectionModel().select(tabAlbumi);
-        setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
         fromAlbum = false;
         btnCheck.setVisible(false);
         btnAbort.setVisible(false);
-        btnAddImages.setVisible(true);
+        //btnAddImages.setVisible(true);
+    }
+
+    private void abortAddingImages(){
+        buttonsVisibleControl = true;
+        tabPane.getSelectionModel().select(tabAlbumi);
+        fromAlbum = false;
+        btnCheck.setVisible(false);
+        btnAbort.setVisible(false);
     }
 
     //otvara onovi prozor u kojem se bira album u koji je potrebno dodati slike ukoliko je izabrano dodavanje sa FS
