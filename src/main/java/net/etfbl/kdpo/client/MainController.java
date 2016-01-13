@@ -17,9 +17,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 
 import javax.swing.filechooser.FileSystemView;
-import java.io.File;
+import java.io.*;
 import java.nio.file.Files;
 
 /**
@@ -94,6 +95,9 @@ public class MainController {
         listView.setItems(listViewData);
         listView.setOnMouseClicked((MouseEvent) -> setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages()));
 
+        //ucitavanje serijalizovanih VA
+        readSerializedAlbums();
+
         setFirstElementOfListViewSelected();
 
         lblMessages.setVisible(false);
@@ -121,12 +125,10 @@ public class MainController {
                 btnAddImages.setVisible(true);
                 if (listViewData.isEmpty()) {
                     flowPane.getChildren().clear();
-                }
-                else {
-                    if(listView.getSelectionModel().getSelectedItem()!=null) {
+                } else {
+                    if (listView.getSelectionModel().getSelectedItem() != null) {
                         setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
-                    }
-                    else{
+                    } else {
                         flowPane.getChildren().clear();
                     }
                 }
@@ -139,7 +141,7 @@ public class MainController {
 
         //listener koji prikazuje ikonicu za dodavanje slika samo kad je selektovan neki album
         listView.getSelectionModel().selectedItemProperty().addListener((ov, oldAlbum, newAlbum) -> {
-            if((listView.getSelectionModel().getSelectedItem()!=null)&&(tabPane.getSelectionModel().getSelectedItem().equals(tabAlbumi))){
+            if ((listView.getSelectionModel().getSelectedItem() != null) && (tabPane.getSelectionModel().getSelectedItem().equals(tabAlbumi))) {
                 btnAddImages.setVisible(true);
             }
         });
@@ -151,6 +153,7 @@ public class MainController {
         btnCheck.setOnMouseClicked(event -> addImagesToAlbum());
 
         btnAbort.setOnMouseClicked(event -> abortAddingImages());
+
     }
 
     // dodavanje novog albuma nakon klika na dugne Add new album
@@ -169,7 +172,9 @@ public class MainController {
     private void setFirstElementOfListViewSelected() {
         if (!listViewData.isEmpty()) {
             listView.getSelectionModel().selectFirst();
-            setImagesToFlowPane(listView.getItems().get(0).getImages());
+            if (listView.getSelectionModel().getSelectedItem().getImages() != null) {
+                setImagesToFlowPane(listView.getItems().get(0).getImages());
+            }
         }
     }
 
@@ -181,6 +186,9 @@ public class MainController {
                     showScreenShotSendWindow();
             });
         });
+
+        //poziva metodu za serijalizovanje albuma pri gasenju aplikacije
+        stage.setOnCloseRequest(we -> serializeAlbums());
     }
 
     // prelazak na ImageViewController
@@ -366,7 +374,7 @@ public class MainController {
     }
 
     //omogucava abort
-    private void abortAddingImages(){
+    private void abortAddingImages() {
         buttonsVisibleControl = true;
         tabPane.getSelectionModel().select(tabAlbumi);
         fromAlbum = false;
@@ -395,4 +403,43 @@ public class MainController {
         return true;
     }
 
+    //metoda koja cita serijalizovane albume i ubacuje ih u listViewData
+    private void readSerializedAlbums() {
+        String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "VirtualAlbums";
+        File inputDirectory = new File(path);
+        if (inputDirectory.isDirectory()) {
+            File[] fileList = inputDirectory.listFiles();
+            if (fileList != null) {
+                for (File f : fileList) {
+                    try {
+                        ObjectInputStream object = new ObjectInputStream(new FileInputStream(f));
+                        listViewData.add((VirtualAlbum) object.readObject());
+                        object.close();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+
+    //metoda koja serijalizuje VA iz listViewData
+    private void serializeAlbums() {
+        String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "VirtualAlbums";
+        File outputPath = new File(path);
+        if (!outputPath.exists()) {
+            outputPath.mkdirs();
+        }
+        int i = 1;
+        for (VirtualAlbum va : listViewData) {
+            try {
+                String file = path + File.separator + (i++) + ". " + va.getName() + ".kva";
+                ObjectOutputStream object = new ObjectOutputStream(new FileOutputStream(file));
+                object.writeObject(va);
+                object.close();
+            } catch (Exception ex) {
+                //ex.printStackTrace();
+            }
+        }
+    }
 }
