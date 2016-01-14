@@ -10,12 +10,13 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.TextFieldListCell;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.util.Callback;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
@@ -181,6 +182,10 @@ public class MainController {
         btnAbort.setOnMouseClicked(event -> abortAddingImages());
 
         menuRemoveListView.setOnAction(event -> removeVA());
+
+        menu.setOnAction(event -> {
+            Main.showNotification("Proba");
+        });
 
     }
 
@@ -447,10 +452,10 @@ public class MainController {
                 for (File f : fileList) {
                     try {
                         ObjectInputStream object = new ObjectInputStream(new FileInputStream(f));
-                        listViewData.add((VirtualAlbum) object.readObject());
+                        listViewData.addAll((ArrayList<VirtualAlbum>) object.readObject());
                         object.close();
                     } catch (Exception ex) {
-                        ex.printStackTrace();
+
                     }
                 }
             }
@@ -465,31 +470,30 @@ public class MainController {
             outputPath.mkdirs();
         }
         String file = path + File.separator + "virtualalbums.kva";
-        try{
-            ArrayList<VirtualAlbum> list= new ArrayList<>(listViewData);
+        try {
+            ArrayList<VirtualAlbum> list = new ArrayList<>(listViewData);
             ObjectOutputStream object = new ObjectOutputStream(new FileOutputStream(file));
             object.writeObject(list);
             object.close();
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
     }
 
     //ukoliko je potvrdjeno brisanje brise VA i prikazuje slike iz sledeceg
-    private void removeVA(){
-        if(!showRemoveVirtualAlbumWindow()){
+    private void removeVA() {
+        if (!showRemoveVirtualAlbumWindow()) {
             listViewData.remove(listView.getSelectionModel().getSelectedItem());
-            if(!listViewData.isEmpty()) {
+            if (!listViewData.isEmpty()) {
                 setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
-            }
-            else {
+            } else {
                 flowPane.getChildren().clear();
             }
         }
     }
 
     //metoda koja prikazuje prozor u kojem se potcrdjuje brisanje VA
-    private boolean showRemoveVirtualAlbumWindow(){
+    private boolean showRemoveVirtualAlbumWindow() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/removeVirtualAlbum.fxml"));
             Parent root = loader.load();
