@@ -17,10 +17,14 @@ import javafx.stage.StageStyle;
 
 public class Main extends Application {
 
+    public static Stage primaryStage;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.getIcons().add(new Image("/images/khronos.png"));
         primaryStage.setTitle("Khronos DPO");
+        //koristi se za onemogucenje mjenjanja pozadinskog prozora iz popup
+        Main.primaryStage=primaryStage;
         //showActivationWindow(primaryStage);
         showMainWindow(primaryStage);
         primaryStage.show();

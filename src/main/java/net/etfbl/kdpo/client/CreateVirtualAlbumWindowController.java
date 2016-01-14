@@ -8,6 +8,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 /**
@@ -58,6 +59,9 @@ public class CreateVirtualAlbumWindowController {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+        //onemogucuje mjenjanje iz popupa
+        this.stage.initModality(Modality.WINDOW_MODAL);
+        this.stage.initOwner(Main.primaryStage);
     }
 
     public void setAlbumList(ObservableList<VirtualAlbum> albums) {

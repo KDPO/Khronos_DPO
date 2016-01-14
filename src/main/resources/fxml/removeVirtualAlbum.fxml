@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="vBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="208.0" prefWidth="319.0" style="-fx-background-color: #000; -fx-border-color: #f98012;"
+      xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="net.etfbl.kdpo.client.RemoveVirtualAlbumWindowController">
+    <children>
+        <AnchorPane fx:id="anchorPane" prefHeight="29.0" prefWidth="320.0" style="-fx-background-color: #2c2c2c;">
+            <children>
+                <Label alignment="CENTER" layoutX="25.0" layoutY="27.0" text="Remove Virtual album"
+                       textAlignment="CENTER" textFill="#f98012" AnchorPane.bottomAnchor="5.0"
+                       AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="5.0">
+                    <font>
+                        <Font size="20.0"/>
+                    </font>
+                </Label>
+            </children>
+        </AnchorPane>
+        <AnchorPane prefHeight="165.0" prefWidth="185.0">
+            <children>
+                <Button fx:id="btnOK" focusTraversable="false" graphicTextGap="0.0" layoutX="40.0" layoutY="127.0"
+                        mnemonicParsing="false" prefWidth="100.0" style="-fx-background-color: #f98012;" text="OK"
+                        textFill="WHITE"/>
+                <Button fx:id="btnCancel" focusTraversable="false" graphicTextGap="0.0" layoutX="170.0" layoutY="127.0"
+                        mnemonicParsing="false" prefWidth="100.0" style="-fx-background-color: #f98012;" text="Cancel"
+                        textFill="WHITE"/>
+            </children>
+        </AnchorPane>
+    </children>
+</VBox>

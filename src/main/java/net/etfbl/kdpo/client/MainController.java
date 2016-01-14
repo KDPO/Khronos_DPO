@@ -20,6 +20,7 @@ import javafx.util.Callback;
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.nio.file.Files;
+import java.util.ArrayList;
 
 /**
  * Created by Stijak on 16.12.2015..
@@ -171,6 +172,8 @@ public class MainController {
         btnCheck.setOnMouseClicked(event -> addImagesToAlbum());
 
         btnAbort.setOnMouseClicked(event -> abortAddingImages());
+
+        menuRemoveListView.setOnAction(event -> removeVA());
 
     }
 
@@ -431,12 +434,12 @@ public class MainController {
             File[] fileList = inputDirectory.listFiles();
             if (fileList != null) {
                 for (File f : fileList) {
-                    try {
+                    try{
                         ObjectInputStream object = new ObjectInputStream(new FileInputStream(f));
-                        listViewData.add((VirtualAlbum) object.readObject());
+                        listViewData.addAll((ArrayList<VirtualAlbum>)object.readObject());
                         object.close();
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
+                    }catch (Exception ex){
+
                     }
                 }
             }
@@ -450,16 +453,46 @@ public class MainController {
         if (!outputPath.exists()) {
             outputPath.mkdirs();
         }
-        int i = 1;
-        for (VirtualAlbum va : listViewData) {
-            try {
-                String file = path + File.separator + (i++) + ". " + va.getName() + ".kva";
-                ObjectOutputStream object = new ObjectOutputStream(new FileOutputStream(file));
-                object.writeObject(va);
-                object.close();
-            } catch (Exception ex) {
-                //ex.printStackTrace();
+        String file = path + File.separator + "virtualalbums.kva";
+        try{
+            ArrayList<VirtualAlbum> list= new ArrayList<>(listViewData);
+            ObjectOutputStream object = new ObjectOutputStream(new FileOutputStream(file));
+            object.writeObject(list);
+            object.close();
+        }catch (Exception ex){
+
+        }
+    }
+
+    //ukoliko je potvrdjeno brisanje brise VA i prikazuje slike iz sledeceg
+    private void removeVA(){
+        if(!showRemoveVirtualAlbumWindow()){
+            listViewData.remove(listView.getSelectionModel().getSelectedItem());
+            if(!listViewData.isEmpty()) {
+                setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
+            }
+            else {
+                flowPane.getChildren().clear();
             }
         }
+    }
+
+    //metoda koja prikazuje prozor u kojem se potcrdjuje brisanje VA
+    private boolean showRemoveVirtualAlbumWindow(){
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/removeVirtualAlbum.fxml"));
+            Parent root = loader.load();
+            RemoveVirtualAlbumWindowController controller = loader.getController();
+            Stage stage = new Stage();
+            controller.setStage(stage);
+            stage.setScene(new Scene(root, 319, 208));
+            stage.setResizable(false);
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.showAndWait();
+            return controller.isCancel();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
     }
 }
