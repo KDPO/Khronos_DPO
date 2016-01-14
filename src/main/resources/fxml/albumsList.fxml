@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="149.0"
       prefWidth="319.0" style="-fx-background-color: #000; -fx-border-color: #f98012;"
       stylesheets="@../css/albumList.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
