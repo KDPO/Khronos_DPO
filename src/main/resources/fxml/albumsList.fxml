@@ -11,7 +11,7 @@
       stylesheets="@../css/albumList.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.etfbl.kdpo.client.AddImagesToAlbumWindowController">
     <children>
-        <AnchorPane prefHeight="29.0" prefWidth="320.0" style="-fx-background-color: #2c2c2c;">
+        <AnchorPane fx:id="anchorPane" prefHeight="29.0" prefWidth="320.0" style="-fx-background-color: #2c2c2c;">
             <children>
                 <Label alignment="CENTER" layoutX="25.0" layoutY="27.0" text="Select Virtual album"
                        textAlignment="CENTER" textFill="#f98012" AnchorPane.bottomAnchor="5.0"
@@ -26,7 +26,7 @@
             <children>
                 <ChoiceBox fx:id="albums" layoutX="14.0" layoutY="10.0" prefHeight="27.0" prefWidth="289.0"
                            style="-fx-background-color: #2c2c2c; -fx-border-color: #f98012; -fx-border-radius: 5px;"
-                           styleClass="albumName" />
+                           styleClass="albumName"/>
                 <Button fx:id="btnSave" focusTraversable="false" graphicTextGap="0.0" layoutX="40.0" layoutY="127.0"
                         mnemonicParsing="false" prefWidth="100.0" style="-fx-background-color: #f98012;" text="Save"
                         textFill="WHITE"/>

@@ -56,6 +56,9 @@ public class ActivationWindowController {
 
     private Stage stage;
 
+    private double x = 0;
+    private double y = 0;
+
     @FXML
     void initialize() {
 
@@ -63,6 +66,17 @@ public class ActivationWindowController {
         usernameErrorText.setVisible(false);
 
         btnCancel.setOnMouseClicked(event -> Platform.exit());
+
+        // za pomijeranje prozora
+        anchorPane.setOnMousePressed(event -> {
+            this.x = anchorPane.getScene().getWindow().getX() - event.getScreenX();
+            this.y = anchorPane.getScene().getWindow().getY() - event.getScreenY();
+        });
+
+        anchorPane.setOnMouseDragged(event -> {
+            stage.setX(event.getScreenX() + this.x);
+            stage.setY(event.getScreenY() + this.y);
+        });
 
         btnActivate.setOnMouseClicked((MouseEvent) -> {
             boolean success = true;

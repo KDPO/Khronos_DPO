@@ -5,21 +5,18 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 
 /**
  * Created by Stijak on 18.12.2015..
@@ -60,22 +57,26 @@ public class ImageViewController {
     private HBox hBoxImageContainer;
 
     @FXML
-    private ImageView imageView;
+    private AnchorPane controlLine;
 
     @FXML
-    private AnchorPane controlLine;
+    private AnchorPane anchorPaneImageContainer;
 
     private ImageViewPane ivp;
 
     private int CONTROL_LINE_COUNTER = 0;
-
+    private ImageView imageView;
     private int INDEX;
     private ObservableList<File> images;
     private Parent oldRoot;
     private Stage stage;
     private boolean canZoomOut = false;
     private boolean canZoomIn = true;
+    private boolean hide = true;
     private VirtualAlbum virtualAlbum;
+    private double x = 0;
+    private double y = 0;
+    private final double STEP = 0.2;
 
     @FXML
     void initialize() {
@@ -91,7 +92,7 @@ public class ImageViewController {
 
         btnPrevImage.setOnMouseClicked((MouseEvent) -> prevImage());
 
-        btnBack.setOnMouseClicked((MouseEvent) -> stage.getScene().setRoot(oldRoot));
+        btnBack.setOnMouseClicked((MouseEvent) -> back());
 
         btnZoomIn.setOnMouseClicked(event -> zoomIn());
 
@@ -122,8 +123,21 @@ public class ImageViewController {
             }).start();
         });
 
-        imageView.setOnMouseClicked(event -> {
-            if (event.getButton().equals(MouseButton.PRIMARY)) {
+        // za pomijeranje prozora
+        imageView.setOnMousePressed(event -> {
+            this.x = imageView.getTranslateX() - event.getScreenX();
+            this.y = imageView.getTranslateY() - event.getScreenY();
+        });
+        // za pomijeranje prozora
+        imageView.setOnMouseDragged(event -> {
+            imageView.setTranslateX(event.getScreenX() + this.x);
+            imageView.setTranslateY(event.getScreenY() + this.y);
+        });
+
+        imageView.setOnDragDetected(event -> hide = false);
+
+        anchorPaneImageContainer.setOnMouseReleased(event -> {
+            if (hide && event.getButton().equals(MouseButton.PRIMARY)) {
                 if (CONTROL_LINE_COUNTER == 0) {
                     controlLine.setVisible(false);
                     CONTROL_LINE_COUNTER = 1;
@@ -132,12 +146,23 @@ public class ImageViewController {
                     CONTROL_LINE_COUNTER = 0;
                 }
             }
+            hide = true;
         });
 
-        // treba popraviti računanje
-        imageView.setOnMouseDragged(event -> {
-            imageView.setTranslateX(event.getX());
-            imageView.setTranslateY(event.getY());
+        imageView.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                if (imageView.getScaleX() == 1 && imageView.getScaleY() == 1 && imageView.getTranslateX() == 0 && imageView.getTranslateY() == 0) {
+                    imageView.setScaleX(2);
+                    imageView.setScaleY(2);
+                    canZoomOut = true;
+                } else {
+                    imageView.setTranslateX(0);
+                    imageView.setTranslateY(0);
+                    imageView.setScaleX(1);
+                    imageView.setScaleY(1);
+                    canZoomOut = false;
+                }
+            }
         });
     }
 
@@ -147,6 +172,9 @@ public class ImageViewController {
         if (images.size() == 1) {
             btnNextImage.setVisible(false);
             btnPrevImage.setVisible(false);
+        } else {
+            btnNextImage.setVisible(true);
+            btnPrevImage.setVisible(true);
         }
         showImage();
     }
@@ -162,16 +190,26 @@ public class ImageViewController {
         this.stage = stage;
         this.oldRoot = root;
         stage.getScene().getWindow().addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
-            if ((event.getCode().equals(KeyCode.RIGHT) || event.getCode().equals(KeyCode.UP))) {
+            if ((event.getCode().equals(KeyCode.RIGHT) || event.getCode().equals(KeyCode.UP)))
                 nextImage();
-                //pojavljuje se više puta nego što treba
-                System.out.println("next imag!!!!e");
-            }else if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.LEFT))
+            else if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.LEFT))
                 prevImage();
             else if (event.getCode().equals(KeyCode.PLUS) || event.getCode().equals(KeyCode.ADD))
                 zoomIn();
             else if (event.getCode().equals(KeyCode.MINUS) || event.getCode().equals(KeyCode.SUBTRACT))
                 zoomOut();
+            else if (event.getCode().equals(KeyCode.ESCAPE))
+                back();
+
+        });
+
+        stage.getScene().getWindow().addEventHandler(ScrollEvent.SCROLL, event -> {
+            double value = event.getDeltaY();
+            if (value < 0) {
+                zoomOut();
+            } else {
+                zoomIn();
+            }
         });
     }
 
@@ -182,8 +220,14 @@ public class ImageViewController {
             imageView.setScaleX(1);
             imageView.setScaleY(1);
         }
+
         if (imageView.getRotate() != 0)
             imageView.setRotate(0);
+
+        if (imageView.getTranslateX() != 0) {
+            imageView.setTranslateX(0);
+            imageView.setTranslateY(0);
+        }
     }
 
     private void nextImage() {
@@ -201,8 +245,8 @@ public class ImageViewController {
     private void zoomIn() {
         if (canZoomIn) {
             canZoomOut = true;
-            imageView.setScaleX(imageView.getScaleX() + 0.5);
-            imageView.setScaleY(imageView.getScaleY() + 0.5);
+            imageView.setScaleX(imageView.getScaleX() + STEP);
+            imageView.setScaleY(imageView.getScaleY() + STEP);
         }
         if (imageView.getScaleX() >= 10)
             canZoomIn = false;
@@ -211,8 +255,8 @@ public class ImageViewController {
     private void zoomOut() {
         if (canZoomOut) {
             canZoomIn = true;
-            imageView.setScaleX(imageView.getScaleX() - 0.5);
-            imageView.setScaleY(imageView.getScaleY() - 0.5);
+            imageView.setScaleX(imageView.getScaleX() - STEP);
+            imageView.setScaleY(imageView.getScaleY() - STEP);
         }
         if (imageView.getScaleX() <= 1)
             canZoomOut = false;
@@ -224,6 +268,12 @@ public class ImageViewController {
 
     private void rotateRight() {
         imageView.setRotate(imageView.getRotate() + 90);
+    }
+
+    private void back() {
+        //virtualAlbum = null;
+        //images = null;
+        stage.getScene().setRoot(oldRoot);
     }
 
     private void showFullScreenControler() {

@@ -6,12 +6,12 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="208.0"
-      prefWidth="319.0" style="-fx-background-color: #000; -fx-border-color: #f98012;"
+<VBox fx:id="vBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="208.0" prefWidth="319.0" style="-fx-background-color: #000; -fx-border-color: #f98012;"
       stylesheets="@../css/newAlbum.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.etfbl.kdpo.client.CreateVirtualAlbumWindowController">
     <children>
-        <AnchorPane prefHeight="29.0" prefWidth="320.0" style="-fx-background-color: #2c2c2c;">
+        <AnchorPane fx:id="anchorPane" prefHeight="29.0" prefWidth="320.0" style="-fx-background-color: #2c2c2c;">
             <children>
                 <Label alignment="CENTER" layoutX="25.0" layoutY="27.0" text="New album properties"
                        textAlignment="CENTER" textFill="#f98012" AnchorPane.bottomAnchor="5.0"

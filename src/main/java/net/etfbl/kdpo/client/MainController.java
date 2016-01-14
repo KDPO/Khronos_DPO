@@ -19,14 +19,18 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import javax.swing.filechooser.FileSystemView;
-import java.io.File;
+import java.io.*;
 import java.nio.file.Files;
+import java.util.ArrayList;
 
 /**
  * Created by Stijak on 16.12.2015..
  */
 
 public class MainController {
+    public static MainController mainController;
+    public static VirtualAlbum screenshotAlbum;
+
     @FXML
     private Label lblAlbumDescription;
 
@@ -86,17 +90,45 @@ public class MainController {
 
     private boolean buttonsVisibleControl = true;
 
+    private Parent imageViewCotrollerRoot;
+    private ImageViewController imageViewController;
+
+    //menu na desni klik
+    private MenuItem menuNewTreeView;
+    private MenuItem menuCopyTreeView;
+    private MenuItem menuCutTreeView;
+    private MenuItem menuPasteTreeView;
+    private MenuItem menuDeleteTreeView;
+    private MenuItem menuRenameTreeView;
+
+    private MenuItem menuRemoveListView;
+    private MenuItem menuRenameListView;
 
     @FXML
     void initialize() {
+        mainController = this;
+        menuNewTreeView = new MenuItem("New");
+        menuCopyTreeView = new MenuItem("Copy");
+        menuCutTreeView = new MenuItem("Cut");
+        menuPasteTreeView = new MenuItem("Paste");
+        menuDeleteTreeView = new MenuItem("Delete");
+        menuRenameTreeView = new MenuItem("Rename");
+        menuRemoveListView = new MenuItem("Remove");
+        menuRenameListView = new MenuItem("Rename");
         // lista unutar koje će se nalaziti objekti Virtuelnih albuma za prikaz u ListView i kasnije korišćenje
         listViewData = FXCollections.observableArrayList();
+        listView.setEditable(true);
         listView.setItems(listViewData);
         listView.setOnMouseClicked((MouseEvent) -> setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages()));
+        listView.setContextMenu(new ContextMenu(menuRenameListView, menuRemoveListView));
+
+        //ucitavanje serijalizovanih VA
+        readSerializedAlbums();
 
         setFirstElementOfListViewSelected();
 
         lblMessages.setVisible(false);
+        btnAddImages.setVisible(false);
         btnCheck.setVisible(false);
         btnAbort.setVisible(false);
         btnRemove.setVisible(false);
@@ -117,11 +149,16 @@ public class MainController {
                 }
             }
             if (newTab.equals(tabAlbumi)) {
-                btnAddImages.setVisible(true);
-                if (listViewData.isEmpty())
+                //btnAddImages.setVisible(true);
+                if (listViewData.isEmpty()) {
                     flowPane.getChildren().clear();
-                else
-                    setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
+                } else {
+                    if (listView.getSelectionModel().getSelectedItem() != null) {
+                        setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
+                    } else {
+                        flowPane.getChildren().clear();
+                    }
+                }
                 if (checked != 0) {
                     checked = 0;
                     btnDelete.setVisible(false);
@@ -129,11 +166,27 @@ public class MainController {
             }
         });
 
+        //listener koji prikazuje ikonicu za dodavanje slika samo kad je selektovan neki album
+        listView.getSelectionModel().selectedItemProperty().addListener((ov, oldAlbum, newAlbum) -> {
+            if ((listView.getSelectionModel().getSelectedItem() != null) && (tabPane.getSelectionModel().getSelectedItem().equals(tabAlbumi))) {
+                btnAddImages.setVisible(true);
+            }
+        });
+
         btnAddNewAlbum.setOnMouseClicked(event -> showCreateNewAlbumWindow());
 
         btnAddImages.setOnMouseClicked(event -> addImages());
 
-        btnCheck.setOnMouseClicked(event -> addImagesTest());
+        btnCheck.setOnMouseClicked(event -> addImagesToAlbum());
+
+        btnAbort.setOnMouseClicked(event -> abortAddingImages());
+
+        menuRemoveListView.setOnAction(event -> removeVA());
+
+        menu.setOnAction(event -> {
+            Main.showNotification("Proba");
+        });
+
     }
 
     // dodavanje novog albuma nakon klika na dugne Add new album
@@ -152,7 +205,9 @@ public class MainController {
     private void setFirstElementOfListViewSelected() {
         if (!listViewData.isEmpty()) {
             listView.getSelectionModel().selectFirst();
-            setImagesToFlowPane(listView.getItems().get(0).getImages());
+            if (listView.getSelectionModel().getSelectedItem().getImages() != null) {
+                setImagesToFlowPane(listView.getItems().get(0).getImages());
+            }
         }
     }
 
@@ -164,21 +219,28 @@ public class MainController {
                     showScreenShotSendWindow();
             });
         });
+
+        //poziva metodu za serijalizovanje albuma pri gasenju aplikacije
+        stage.setOnCloseRequest(we -> serializeAlbums());
     }
 
     // prelazak na ImageViewController
-    private void showImageViewController(ObservableList<File> images, int index) {
+    public void showImageViewController(ObservableList<File> images, int index) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/imageView.fxml"));
-            Parent root = loader.load();
-            ImageViewController controller = loader.getController();
-            // privremeno
-            VirtualAlbum va = new VirtualAlbum("", "", true);
-            va.getImages().setAll(images);
-            controller.setVirtualAlbum(va, index);
-            controller.initParams(stage, stage.getScene().getRoot());
-            stage.getScene().setRoot(root);
-
+            if (imageViewCotrollerRoot == null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/imageView.fxml"));
+                imageViewCotrollerRoot = loader.load();
+                imageViewController = loader.getController();
+                imageViewController.initParams(stage, stage.getScene().getRoot());
+            }
+            if (tabPane.getSelectionModel().getSelectedItem().equals(tabAlbumi))
+                imageViewController.setVirtualAlbum(listView.getSelectionModel().getSelectedItem(), index);
+            else {
+                VirtualAlbum va = new VirtualAlbum("", "", true);
+                va.getImages().setAll(images);
+                imageViewController.setVirtualAlbum(va, index);
+            }
+            stage.getScene().setRoot(imageViewCotrollerRoot);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -186,6 +248,7 @@ public class MainController {
 
     private void setTreeView() {
         /* TreeView initialization */
+        treeView.setContextMenu(new ContextMenu(menuNewTreeView, menuCopyTreeView, menuCutTreeView, menuPasteTreeView, menuDeleteTreeView, menuRenameTreeView));
         TreeItem<MyFile> root = new TreeItem<>();
         treeView.setRoot(root);
         treeView.setShowRoot(false);
@@ -240,6 +303,7 @@ public class MainController {
                     if (event.getButton().equals(MouseButton.PRIMARY))
                         showImageViewController(getImagesFromFlowPane(), flowPane.getChildren().indexOf(iFrame));
                 });
+
                 iFrame.getCheckBox().setOnAction(event -> {
                     if (buttonsVisibleControl) {
                         if (iFrame.getCheckBox().isSelected()) {
@@ -328,33 +392,33 @@ public class MainController {
             btnAddImages.setVisible(false);
             fromAlbum = true;
         } else {
-            if (fromAlbum) {
-                buttonsVisibleControl = true;
-                listView.getSelectionModel().getSelectedItem().setImages(getCheckedImagesFromFlowPane());
+            buttonsVisibleControl = true;
+            // u slučaju prekida da ne prebaci na Tab Albumi
+            if (!showAlbumList(getCheckedImagesFromFlowPane())) {
                 tabPane.getSelectionModel().select(tabAlbumi);
-                setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
                 fromAlbum = false;
-            } else {
-                buttonsVisibleControl = true;
-                // u slučaju prekida da ne prebaci na Tab Albumi
-                if (!showAlbumList(getCheckedImagesFromFlowPane())) {
-                    tabPane.getSelectionModel().select(tabAlbumi);
-                    setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
-                    fromAlbum = false;
-                }
             }
         }
     }
 
-    private void addImagesTest() {
+    //vrsi ubacivanje slika u selektovani album
+    private void addImagesToAlbum() {
         buttonsVisibleControl = true;
         listView.getSelectionModel().getSelectedItem().setImages(getCheckedImagesFromFlowPane());
         tabPane.getSelectionModel().select(tabAlbumi);
-        setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
         fromAlbum = false;
         btnCheck.setVisible(false);
         btnAbort.setVisible(false);
-        btnAddImages.setVisible(true);
+        //btnAddImages.setVisible(true);
+    }
+
+    //omogucava abort
+    private void abortAddingImages() {
+        buttonsVisibleControl = true;
+        tabPane.getSelectionModel().select(tabAlbumi);
+        fromAlbum = false;
+        btnCheck.setVisible(false);
+        btnAbort.setVisible(false);
     }
 
     //otvara onovi prozor u kojem se bira album u koji je potrebno dodati slike ukoliko je izabrano dodavanje sa FS
@@ -378,4 +442,72 @@ public class MainController {
         return true;
     }
 
+    //metoda koja cita serijalizovane albume i ubacuje ih u listViewData
+    private void readSerializedAlbums() {
+        String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "VirtualAlbums";
+        File inputDirectory = new File(path);
+        if (inputDirectory.isDirectory()) {
+            File[] fileList = inputDirectory.listFiles();
+            if (fileList != null) {
+                for (File f : fileList) {
+                    try {
+                        ObjectInputStream object = new ObjectInputStream(new FileInputStream(f));
+                        listViewData.addAll((ArrayList<VirtualAlbum>) object.readObject());
+                        object.close();
+                    } catch (Exception ex) {
+
+                    }
+                }
+            }
+        }
+    }
+
+    //metoda koja serijalizuje VA iz listViewData
+    private void serializeAlbums() {
+        String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "VirtualAlbums";
+        File outputPath = new File(path);
+        if (!outputPath.exists()) {
+            outputPath.mkdirs();
+        }
+        String file = path + File.separator + "virtualalbums.kva";
+        try {
+            ArrayList<VirtualAlbum> list = new ArrayList<>(listViewData);
+            ObjectOutputStream object = new ObjectOutputStream(new FileOutputStream(file));
+            object.writeObject(list);
+            object.close();
+        } catch (Exception ex) {
+
+        }
+    }
+
+    //ukoliko je potvrdjeno brisanje brise VA i prikazuje slike iz sledeceg
+    private void removeVA() {
+        if (!showRemoveVirtualAlbumWindow()) {
+            listViewData.remove(listView.getSelectionModel().getSelectedItem());
+            if (!listViewData.isEmpty()) {
+                setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
+            } else {
+                flowPane.getChildren().clear();
+            }
+        }
+    }
+
+    //metoda koja prikazuje prozor u kojem se potcrdjuje brisanje VA
+    private boolean showRemoveVirtualAlbumWindow() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/removeVirtualAlbum.fxml"));
+            Parent root = loader.load();
+            RemoveVirtualAlbumWindowController controller = loader.getController();
+            Stage stage = new Stage();
+            controller.setStage(stage);
+            stage.setScene(new Scene(root, 319, 98));
+            stage.setResizable(false);
+            stage.initStyle(StageStyle.UNDECORATED);
+            stage.showAndWait();
+            return controller.isCancel();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
 }
