@@ -1,24 +1,26 @@
 package net.etfbl.kdpo.client;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.net.URL;
-import java.util.ResourceBundle;
-
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.*;
 import javafx.stage.Stage;
+
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * Created by Stijak on 12.01.2016.
@@ -42,6 +44,12 @@ public class ScreenShotSendWindowController {
     @FXML
     private AnchorPane anchorPane;
 
+    @FXML
+    private Label lblErrorText;
+
+    @FXML
+    private VBox vBox;
+
     private ImageView imageView;
     private Stage stage;
     private double x = 0;
@@ -49,14 +57,34 @@ public class ScreenShotSendWindowController {
 
     @FXML
     void initialize() {
+        ObservableList<String> data = FXCollections.observableArrayList();
+        data.addAll("Marko", "Nenad", "Nemanja", "Duško", "Vladan");
+        dropDownList.setItems(data);
+        progressBar.setVisible(false);
+        lblErrorText.setVisible(false);
         imageView = new ImageView();
+        //imageView.setPreserveRatio(true);
         ImageViewPane ivp = new ImageViewPane(imageView);
         hBoxImageContainer.getChildren().add(ivp);
         ivp.prefHeightProperty().bind(hBoxImageContainer.heightProperty());
         ivp.prefWidthProperty().bind(hBoxImageContainer.widthProperty());
-        btnCancel.setOnMouseClicked(event -> stage.close());
+        progressBar.setPrefHeight(30);
         new Thread(this::createImage).start();
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                progressBar.setVisible(true);
+                dropDownList.setDisable(true);
+                for (int i = 0; i < 100; i++)
+                    Thread.sleep(100);
+                dropDownList.setDisable(false);
+                progressBar.setVisible(false);
+                return null;
+            }
+        };
 
+        progressBar.progressProperty().bind(task.progressProperty());
+        new Thread(task).start();
         // za pomijeranje prozora
         anchorPane.setOnMousePressed(event -> {
             this.x = anchorPane.getScene().getWindow().getX() - event.getScreenX();
@@ -66,6 +94,18 @@ public class ScreenShotSendWindowController {
         anchorPane.setOnMouseDragged(event -> {
             stage.setX(event.getScreenX() + this.x);
             stage.setY(event.getScreenY() + this.y);
+        });
+
+        btnSend.setOnMouseClicked(event -> sendSS());
+
+        btnCancel.setOnMouseClicked(event -> {
+            task.cancel();
+            stage.close();
+        });
+
+        dropDownList.setOnAction(event -> {
+            if (lblErrorText.isVisible())
+                lblErrorText.setVisible(false);
         });
     }
 
@@ -83,8 +123,19 @@ public class ScreenShotSendWindowController {
             WritableImage image = new WritableImage(width, height);
             SwingFXUtils.toFXImage(im, image);
             imageView.setImage(image);
+
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void sendSS() {
+        String user = dropDownList.getValue();
+        if (user == null) {
+            lblErrorText.setText("You need to select some user!");
+            lblErrorText.setVisible(true);
+        } else {
+
         }
     }
 }

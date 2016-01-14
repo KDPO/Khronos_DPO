@@ -115,17 +115,6 @@ public class MainController {
         menuRenameTreeView = new MenuItem("Rename");
         menuRemoveListView = new MenuItem("Remove");
         menuRenameListView = new MenuItem("Rename");
-        // lista unutar koje će se nalaziti objekti Virtuelnih albuma za prikaz u ListView i kasnije korišćenje
-        listViewData = FXCollections.observableArrayList();
-        listView.setEditable(true);
-        listView.setItems(listViewData);
-        listView.setOnMouseClicked((MouseEvent) -> setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages()));
-        listView.setContextMenu(new ContextMenu(menuRenameListView, menuRemoveListView));
-
-        //ucitavanje serijalizovanih VA
-        readSerializedAlbums();
-
-        setFirstElementOfListViewSelected();
 
         lblMessages.setVisible(false);
         btnAddImages.setVisible(false);
@@ -133,6 +122,21 @@ public class MainController {
         btnAbort.setVisible(false);
         btnRemove.setVisible(false);
         btnDelete.setVisible(false);
+
+        // lista unutar koje će se nalaziti objekti Virtuelnih albuma za prikaz u ListView i kasnije korišćenje
+        listViewData = FXCollections.observableArrayList();
+        listView.setEditable(true);
+        listView.setItems(listViewData);
+        listView.setOnMouseClicked((MouseEvent) -> {
+            if (listView.getSelectionModel().getSelectedItem() != null)
+                setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
+        });
+        listView.setContextMenu(new ContextMenu(menuRenameListView, menuRemoveListView));
+
+        //ucitavanje serijalizovanih VA
+        readSerializedAlbums();
+
+        setFirstElementOfListViewSelected();
 
         new Thread(this::setTreeView).start();
 
@@ -149,7 +153,8 @@ public class MainController {
                 }
             }
             if (newTab.equals(tabAlbumi)) {
-                //btnAddImages.setVisible(true);
+                if (listView.getSelectionModel().getSelectedIndex() >= 0)
+                    btnAddImages.setVisible(true);
                 if (listViewData.isEmpty()) {
                     flowPane.getChildren().clear();
                 } else {
@@ -183,10 +188,12 @@ public class MainController {
 
         menuRemoveListView.setOnAction(event -> removeVA());
 
-        menu.setOnAction(event -> {
+        btnRemove.setOnMouseClicked(event -> removeImagesFromVA());
+
+        // Notification test
+        menu.setOnMouseClicked(event -> {
             Main.showNotification("Proba");
         });
-
     }
 
     // dodavanje novog albuma nakon klika na dugne Add new album
@@ -204,6 +211,7 @@ public class MainController {
     // u slučaju da postoje VA potrebno je prvi selektovati
     private void setFirstElementOfListViewSelected() {
         if (!listViewData.isEmpty()) {
+            btnAddImages.setVisible(true);
             listView.getSelectionModel().selectFirst();
             if (listView.getSelectionModel().getSelectedItem().getImages() != null) {
                 setImagesToFlowPane(listView.getItems().get(0).getImages());
@@ -360,6 +368,12 @@ public class MainController {
             stage.setResizable(false);
             stage.initStyle(StageStyle.UNDECORATED);
             stage.showAndWait();
+            if (!controller.isCancel()) {
+                listView.getSelectionModel().selectLast();
+                listView.scrollTo(listViewData.size() - 1);
+                if (!flowPane.getChildren().isEmpty())
+                    flowPane.getChildren().clear();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -373,7 +387,7 @@ public class MainController {
             ScreenShotSendWindowController controller = loader.getController();
             Stage stage = new Stage();
             controller.setStage(stage);
-            stage.setScene(new Scene(root, 531, 367));
+            stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.initStyle(StageStyle.UNDECORATED);
             stage.showAndWait();
@@ -405,6 +419,7 @@ public class MainController {
     private void addImagesToAlbum() {
         buttonsVisibleControl = true;
         listView.getSelectionModel().getSelectedItem().setImages(getCheckedImagesFromFlowPane());
+        new Thread(this::serializeAlbums).start();
         tabPane.getSelectionModel().select(tabAlbumi);
         fromAlbum = false;
         btnCheck.setVisible(false);
@@ -431,10 +446,14 @@ public class MainController {
             controller.setStage(stage);
             controller.setAlbumList(listViewData);
             controller.setImagesList(images);
-            stage.setScene(new Scene(root, 319, 208));
+            stage.setScene(new Scene(root, 319, 149));
             stage.setResizable(false);
             stage.initStyle(StageStyle.UNDECORATED);
             stage.showAndWait();
+            if (controller.getIndexOfVA() > 0) {
+                listView.getSelectionModel().select(controller.getIndexOfVA());
+                listView.scrollTo(controller.getIndexOfVA());
+            }
             return controller.isCancel();
         } catch (Exception e) {
             e.printStackTrace();
@@ -488,6 +507,7 @@ public class MainController {
                 setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
             } else {
                 flowPane.getChildren().clear();
+                btnAddImages.setVisible(false);
             }
         }
     }
@@ -509,5 +529,12 @@ public class MainController {
             e.printStackTrace();
         }
         return true;
+    }
+
+    //metoda za uklanjanje slika iz virtuelnog album
+    private void removeImagesFromVA() {
+        ObservableList<File> temp = listView.getSelectionModel().getSelectedItem().getImages();
+        temp.removeAll(getCheckedImagesFromFlowPane());
+        setImagesToFlowPane(temp);
     }
 }

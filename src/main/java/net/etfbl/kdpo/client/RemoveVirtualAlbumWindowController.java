@@ -1,11 +1,8 @@
 package net.etfbl.kdpo.client;
 
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -33,11 +30,11 @@ public class RemoveVirtualAlbumWindowController {
     @FXML
     void initialize() {
         btnCancel.setOnMouseClicked(event -> {
-            cancel=true;
+            cancel = true;
             stage.close();
         });
         btnOK.setOnMouseClicked(event -> {
-            cancel=false;
+            cancel = false;
             stage.close();
         });
 

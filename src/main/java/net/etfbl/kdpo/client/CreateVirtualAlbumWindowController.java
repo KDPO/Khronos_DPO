@@ -6,8 +6,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -35,13 +36,17 @@ public class CreateVirtualAlbumWindowController {
 
     private Stage stage;
     private ObservableList<VirtualAlbum> albums;
+    private boolean cancel = false;
 
     private double x = 0;
     private double y = 0;
 
     @FXML
     void initialize() {
-        btnCancel.setOnMouseClicked(event -> stage.close());
+        btnCancel.setOnMouseClicked(event -> {
+            cancel = true;
+            stage.close();
+        });
         btnSave.setOnMouseClicked(event -> addNewAlbum());
         lblErrorText.setOpacity(0.0);
 
@@ -83,5 +88,9 @@ public class CreateVirtualAlbumWindowController {
             albums.add(new VirtualAlbum(txtName, txtAlbumDescription.getText()));
             stage.close();
         }
+    }
+
+    public boolean isCancel() {
+        return cancel;
     }
 }

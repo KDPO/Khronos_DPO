@@ -271,8 +271,7 @@ public class ImageViewController {
     }
 
     private void back() {
-        //virtualAlbum = null;
-        //images = null;
+        images.clear();
         stage.getScene().setRoot(oldRoot);
     }
 

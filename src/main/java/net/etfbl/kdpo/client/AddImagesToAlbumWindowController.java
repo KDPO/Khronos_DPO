@@ -4,12 +4,12 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.prefs.AbstractPreferences;
 
 /**
  * Created by Vladan on 1/12/2016.
@@ -22,6 +22,9 @@ public class AddImagesToAlbumWindowController {
     private Button btnSave;
 
     @FXML
+    private Label lblErrorText;
+
+    @FXML
     private ChoiceBox<VirtualAlbum> albums;
 
     @FXML
@@ -30,11 +33,13 @@ public class AddImagesToAlbumWindowController {
     private Stage stage;
     private ObservableList<File> images;
     private boolean cancel = false;
+    private int indexOfVA = -1;
     private double x = 0;
     private double y = 0;
 
     @FXML
     void initialize() {
+        lblErrorText.setVisible(false);
         // za pomijeranje prozora
         anchorPane.setOnMousePressed(event -> {
             this.x = anchorPane.getScene().getWindow().getX() - event.getScreenX();
@@ -56,6 +61,10 @@ public class AddImagesToAlbumWindowController {
             selectAlbum();
         });
 
+        albums.setOnAction(event -> {
+            if (lblErrorText.isVisible())
+                lblErrorText.setVisible(false);
+        });
     }
 
     public void setStage(Stage stage) {
@@ -78,7 +87,17 @@ public class AddImagesToAlbumWindowController {
     }
 
     private void selectAlbum() {
-        albums.getValue().setImages(images);
-        stage.close();
+        if (albums.getValue() == null) {
+            lblErrorText.setText("You need to select some album!");
+            lblErrorText.setVisible(true);
+        } else {
+            albums.getValue().setImages(images);
+            indexOfVA = albums.getSelectionModel().getSelectedIndex();
+            stage.close();
+        }
+    }
+
+    public int getIndexOfVA() {
+        return indexOfVA;
     }
 }
