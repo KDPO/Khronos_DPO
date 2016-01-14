@@ -21,6 +21,7 @@ import javafx.stage.StageStyle;
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
@@ -187,6 +188,8 @@ public class MainController {
         btnAbort.setOnMouseClicked(event -> abortAddingImages());
 
         menuRemoveListView.setOnAction(event -> removeVA());
+
+        menuDeleteTreeView.setOnAction(event -> deleteFolder(treeView.getSelectionModel().getSelectedItem().getValue()));
 
         btnRemove.setOnMouseClicked(event -> removeImagesFromVA());
 
@@ -536,5 +539,25 @@ public class MainController {
         ObservableList<File> temp = listView.getSelectionModel().getSelectedItem().getImages();
         temp.removeAll(getCheckedImagesFromFlowPane());
         setImagesToFlowPane(temp);
+    }
+
+    //kao sto pise, brise foldere kad se na FS izabere delete iz dropdown menija
+    private void deleteFolder(File file){
+        File[] files = file.listFiles();
+        try{
+            if(files.length != 0){
+                for(File fileTmp : files){
+                    if(fileTmp.isDirectory()){
+                        deleteFolder(fileTmp);
+                    }else{
+                        Files.delete(Paths.get(fileTmp.getAbsolutePath()));
+                    }
+                }
+            }
+            Files.delete(Paths.get(file.getAbsolutePath()));
+            System.out.println("Obrisano");
+        }catch (IOException ex){
+            ex.printStackTrace();
+        }
     }
 }
