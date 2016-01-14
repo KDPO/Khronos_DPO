@@ -27,6 +27,9 @@ import java.util.ArrayList;
  */
 
 public class MainController {
+    public static MainController mainController;
+    public static VirtualAlbum screenshotAlbum;
+
     @FXML
     private Label lblAlbumDescription;
 
@@ -86,6 +89,9 @@ public class MainController {
 
     private boolean buttonsVisibleControl = true;
 
+    private Parent imageViewCotrollerRoot;
+    private ImageViewController imageViewController;
+
     //menu na desni klik
     private MenuItem menuNewTreeView;
     private MenuItem menuCopyTreeView;
@@ -99,6 +105,7 @@ public class MainController {
 
     @FXML
     void initialize() {
+        mainController = this;
         menuNewTreeView = new MenuItem("New");
         menuCopyTreeView = new MenuItem("Copy");
         menuCutTreeView = new MenuItem("Cut");
@@ -213,18 +220,22 @@ public class MainController {
     }
 
     // prelazak na ImageViewController
-    private void showImageViewController(ObservableList<File> images, int index) {
+    public void showImageViewController(ObservableList<File> images, int index) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/imageView.fxml"));
-            Parent root = loader.load();
-            ImageViewController controller = loader.getController();
-            // privremeno
-            VirtualAlbum va = new VirtualAlbum("", "", true);
-            va.getImages().setAll(images);
-            controller.setVirtualAlbum(va, index);
-            controller.initParams(stage, stage.getScene().getRoot());
-            stage.getScene().setRoot(root);
-
+            if (imageViewCotrollerRoot == null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/imageView.fxml"));
+                imageViewCotrollerRoot = loader.load();
+                imageViewController = loader.getController();
+                imageViewController.initParams(stage, stage.getScene().getRoot());
+            }
+            if (tabPane.getSelectionModel().getSelectedItem().equals(tabAlbumi))
+                imageViewController.setVirtualAlbum(listView.getSelectionModel().getSelectedItem(), index);
+            else {
+                VirtualAlbum va = new VirtualAlbum("", "", true);
+                va.getImages().setAll(images);
+                imageViewController.setVirtualAlbum(va, index);
+            }
+            stage.getScene().setRoot(imageViewCotrollerRoot);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -434,12 +445,12 @@ public class MainController {
             File[] fileList = inputDirectory.listFiles();
             if (fileList != null) {
                 for (File f : fileList) {
-                    try{
+                    try {
                         ObjectInputStream object = new ObjectInputStream(new FileInputStream(f));
-                        listViewData.addAll((ArrayList<VirtualAlbum>)object.readObject());
+                        listViewData.add((VirtualAlbum) object.readObject());
                         object.close();
-                    }catch (Exception ex){
-
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
                 }
             }
@@ -485,7 +496,7 @@ public class MainController {
             RemoveVirtualAlbumWindowController controller = loader.getController();
             Stage stage = new Stage();
             controller.setStage(stage);
-            stage.setScene(new Scene(root, 319, 208));
+            stage.setScene(new Scene(root, 319, 98));
             stage.setResizable(false);
             stage.initStyle(StageStyle.UNDECORATED);
             stage.showAndWait();

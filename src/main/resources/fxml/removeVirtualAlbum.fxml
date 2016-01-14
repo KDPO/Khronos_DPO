@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 
 <VBox fx:id="vBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-      prefHeight="208.0" prefWidth="319.0" style="-fx-background-color: #000; -fx-border-color: #f98012;"
+      prefHeight="98.0" prefWidth="319.0" style="-fx-background-color: #000; -fx-border-color: #f98012;"
       xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.etfbl.kdpo.client.RemoveVirtualAlbumWindowController">
     <children>
@@ -22,14 +22,14 @@
                 </Label>
             </children>
         </AnchorPane>
-        <AnchorPane prefHeight="165.0" prefWidth="185.0">
+        <AnchorPane prefHeight="42.0" prefWidth="317.0" VBox.vgrow="ALWAYS">
             <children>
-                <Button fx:id="btnOK" focusTraversable="false" graphicTextGap="0.0" layoutX="40.0" layoutY="127.0"
+                <Button fx:id="btnOK" focusTraversable="false" graphicTextGap="0.0" layoutX="40.0" layoutY="7.0"
                         mnemonicParsing="false" prefWidth="100.0" style="-fx-background-color: #f98012;" text="OK"
-                        textFill="WHITE"/>
-                <Button fx:id="btnCancel" focusTraversable="false" graphicTextGap="0.0" layoutX="170.0" layoutY="127.0"
+                        textFill="WHITE" AnchorPane.topAnchor="15.0"/>
+                <Button fx:id="btnCancel" focusTraversable="false" graphicTextGap="0.0" layoutX="170.0" layoutY="7.0"
                         mnemonicParsing="false" prefWidth="100.0" style="-fx-background-color: #f98012;" text="Cancel"
-                        textFill="WHITE"/>
+                        textFill="WHITE" AnchorPane.topAnchor="15.0"/>
             </children>
         </AnchorPane>
     </children>

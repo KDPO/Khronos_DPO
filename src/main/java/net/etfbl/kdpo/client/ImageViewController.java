@@ -92,7 +92,7 @@ public class ImageViewController {
 
         btnPrevImage.setOnMouseClicked((MouseEvent) -> prevImage());
 
-        btnBack.setOnMouseClicked((MouseEvent) -> stage.getScene().setRoot(oldRoot));
+        btnBack.setOnMouseClicked((MouseEvent) -> back());
 
         btnZoomIn.setOnMouseClicked(event -> zoomIn());
 
@@ -172,6 +172,9 @@ public class ImageViewController {
         if (images.size() == 1) {
             btnNextImage.setVisible(false);
             btnPrevImage.setVisible(false);
+        } else {
+            btnNextImage.setVisible(true);
+            btnPrevImage.setVisible(true);
         }
         showImage();
     }
@@ -195,6 +198,9 @@ public class ImageViewController {
                 zoomIn();
             else if (event.getCode().equals(KeyCode.MINUS) || event.getCode().equals(KeyCode.SUBTRACT))
                 zoomOut();
+            else if (event.getCode().equals(KeyCode.ESCAPE))
+                back();
+
         });
 
         stage.getScene().getWindow().addEventHandler(ScrollEvent.SCROLL, event -> {
@@ -262,6 +268,12 @@ public class ImageViewController {
 
     private void rotateRight() {
         imageView.setRotate(imageView.getRotate() + 90);
+    }
+
+    private void back() {
+        //virtualAlbum = null;
+        //images = null;
+        stage.getScene().setRoot(oldRoot);
     }
 
     private void showFullScreenControler() {

@@ -69,14 +69,18 @@ public class CreateVirtualAlbumWindowController {
     }
 
     private void addNewAlbum() {
-        if ("".equals(txtAlbumName.getText())) {
+        String txtName = txtAlbumName.getText();
+        if (txtName.startsWith(" "))
+            txtName = txtName.replaceFirst(" *", "");
+
+        if ("".equals(txtName)) {
             lblErrorText.setText("Album name must not be empty");
             lblErrorText.setOpacity(1.0);
-        } else if (albums.contains(new VirtualAlbum(txtAlbumName.getText(), ""))) {
+        } else if (albums.contains(new VirtualAlbum(txtName, ""))) {
             lblErrorText.setText("Album with that name already exists");
             lblErrorText.setOpacity(1.0);
         } else {
-            albums.add(new VirtualAlbum(txtAlbumName.getText(), txtAlbumDescription.getText()));
+            albums.add(new VirtualAlbum(txtName, txtAlbumDescription.getText()));
             stage.close();
         }
     }
