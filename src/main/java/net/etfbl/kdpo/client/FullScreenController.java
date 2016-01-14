@@ -51,8 +51,6 @@ public class FullScreenController {
 		imageView = new ImageView();
 		imageView.setPreserveRatio(true);
 		ivp = new ImageViewPane(imageView);
-		System.out.println(hBox);
-		System.out.println(lblStatus);
 		hBox.getChildren().add(ivp);
 		ivp.prefHeightProperty().bind(hBox.heightProperty());
 		ivp.prefWidthProperty().bind(hBox.widthProperty());
@@ -153,17 +151,14 @@ public class FullScreenController {
 	private void slideShow() {
 		slideShowOn = !slideShowOn;
 		if (slideShowOn) {
-			System.out.println("SlideShow ONN slideshowon=" + slideShowOn);
 			lblStatus.setOpacity(0.0);
 			updateProgressBar();
 			progressBar.setOpacity(0.3);
-			System.out.println("Creating task");
 			Task<Integer> task = new Task<Integer>() {
 				@Override
 				protected Integer call() throws Exception {
 					try {
 						while (slideShowOn) {
-							System.out.println("starting slideshow");
 							Thread.sleep(3500);
 							if (!slideShowOn) {
 								progressBar.setOpacity(0.0);
@@ -195,7 +190,6 @@ public class FullScreenController {
 			thread.setDaemon(true);
 			thread.start();
 		} else {
-			System.out.println("Slideshow off slideshowon=" + slideShowOn);
 			updateStatusLabel();
 			lblStatus.setOpacity(1.0);
 			progressBar.setOpacity(0.0);
@@ -203,7 +197,6 @@ public class FullScreenController {
 	}
 
 	private void showImage() {
-		System.out.println("show image");
 		File file = images.get(index);
 		if (file.isAbsolute()) {
 			this.imageView.setImage(new Image("file:" + file.getPath()));
@@ -223,7 +216,6 @@ public class FullScreenController {
 			hideLblStatusAfterSeconds(2);
 		}
 		if ((index + 1) < images.size()) {
-			System.out.println("prije show image");
 			index++;
 			showImage();
 			if (slideShowOn) {
