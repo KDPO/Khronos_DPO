@@ -162,9 +162,11 @@ public class ImageViewController {
         this.stage = stage;
         this.oldRoot = root;
         stage.getScene().getWindow().addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
-            if ((event.getCode().equals(KeyCode.RIGHT) || event.getCode().equals(KeyCode.UP)))
+            if ((event.getCode().equals(KeyCode.RIGHT) || event.getCode().equals(KeyCode.UP))) {
                 nextImage();
-            else if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.LEFT))
+                //pojavljuje se više puta nego što treba
+                System.out.println("next imag!!!!e");
+            }else if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.LEFT))
                 prevImage();
             else if (event.getCode().equals(KeyCode.PLUS) || event.getCode().equals(KeyCode.ADD))
                 zoomIn();
@@ -228,17 +230,21 @@ public class ImageViewController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/fullScreen.fxml"));
             Parent root = loader.load();
-            FullScreenController fullScreenController = loader.getController();
-            fullScreenController.setIndex(INDEX);
-            fullScreenController.setImages(images);
-            fullScreenController.setSceneAndStage(stage.getScene(), stage);
-            stage.getScene().setRoot(root);
-            stage.setFullScreenExitHint("");
-            stage.setFullScreen(true);
+            FullScreenController fsc = loader.getController();
+            fsc.setRoot(root);
+            fsc.setPreviousStageStage(stage);
+            fsc.setImages(images, INDEX);
+            fsc.setImageViewController(this);
+            fsc.show();
+            stage.hide();
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("OH NO!");
         }
 
+    }
+
+    public void setINDEX(int index) {
+        INDEX = index;
+        showImage();
     }
 }
