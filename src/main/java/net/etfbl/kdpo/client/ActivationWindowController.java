@@ -2,19 +2,18 @@ package net.etfbl.kdpo.client;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
 /**
  * Created by Stijak on 12.01.2016.
@@ -55,6 +54,8 @@ public class ActivationWindowController {
     private TextField txtActivationCodeFour;
 
     private Stage stage;
+    private String key;
+    private boolean activated = false;
 
     private double x = 0;
     private double y = 0;
@@ -65,7 +66,10 @@ public class ActivationWindowController {
         activationErrorText.setVisible(false);
         usernameErrorText.setVisible(false);
 
-        btnCancel.setOnMouseClicked(event -> Platform.exit());
+        btnCancel.setOnMouseClicked(event -> {
+            activated = false;
+            stage.close();
+        });
 
         // za pomijeranje prozora
         anchorPane.setOnMousePressed(event -> {
@@ -78,18 +82,18 @@ public class ActivationWindowController {
             stage.setY(event.getScreenY() + this.y);
         });
 
-        btnActivate.setOnMouseClicked((MouseEvent) -> {
+        btnActivate.setOnMouseClicked(event -> {
             boolean success = true;
             usernameErrorText.setVisible(false);
             activationErrorText.setVisible(false);
             CharSequence charSequence = txtUsername.getCharacters();
-            if(charSequence.length() < 8 || charSequence.length() > 32){
+            if (charSequence.length() < 8 || charSequence.length() > 32) {
                 usernameErrorText.setText("Username should be between 8 and 32 characters long.");
                 usernameErrorText.setVisible(true);
                 success = false;
-            }else{
-                for (char character: charSequence.toString().toCharArray()) {
-                    if(!(Character.isDigit(character) || Character.isLetter(character) || Character.isWhitespace(character))){
+            } else {
+                for (char character : charSequence.toString().toCharArray()) {
+                    if (!(Character.isDigit(character) || Character.isLetter(character) || Character.isWhitespace(character))) {
                         usernameErrorText.setText("Only alphanumeric and whitespace characters are allowed.");
                         usernameErrorText.setVisible(true);
                         success = false;
@@ -97,7 +101,8 @@ public class ActivationWindowController {
                     }
                 }
             }
-            activationErrorText.setText("Incorrect activation code.");
+            key = txtActivationCodeOne.getText() + txtActivationCodeTwo.getText() + txtActivationCodeThree.getText() + txtActivationCodeFour.getText();
+            //activationErrorText.setText("Incorrect activation code.");
             activationErrorText.setVisible(true);
 
             /*
@@ -105,6 +110,12 @@ public class ActivationWindowController {
             checkKey();
             ako prodje i provjera lozinke, i jedinstvenosti korisnickog imena, treba pokrenuti mainController
              */
+            if (success) {
+                activated = true;
+                new Thread(() -> saveParametars(txtUsername.getText(), key)).start();
+                stage.close();
+            }
+
         });
 
         txtActivationCodeOne.setOnMouseClicked((MouseEvent) -> {
@@ -140,5 +151,32 @@ public class ActivationWindowController {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+    }
+
+    // ako je aktivacija uspješna sačuvaj podatke na FS radi provjere aktivacije pri idućem pokretanju
+    private void saveParametars(String username, String key) {
+        try {
+            System.out.println(username);
+            System.out.println(key);
+            String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "License";
+            File outputPath = new File(path);
+            if (!outputPath.exists()) {
+                outputPath.mkdirs();
+            }
+            String file = path + File.separator + "license.txt";
+            String hash = Main.getHashCode(username, key);
+            System.out.println(hash);
+            PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(file)), true);
+            writer.println("<username>" + username + "</username>");
+            writer.println("<key>" + key + "</key>");
+            writer.println("<hashkey>" + hash + "</hashkey>");
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isActivated() {
+        return activated;
     }
 }

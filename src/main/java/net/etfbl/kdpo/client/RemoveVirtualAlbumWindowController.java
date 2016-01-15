@@ -2,6 +2,7 @@ package net.etfbl.kdpo.client;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Modality;
@@ -19,6 +20,9 @@ public class RemoveVirtualAlbumWindowController {
 
     @FXML
     private AnchorPane anchorPane;
+
+    @FXML
+    private Label lblText;
 
     private Stage stage;
 
@@ -59,5 +63,9 @@ public class RemoveVirtualAlbumWindowController {
 
     public boolean isCancel() {
         return cancel;
+    }
+
+    public void setText(String text) {
+        lblText.setText(text);
     }
 }

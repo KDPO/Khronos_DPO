@@ -12,6 +12,11 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.controlsfx.control.Notifications;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.nio.charset.Charset;
+
 /**
  * Created by Stijak on 12.12.2015..
  */
@@ -26,21 +31,15 @@ public class Main extends Application {
         primaryStage.setTitle("Khronos DPO");
         //koristi se za onemogucenje mjenjanja pozadinskog prozora iz popup
         Main.primaryStage = primaryStage;
-        //showActivationWindow(primaryStage);
-        showMainWindow(primaryStage);
-        primaryStage.show();
+        if (checkActivation())
+            showMainWindow(primaryStage);
+        else if (showActivationWindow(new Stage()))
+            showMainWindow(primaryStage);
+        else Platform.exit();
     }
 
     public static void main(String[] args) {
         launch();//args);
-    }
-
-    public boolean checkConnection() {
-        return false;
-    }
-
-    public boolean checkActivation() {
-        return false;
     }
 
     private void showMainWindow(Stage stage) throws Exception {
@@ -51,9 +50,10 @@ public class Main extends Application {
         stage.setScene(new Scene(root, 600, 360));
         stage.setMinWidth(600);
         stage.setMinHeight(360);
+        stage.show();
     }
 
-    private void showActivationWindow(Stage stage) throws Exception {
+    private boolean showActivationWindow(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/activation.fxml"));
         Parent root = loader.load();
         ActivationWindowController controller = loader.getController();
@@ -61,6 +61,8 @@ public class Main extends Application {
         stage.setScene(new Scene(root, 600, 400));
         stage.setResizable(false);
         stage.initStyle(StageStyle.UNDECORATED);
+        stage.showAndWait();
+        return controller.isActivated();
     }
 
     public static void showNotification(String message) {
@@ -77,5 +79,39 @@ public class Main extends Application {
         }
     }
 
+    // vraća hash funkciju generisanu pomoću username, computer name i key
+    public static String getHashCode(String username, String key) {
+        try {
+            String string = username + System.getProperty("user.name") + key;
+            java.security.MessageDigest md = java.security.MessageDigest.getInstance("SHA-256");
+            byte[] array = md.digest(string.getBytes(Charset.forName("UTF-8")));
+            StringBuffer sb = new StringBuffer();
+            for (byte anArray : array) {
+                sb.append(Integer.toHexString((anArray & 0xFF) | 0x100).substring(1, 3));
+            }
+            return sb.toString();
+        } catch (java.security.NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
+    // provjerava aktivaciju tako što koristi zapamćeni username i key i hash funkciju
+    public static boolean checkActivation() {
+        try {
+            String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "License" + File.separator + "license.txt";
+            File file = new File(path);
+            if (file.exists()) {
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                String username = reader.readLine().split("<.*?>")[1];
+                String key = reader.readLine().split("<.*?>")[1];
+                String hash = reader.readLine().split("<.*?>")[1];
+                reader.close();
+                return hash.equals(Main.getHashCode(username, key));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

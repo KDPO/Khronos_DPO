@@ -1,8 +1,6 @@
 package net.etfbl.kdpo.client;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -24,7 +22,6 @@ import javafx.stage.StageStyle;
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
@@ -171,8 +168,8 @@ public class MainController {
             }
             if (newTab.equals(tabAlbumi)) {
                 if (listView.getSelectionModel().getSelectedIndex() >= 0)
-                    if (!btnCheck.isVisible())
-                        btnAddImages.setVisible(true);
+                    //if (!btnCheck.isVisible())
+                    btnAddImages.setVisible(true);
                 if (listViewData.isEmpty()) {
                     flowPane.getChildren().clear();
                 } else {
@@ -435,7 +432,7 @@ public class MainController {
             tabAlbumi.setDisable(true);
             btnCheck.setVisible(true);
             btnAbort.setVisible(true);
-            btnAddImages.setVisible(false);
+            //btnAddImages.setVisible(false);
             fromAlbum = true;
         } else {
             buttonsVisibleControl = true;
@@ -458,7 +455,7 @@ public class MainController {
         fromAlbum = false;
         btnCheck.setVisible(false);
         btnAbort.setVisible(false);
-        //btnAddImages.setVisible(true);
+        btnAddImages.setVisible(true);
     }
 
     //omogucava abort
@@ -528,20 +525,22 @@ public class MainController {
 
     //metoda koja serijalizuje VA iz listViewData
     private void serializeAlbums() {
-        String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "VirtualAlbums";
-        File outputPath = new File(path);
-        if (!outputPath.exists()) {
-            outputPath.mkdirs();
-        }
-        String file = path + File.separator + "virtualalbums.kva";
-        try {
-            ArrayList<VirtualAlbum> list = new ArrayList<>(listViewData);
-            ObjectOutputStream object = new ObjectOutputStream(new FileOutputStream(file));
-            object.writeObject(list);
-            object.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        new Thread(() -> {
+            String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "VirtualAlbums";
+            File outputPath = new File(path);
+            if (!outputPath.exists()) {
+                outputPath.mkdirs();
+            }
+            String file = path + File.separator + "virtualalbums.kva";
+            try {
+                ArrayList<VirtualAlbum> list = new ArrayList<>(listViewData);
+                ObjectOutputStream object = new ObjectOutputStream(new FileOutputStream(file));
+                object.writeObject(list);
+                object.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }).start();
     }
 
     //ukoliko je potvrdjeno brisanje brise VA i prikazuje slike iz sledeceg

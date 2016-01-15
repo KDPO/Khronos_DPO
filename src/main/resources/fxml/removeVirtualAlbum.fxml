@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+
 <VBox fx:id="vBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
       prefHeight="98.0" prefWidth="319.0" style="-fx-background-color: #000; -fx-border-color: #f98012;"
       xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
@@ -11,7 +15,7 @@
     <children>
         <AnchorPane fx:id="anchorPane" prefHeight="29.0" prefWidth="320.0" style="-fx-background-color: #2c2c2c;">
             <children>
-                <Label alignment="CENTER" layoutX="25.0" layoutY="27.0" text="Remove Virtual album"
+                <Label fx:id="lblText" alignment="CENTER" layoutX="25.0" layoutY="27.0" text="Remove Virtual album"
                        textAlignment="CENTER" textFill="#f98012" AnchorPane.bottomAnchor="5.0"
                        AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="5.0">
                     <font>
