@@ -47,7 +47,7 @@ public class Main extends Application {
         Parent root = loader.load();
         MainController controller = loader.getController();
         controller.setStage(stage);
-        stage.setScene(new Scene(root, 600, 360));
+        stage.setScene(new Scene(root, 800, 480));
         stage.setMinWidth(600);
         stage.setMinHeight(360);
         stage.show();

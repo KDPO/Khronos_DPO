@@ -156,16 +156,16 @@ public class ActivationWindowController {
     // ako je aktivacija uspješna sačuvaj podatke na FS radi provjere aktivacije pri idućem pokretanju
     private void saveParametars(String username, String key) {
         try {
-            System.out.println(username);
-            System.out.println(key);
             String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "License";
             File outputPath = new File(path);
             if (!outputPath.exists()) {
                 outputPath.mkdirs();
             }
             String file = path + File.separator + "license.txt";
-            String hash = Main.getHashCode(username, key);
-            System.out.println(hash);
+            String hash = "";
+            do {
+                hash = Main.getHashCode(username, key);
+            } while (hash == null);
             PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(file)), true);
             writer.println("<username>" + username + "</username>");
             writer.println("<key>" + key + "</key>");
