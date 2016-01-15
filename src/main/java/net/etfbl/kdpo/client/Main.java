@@ -54,6 +54,7 @@ public class Main extends Application {
     }
 
     private boolean showActivationWindow(Stage stage) throws Exception {
+        stage.getIcons().add(new Image("/images/khronos.png"));
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/activation.fxml"));
         Parent root = loader.load();
         ActivationWindowController controller = loader.getController();

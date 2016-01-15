@@ -1,11 +1,9 @@
 package net.etfbl.kdpo.client;
 
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Control;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -39,6 +37,9 @@ public class ActivationWindowController {
     private Label usernameErrorText;
 
     @FXML
+    private Label activationText;
+
+    @FXML
     private TextField txtActivationCodeOne;
 
     @FXML
@@ -48,10 +49,16 @@ public class ActivationWindowController {
     private AnchorPane anchorPane;
 
     @FXML
+    private AnchorPane anchorPaneLabels;
+
+    @FXML
     private VBox vBox;
 
     @FXML
     private TextField txtActivationCodeFour;
+
+    @FXML
+    private ProgressIndicator progressIndicator;
 
     private Stage stage;
     private String key;
@@ -65,9 +72,9 @@ public class ActivationWindowController {
 
         activationErrorText.setVisible(false);
         usernameErrorText.setVisible(false);
+        progressIndicator.setVisible(false);
 
         btnCancel.setOnMouseClicked(event -> {
-            activated = false;
             stage.close();
         });
 
@@ -103,8 +110,7 @@ public class ActivationWindowController {
             }
             key = txtActivationCodeOne.getText() + txtActivationCodeTwo.getText() + txtActivationCodeThree.getText() + txtActivationCodeFour.getText();
             //activationErrorText.setText("Incorrect activation code.");
-            activationErrorText.setVisible(true);
-
+            //activationErrorText.setVisible(true);
             /*
             checkUsername();
             checkKey();
@@ -113,7 +119,24 @@ public class ActivationWindowController {
             if (success) {
                 activated = true;
                 new Thread(() -> saveParametars(txtUsername.getText(), key)).start();
-                stage.close();
+                Task<Void> task = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        anchorPaneLabels.setDisable(true);
+                        for (int i = 0; i < 50; i++)
+                            Thread.sleep(100);
+                        Platform.runLater(() -> {
+                            activationText.setStyle("-fx-text-fill: #2aff05;");
+                            activationText.setText("Activated!");
+                            anchorPaneLabels.setDisable(false);
+                            btnActivate.setDisable(true);
+                            btnCancel.requestFocus();
+                        });
+                        return null;
+                    }
+                };
+                progressIndicator.visibleProperty().bind(task.runningProperty());
+                new Thread(task).start();
             }
 
         });
@@ -178,5 +201,15 @@ public class ActivationWindowController {
 
     public boolean isActivated() {
         return activated;
+    }
+
+    private boolean checkKeyValidation() {
+        // provjerava lokalno
+        return false;
+    }
+
+    private boolean checkKeyStatus() {
+        // provjerava na serveru
+        return false;
     }
 }
