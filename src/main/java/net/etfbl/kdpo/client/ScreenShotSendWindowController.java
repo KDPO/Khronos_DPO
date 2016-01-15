@@ -1,6 +1,5 @@
 package net.etfbl.kdpo.client;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -10,13 +9,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.*;
 import javafx.stage.Stage;
 
 import java.awt.*;
@@ -73,17 +70,15 @@ public class ScreenShotSendWindowController {
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                progressBar.setVisible(true);
                 dropDownList.setDisable(true);
                 for (int i = 0; i < 100; i++)
                     Thread.sleep(100);
                 dropDownList.setDisable(false);
-                progressBar.setVisible(false);
                 return null;
             }
         };
-
         progressBar.progressProperty().bind(task.progressProperty());
+        progressBar.visibleProperty().bind(task.runningProperty());
         new Thread(task).start();
         // za pomijeranje prozora
         anchorPane.setOnMousePressed(event -> {

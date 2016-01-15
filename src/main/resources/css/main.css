@@ -30,6 +30,10 @@
     -fx-background-color: #f98012;
 }
 
+.listView .list-cell:filled:focused {
+    -fx-background-color: #a2a2a2;
+}
+
 .listView .list-cell:filled:selected, .treeView .tree-cell:filled:selected {
     -fx-background-color: #f98012;
 }
@@ -92,6 +96,14 @@
     -fx-background-color: #f98012;
     -fx-border-color: transparent;
     -fx-end-margin: 0px;
+}
+
+.tabAlbumi:disabled {
+    -fx-opacity: 1;
+}
+
+.tabAlbumi:hover:disabled {
+    -fx-background-color: #000000;
 }
 
 .tabAlbumi:selected {
@@ -196,4 +208,12 @@
 .menu-item .label {
     -fx-text-fill: white;
     -fx-font-size: 13px;
+}
+
+.progressIndicator {
+    -fx-progress-color: #f98012;
+}
+
+.treeViewProgress {
+    -fx-progress-color: #ffffff;
 }

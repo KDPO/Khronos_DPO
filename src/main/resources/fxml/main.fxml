@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+
 <AnchorPane minHeight="360.0" minWidth="640.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.etfbl.kdpo.client.MainController">
     <children>
@@ -42,6 +46,11 @@
                                                 <TreeView fx:id="treeView" styleClass="treeView"
                                                           AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0"
                                                           AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="3.0"/>
+                                                <ProgressIndicator fx:id="treeViewProgressIndicator" prefHeight="20.0"
+                                                                   prefWidth="20.0" progress="0.0"
+                                                                   styleClass="treeViewProgress"
+                                                                   AnchorPane.rightAnchor="20.0"
+                                                                   AnchorPane.topAnchor="6.5"/>
                                             </children>
                                         </AnchorPane>
                                     </content>
@@ -108,19 +117,31 @@
                                         AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="0.0"/>
                             </children>
                         </AnchorPane>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false" hbarPolicy="NEVER"
-                                    style="-fx-background-color: #000;" styleClass="scrollPane">
-                            <VBox.margin>
-                                <Insets left="5.0" top="5.0"/>
-                            </VBox.margin>
-                            <content>
-                                <FlowPane fx:id="flowPane" hgap="5.0" style="-fx-background-color: #000;" vgap="5.0">
-                                    <padding>
-                                        <Insets bottom="5.0" left="5.0" top="5.0"/>
-                                    </padding>
-                                </FlowPane>
-                            </content>
-                        </ScrollPane>
+                        <AnchorPane VBox.vgrow="ALWAYS">
+                            <children>
+                                <ScrollPane fitToHeight="true" fitToWidth="true" focusTraversable="false"
+                                            hbarPolicy="NEVER" style="-fx-background-color: #000;"
+                                            styleClass="scrollPane" AnchorPane.bottomAnchor="0.0"
+                                            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                            AnchorPane.topAnchor="0.0">
+                                    <VBox.margin>
+                                        <Insets left="5.0" top="5.0"/>
+                                    </VBox.margin>
+                                    <content>
+                                        <FlowPane fx:id="flowPane" hgap="5.0" style="-fx-background-color: #000;"
+                                                  vgap="5.0">
+                                            <padding>
+                                                <Insets bottom="5.0" left="5.0" top="5.0"/>
+                                            </padding>
+                                        </FlowPane>
+                                    </content>
+                                </ScrollPane>
+                                <ProgressIndicator fx:id="progressIndicator" maxHeight="-Infinity" maxWidth="-Infinity"
+                                                   minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0"
+                                                   prefWidth="30.0" progress="0.0" styleClass="progressIndicator"
+                                                   AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0"/>
+                            </children>
+                        </AnchorPane>
                     </children>
                 </VBox>
             </children>

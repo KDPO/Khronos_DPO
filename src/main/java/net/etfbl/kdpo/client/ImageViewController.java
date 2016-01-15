@@ -271,7 +271,6 @@ public class ImageViewController {
     }
 
     private void back() {
-        images.clear();
         stage.getScene().setRoot(oldRoot);
     }
 

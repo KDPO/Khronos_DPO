@@ -1,8 +1,11 @@
 package net.etfbl.kdpo.client;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -81,6 +84,12 @@ public class MainController {
     @FXML
     private MenuItem menuSendSS;
 
+    @FXML
+    private ProgressIndicator progressIndicator;
+
+    @FXML
+    private ProgressIndicator treeViewProgressIndicator;
+
     private Stage stage;
 
     //Pomocna promjenjliva koja samo pamti stanje da li se do FS doslo preko + dugmeta u VA
@@ -93,6 +102,7 @@ public class MainController {
 
     private Parent imageViewCotrollerRoot;
     private ImageViewController imageViewController;
+
 
     //menu na desni klik
     private MenuItem menuNewTreeView;
@@ -123,15 +133,21 @@ public class MainController {
         btnAbort.setVisible(false);
         btnRemove.setVisible(false);
         btnDelete.setVisible(false);
+        progressIndicator.setVisible(false);
+        progressIndicator.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+        treeViewProgressIndicator.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
+        treeViewProgressIndicator.setVisible(false);
 
         // lista unutar koje će se nalaziti objekti Virtuelnih albuma za prikaz u ListView i kasnije korišćenje
         listViewData = FXCollections.observableArrayList();
         listView.setEditable(true);
         listView.setItems(listViewData);
-        listView.setOnMouseClicked((MouseEvent) -> {
-            if (listView.getSelectionModel().getSelectedItem() != null)
-                setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
-        });
+        listView.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                setImagesToFlowPane(newValue.getImages());
+                btnAddImages.setVisible(true);
+            }
+        }));
         listView.setContextMenu(new ContextMenu(menuRenameListView, menuRemoveListView));
 
         //ucitavanje serijalizovanih VA
@@ -155,7 +171,8 @@ public class MainController {
             }
             if (newTab.equals(tabAlbumi)) {
                 if (listView.getSelectionModel().getSelectedIndex() >= 0)
-                    btnAddImages.setVisible(true);
+                    if (!btnCheck.isVisible())
+                        btnAddImages.setVisible(true);
                 if (listViewData.isEmpty()) {
                     flowPane.getChildren().clear();
                 } else {
@@ -172,13 +189,6 @@ public class MainController {
             }
         });
 
-        //listener koji prikazuje ikonicu za dodavanje slika samo kad je selektovan neki album
-        listView.getSelectionModel().selectedItemProperty().addListener((ov, oldAlbum, newAlbum) -> {
-            if ((listView.getSelectionModel().getSelectedItem() != null) && (tabPane.getSelectionModel().getSelectedItem().equals(tabAlbumi))) {
-                btnAddImages.setVisible(true);
-            }
-        });
-
         btnAddNewAlbum.setOnMouseClicked(event -> showCreateNewAlbumWindow());
 
         btnAddImages.setOnMouseClicked(event -> addImages());
@@ -189,7 +199,7 @@ public class MainController {
 
         menuRemoveListView.setOnAction(event -> removeVA());
 
-        menuDeleteTreeView.setOnAction(event -> deleteFolder(treeView.getSelectionModel().getSelectedItem().getValue()));
+        menuDeleteTreeView.setOnAction(event -> deleteFolder());
 
         btnRemove.setOnMouseClicked(event -> removeImagesFromVA());
 
@@ -216,9 +226,6 @@ public class MainController {
         if (!listViewData.isEmpty()) {
             btnAddImages.setVisible(true);
             listView.getSelectionModel().selectFirst();
-            if (listView.getSelectionModel().getSelectedItem().getImages() != null) {
-                setImagesToFlowPane(listView.getItems().get(0).getImages());
-            }
         }
     }
 
@@ -272,12 +279,22 @@ public class MainController {
         // za dinamičko učitavanje
         root.addEventHandler(TreeItem.branchExpandedEvent(), new EventHandler<TreeItem.TreeModificationEvent<MyFile>>() {
             public void handle(TreeItem.TreeModificationEvent<MyFile> event) {
-                findChilds(event.getTreeItem().getValue(), event.getTreeItem());
+                TreeItem<MyFile> item = event.getTreeItem();
+                Task<Void> task = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        TreeItem<MyFile> temp = new TreeItem<>();
+                        findChilds(item.getValue(), temp);
+                        Platform.runLater(() -> item.getChildren().setAll(temp.getChildren()));
+                        return null;
+                    }
+                };
+                treeViewProgressIndicator.progressProperty().bind(task.progressProperty());
+                treeViewProgressIndicator.visibleProperty().bind(task.runningProperty());
+                new Thread(task).start();
             }
         });
 
-        // listener za prikaz slika u flowPane na sleketovanje foldera
-        // treba izbaciti odavde
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             ObservableList<File> images = FXCollections.observableArrayList();
             if (newValue != null)
@@ -297,7 +314,7 @@ public class MainController {
 
     // Don't repeat yourself  :D
     private void setChild(TreeItem<MyFile> parent, TreeItem<MyFile> child) {
-        child.getChildren().add(new TreeItem<>()); // kako bi se pojavlia strelica za expand
+        child.getChildren().add(new TreeItem<>(new MyFile("Loading..."))); // kako bi se pojavlia strelica za expand
         parent.getChildren().add(child);
     }
 
@@ -305,40 +322,51 @@ public class MainController {
     private void setImagesToFlowPane(ObservableList<File> images) {
         ObservableList<Node> childs = flowPane.getChildren();
         childs.clear();
-        for (File file : images)
-            Platform.runLater(() -> {
-                ImageFrame iFrame = new ImageFrame(file);
-                childs.add(iFrame);
-                /*  onClick na ImageFrame treba da pređe u prikaz slike */
-                iFrame.setOnMouseClicked((MouseEvent event) -> {
-                    if (event.getButton().equals(MouseButton.PRIMARY))
-                        showImageViewController(getImagesFromFlowPane(), flowPane.getChildren().indexOf(iFrame));
-                });
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                /* code start here  */
+                for (File file : images) {
+                    ImageFrame iFrame = new ImageFrame(file);
+                    Platform.runLater(() -> childs.add(iFrame));
 
-                iFrame.getCheckBox().setOnAction(event -> {
-                    if (buttonsVisibleControl) {
-                        if (iFrame.getCheckBox().isSelected()) {
-                            if (checked == 0) {
-                                btnAddImages.setVisible(true);
-                                if (tabPane.getSelectionModel().getSelectedItem().equals(tabAlbumi)) {
-                                    btnRemove.setVisible(true);
-                                } else if (tabPane.getSelectionModel().getSelectedItem().equals(tabFS)) {
-                                    btnDelete.setVisible(true);
+                    iFrame.setOnMouseClicked((MouseEvent event) -> {
+                        if (event.getButton().equals(MouseButton.PRIMARY)) {
+                            showImageViewController(getImagesFromFlowPane(), flowPane.getChildren().indexOf(iFrame));
+                        }
+                    });
+
+                    iFrame.getCheckBox().setOnAction(event -> {
+                        if (buttonsVisibleControl) {
+                            if (iFrame.getCheckBox().isSelected()) {
+                                if (checked == 0) {
+                                    btnAddImages.setVisible(true);
+                                    if (tabPane.getSelectionModel().getSelectedItem().equals(tabAlbumi)) {
+                                        btnRemove.setVisible(true);
+                                    } else if (tabPane.getSelectionModel().getSelectedItem().equals(tabFS)) {
+                                        btnDelete.setVisible(true);
+                                    }
+                                }
+                                checked++;
+                            } else {
+                                checked--;
+                                if (checked == 0) {
+                                    if (tabPane.getSelectionModel().getSelectedItem().equals(tabFS))
+                                        btnAddImages.setVisible(false);
+                                    btnDelete.setVisible(false);
+                                    btnRemove.setVisible(false);
                                 }
                             }
-                            checked++;
-                        } else {
-                            checked--;
-                            if (checked == 0) {
-                                if (tabPane.getSelectionModel().getSelectedItem().equals(tabFS))
-                                    btnAddImages.setVisible(false);
-                                btnDelete.setVisible(false);
-                                btnRemove.setVisible(false);
-                            }
                         }
-                    }
-                });
-            });
+                    });
+                }
+                /* code end here  */
+                return null;
+            }
+        };
+        progressIndicator.visibleProperty().bind(task.runningProperty());
+        progressIndicator.progressProperty().bind(task.progressProperty());
+        new Thread(task).start();
     }
 
     // objekti slika su već napravljeni pa zašto ih ne iskoristiti
@@ -404,6 +432,7 @@ public class MainController {
         buttonsVisibleControl = false;
         if (tabPane.getSelectionModel().getSelectedItem().equals(tabAlbumi)) {
             tabPane.getSelectionModel().select(tabFS);
+            tabAlbumi.setDisable(true);
             btnCheck.setVisible(true);
             btnAbort.setVisible(true);
             btnAddImages.setVisible(false);
@@ -420,6 +449,8 @@ public class MainController {
 
     //vrsi ubacivanje slika u selektovani album
     private void addImagesToAlbum() {
+        if (tabAlbumi.isDisable())
+            tabAlbumi.setDisable(false);
         buttonsVisibleControl = true;
         listView.getSelectionModel().getSelectedItem().setImages(getCheckedImagesFromFlowPane());
         new Thread(this::serializeAlbums).start();
@@ -432,6 +463,8 @@ public class MainController {
 
     //omogucava abort
     private void abortAddingImages() {
+        if (tabAlbumi.isDisable())
+            tabAlbumi.setDisable(false);
         buttonsVisibleControl = true;
         tabPane.getSelectionModel().select(tabAlbumi);
         fromAlbum = false;
@@ -468,6 +501,7 @@ public class MainController {
     private void readSerializedAlbums() {
         String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "VirtualAlbums";
         File inputDirectory = new File(path);
+        /* nema potrebe za ovim ?
         if (inputDirectory.isDirectory()) {
             File[] fileList = inputDirectory.listFiles();
             if (fileList != null) {
@@ -477,11 +511,19 @@ public class MainController {
                         listViewData.addAll((ArrayList<VirtualAlbum>) object.readObject());
                         object.close();
                     } catch (Exception ex) {
-
+                        ex.printStackTrace();
                     }
                 }
             }
-        }
+        } */
+        if (inputDirectory.isDirectory())
+            try {
+                ObjectInputStream object = new ObjectInputStream(new FileInputStream(path + File.separator + "virtualalbums.kva"));
+                listViewData.setAll((ArrayList<VirtualAlbum>) object.readObject());
+                object.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
     }
 
     //metoda koja serijalizuje VA iz listViewData
@@ -498,7 +540,7 @@ public class MainController {
             object.writeObject(list);
             object.close();
         } catch (Exception ex) {
-
+            ex.printStackTrace();
         }
     }
 
@@ -506,9 +548,7 @@ public class MainController {
     private void removeVA() {
         if (!showRemoveVirtualAlbumWindow()) {
             listViewData.remove(listView.getSelectionModel().getSelectedItem());
-            if (!listViewData.isEmpty()) {
-                setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
-            } else {
+            if (listViewData.isEmpty()) {
                 flowPane.getChildren().clear();
                 btnAddImages.setVisible(false);
             }
@@ -542,22 +582,22 @@ public class MainController {
     }
 
     //kao sto pise, brise foldere kad se na FS izabere delete iz dropdown menija
-    private void deleteFolder(File file){
-        File[] files = file.listFiles();
-        try{
-            if(files.length != 0){
-                for(File fileTmp : files){
-                    if(fileTmp.isDirectory()){
-                        deleteFolder(fileTmp);
-                    }else{
-                        Files.delete(Paths.get(fileTmp.getAbsolutePath()));
-                    }
-                }
-            }
-            Files.delete(Paths.get(file.getAbsolutePath()));
-            System.out.println("Obrisano");
-        }catch (IOException ex){
-            ex.printStackTrace();
+    //rekurzivno brisanje
+    private void deleteFolder() {
+        TreeItem<MyFile> item = treeView.getSelectionModel().getSelectedItem();
+        item.getParent().getChildren().remove(item);
+        // kada radiš nešto u pozadini to treba prebaciti u neki background thread da se ne opterećuje UI thread
+        new Thread(() -> deleteFromDisk(item.getValue())).start();
+    }
+
+    private void deleteFromDisk(File file) {
+        for (File var : file.listFiles()) {
+            if (var.isDirectory())
+                deleteFromDisk(var);
+            else if (!var.delete())
+                var.deleteOnExit();
         }
+        if (!file.delete())
+            file.deleteOnExit();
     }
 }
