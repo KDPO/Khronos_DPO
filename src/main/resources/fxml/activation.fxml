@@ -93,7 +93,7 @@
                                 <Font size="18.0"/>
                             </font>
                         </Button>
-                        <Button fx:id="btnCancel" focusTraversable="false" layoutX="335.0" layoutY="196.0"
+                        <Button fx:id="btnClose" focusTraversable="false" layoutX="335.0" layoutY="196.0"
                                 mnemonicParsing="false" prefHeight="30.0" prefWidth="150.0"
                                 style="-fx-border-radius: 5px; -fx-background-color: #f98012; -fx-border-color: #fff;"
                                 styleClass="btnCancel" text="Close" textFill="WHITE">

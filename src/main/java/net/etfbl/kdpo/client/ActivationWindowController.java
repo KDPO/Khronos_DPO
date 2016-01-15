@@ -22,7 +22,7 @@ public class ActivationWindowController {
     private TextField txtActivationCodeTwo;
 
     @FXML
-    private Button btnCancel;
+    private Button btnClose;
 
     @FXML
     private TextField txtUsername;
@@ -62,6 +62,7 @@ public class ActivationWindowController {
 
     private Stage stage;
     private String key;
+    private String username;
     private boolean activated = false;
 
     private double x = 0;
@@ -74,7 +75,7 @@ public class ActivationWindowController {
         usernameErrorText.setVisible(false);
         progressIndicator.setVisible(false);
 
-        btnCancel.setOnMouseClicked(event -> {
+        btnClose.setOnMouseClicked(event -> {
             stage.close();
         });
 
@@ -108,54 +109,30 @@ public class ActivationWindowController {
                     }
                 }
             }
+            username = charSequence.toString();
             key = txtActivationCodeOne.getText() + txtActivationCodeTwo.getText() + txtActivationCodeThree.getText() + txtActivationCodeFour.getText();
-            //activationErrorText.setText("Incorrect activation code.");
-            //activationErrorText.setVisible(true);
-            /*
-            checkUsername();
-            checkKey();
-            ako prodje i provjera lozinke, i jedinstvenosti korisnickog imena, treba pokrenuti mainController
-             */
+
+            if (key.length() != 16) {
+                // još neke provjere
+                success = false;
+                activationErrorText.setText("Incorrect activation code.");
+                activationErrorText.setVisible(true);
+            }
+
             if (success) {
-                activated = true;
-                new Thread(() -> saveParametars(txtUsername.getText(), key)).start();
-                Task<Void> task = new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        anchorPaneLabels.setDisable(true);
-                        for (int i = 0; i < 50; i++)
-                            Thread.sleep(100);
-                        Platform.runLater(() -> {
-                            activationText.setStyle("-fx-text-fill: #2aff05;");
-                            activationText.setText("Activated!");
-                            anchorPaneLabels.setDisable(false);
-                            btnActivate.setDisable(true);
-                            btnCancel.requestFocus();
-                        });
-                        return null;
-                    }
-                };
-                progressIndicator.visibleProperty().bind(task.runningProperty());
-                new Thread(task).start();
+                //provjera na serveru
+                checkActivationStatus();
             }
 
         });
 
-        txtActivationCodeOne.setOnMouseClicked((MouseEvent) -> {
-            txtActivationCodeOne.clear();
-        });
+        txtActivationCodeOne.setOnMouseClicked((MouseEvent) -> txtActivationCodeOne.clear());
 
-        txtActivationCodeTwo.setOnMouseClicked((MouseEvent) -> {
-            txtActivationCodeTwo.clear();
-        });
+        txtActivationCodeTwo.setOnMouseClicked((MouseEvent) -> txtActivationCodeTwo.clear());
 
-        txtActivationCodeThree.setOnMouseClicked((MouseEvent) -> {
-            txtActivationCodeThree.clear();
-        });
+        txtActivationCodeThree.setOnMouseClicked((MouseEvent) -> txtActivationCodeThree.clear());
 
-        txtActivationCodeFour.setOnMouseClicked((MouseEvent) -> {
-            txtActivationCodeFour.clear();
-        });
+        txtActivationCodeFour.setOnMouseClicked((MouseEvent) -> txtActivationCodeFour.clear());
 
         registerListener(txtActivationCodeOne, txtActivationCodeTwo);
         registerListener(txtActivationCodeTwo, txtActivationCodeThree);
@@ -178,25 +155,27 @@ public class ActivationWindowController {
 
     // ako je aktivacija uspješna sačuvaj podatke na FS radi provjere aktivacije pri idućem pokretanju
     private void saveParametars(String username, String key) {
-        try {
-            String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "License";
-            File outputPath = new File(path);
-            if (!outputPath.exists()) {
-                outputPath.mkdirs();
+        new Thread(() -> {
+            try {
+                String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "License";
+                File outputPath = new File(path);
+                if (!outputPath.exists()) {
+                    outputPath.mkdirs();
+                }
+                String file = path + File.separator + "license.txt";
+                String hash = "";
+                do {
+                    hash = Main.getHashCode(username, key);
+                } while (hash == null);
+                PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(file)), true);
+                writer.println("<username>" + username + "</username>");
+                writer.println("<key>" + key + "</key>");
+                writer.println("<hashkey>" + hash + "</hashkey>");
+                writer.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            String file = path + File.separator + "license.txt";
-            String hash = "";
-            do {
-                hash = Main.getHashCode(username, key);
-            } while (hash == null);
-            PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(file)), true);
-            writer.println("<username>" + username + "</username>");
-            writer.println("<key>" + key + "</key>");
-            writer.println("<hashkey>" + hash + "</hashkey>");
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        }).start();
     }
 
     public boolean isActivated() {
@@ -208,8 +187,29 @@ public class ActivationWindowController {
         return false;
     }
 
-    private boolean checkKeyStatus() {
+    private void checkActivationStatus() {
         // provjerava na serveru
-        return false;
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                // ovdje ide konekcija sa serverom i sve ostalo
+                anchorPaneLabels.setDisable(true);
+                for (int i = 0; i < 50; i++)
+                    Thread.sleep(100);
+                Platform.runLater(() -> {
+                    activated = true;
+                    activationText.setStyle("-fx-text-fill: #2aff05;");
+                    activationText.setText("Activated!");
+                    anchorPaneLabels.setDisable(false);
+                    btnActivate.setDisable(true);
+                    btnClose.requestFocus();
+                });
+                //sacuvaj da je aktivirano
+                saveParametars(username, key);
+                return null;
+            }
+        };
+        progressIndicator.visibleProperty().bind(task.runningProperty());
+        new Thread(task).start();
     }
 }
