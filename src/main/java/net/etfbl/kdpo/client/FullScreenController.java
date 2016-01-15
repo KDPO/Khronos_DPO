@@ -19,7 +19,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -54,10 +53,8 @@ public class FullScreenController {
 		hBox.getChildren().add(ivp);
 		ivp.prefHeightProperty().bind(hBox.heightProperty());
 		ivp.prefWidthProperty().bind(hBox.widthProperty());
-		lblStatus.setTextFill(Paint.valueOf("green"));
 		lblStatus.setContentDisplay(ContentDisplay.TOP);
 		progressBar.setOpacity(0.0);
-		lblEndOfSlideShow.setTextFill(Paint.valueOf("green"));
 		lblEndOfSlideShow.setOpacity(0.0);
 		lblEndOfSlideShow.setText("End of Slide Show");
 	}
@@ -145,7 +142,12 @@ public class FullScreenController {
 		myScene.setCursor(Cursor.DEFAULT);
 		myStage.close();
 		imageViewController.setINDEX(index);
+		previousStage.setHeight(height);
+		previousStage.setWidth(width);
+		previousStage.setX(X);
+		previousStage.setY(Y);
 		previousStage.show();
+
 	}
 
 	private void slideShow() {
@@ -205,6 +207,18 @@ public class FullScreenController {
 		}
 		ivp.setMaxHeight(imageView.getImage().getHeight());
 		noActivity = false;
+	}
+
+	private double width;
+	private double height;
+	private double X;
+	private double Y;
+
+	public void setStuff(double a, double b, double c, double d) {
+		width = a;
+		height = b;
+		X = c;
+		Y = d;
 	}
 
 	private void nextImage() {

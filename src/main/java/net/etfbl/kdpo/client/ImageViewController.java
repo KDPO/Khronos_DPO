@@ -283,8 +283,10 @@ public class ImageViewController {
             fsc.setPreviousStageStage(stage);
             fsc.setImages(images, INDEX);
             fsc.setImageViewController(this);
-            fsc.show();
+            fsc.setStuff(stage.getWidth(),stage.getHeight(),stage.getX(),stage.getY());
             stage.hide();
+            fsc.show();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
