@@ -65,7 +65,6 @@ public class ScreenShotSendWindowController {
         hBoxImageContainer.getChildren().add(ivp);
         ivp.prefHeightProperty().bind(hBoxImageContainer.heightProperty());
         ivp.prefWidthProperty().bind(hBoxImageContainer.widthProperty());
-        progressBar.setPrefHeight(30);
         new Thread(this::createImage).start();
         Task<Void> task = new Task<Void>() {
             @Override
@@ -77,7 +76,6 @@ public class ScreenShotSendWindowController {
                 return null;
             }
         };
-        progressBar.progressProperty().bind(task.progressProperty());
         progressBar.visibleProperty().bind(task.runningProperty());
         new Thread(task).start();
         // za pomijeranje prozora

@@ -47,8 +47,7 @@
                                                           AnchorPane.bottomAnchor="3.0" AnchorPane.leftAnchor="3.0"
                                                           AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="3.0"/>
                                                 <ProgressIndicator fx:id="treeViewProgressIndicator" prefHeight="20.0"
-                                                                   prefWidth="20.0" progress="0.0"
-                                                                   styleClass="treeViewProgress"
+                                                                   prefWidth="20.0" styleClass="treeViewProgress"
                                                                    AnchorPane.rightAnchor="20.0"
                                                                    AnchorPane.topAnchor="6.5"/>
                                             </children>
@@ -66,8 +65,8 @@
                 </AnchorPane>
                 <VBox style="-fx-background-color: #000;" HBox.hgrow="ALWAYS">
                     <children>
-                        <AnchorPane maxHeight="40.0" minHeight="40.0" prefHeight="40.0"
-                                    style="-fx-background-color: #2c2c2c;">
+                        <AnchorPane fx:id="anchorPaneButtonContainer" maxHeight="40.0" minHeight="40.0"
+                                    prefHeight="40.0" style="-fx-background-color: #2c2c2c;">
                             <children>
                                 <MenuButton fx:id="menu" focusTraversable="false" maxHeight="-Infinity"
                                             maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
@@ -82,10 +81,9 @@
                                         <MenuItem fx:id="menuPreferences" mnemonicParsing="false" text="Preferences"/>
                                     </items>
                                 </MenuButton>
-                                <Label fx:id="labelAlbumDescription" layoutX="78.0" layoutY="12.0" minWidth="60.0"
-                                       prefHeight="40.0" prefWidth="169.0" text="Label" textFill="WHITE"
+                                <Label fx:id="lblAlbumDescription" layoutX="78.0" layoutY="12.0" textFill="WHITE"
                                        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="80.0"
-                                       AnchorPane.topAnchor="0.0">
+                                       AnchorPane.rightAnchor="150.0" AnchorPane.topAnchor="0.0">
                                     <font>
                                         <Font size="15.0"/>
                                     </font>
@@ -138,7 +136,7 @@
                                 </ScrollPane>
                                 <ProgressIndicator fx:id="progressIndicator" maxHeight="-Infinity" maxWidth="-Infinity"
                                                    minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0"
-                                                   prefWidth="30.0" progress="0.0" styleClass="progressIndicator"
+                                                   prefWidth="30.0" styleClass="progressIndicator"
                                                    AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0"/>
                             </children>
                         </AnchorPane>

@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
+
 <VBox fx:id="vBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
       prefHeight="208.0" prefWidth="319.0" style="-fx-background-color: #000; -fx-border-color: #f98012;"
       stylesheets="@../css/newAlbum.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
@@ -22,12 +25,13 @@
         <AnchorPane prefHeight="165.0" prefWidth="185.0">
             <children>
                 <TextField fx:id="txtAlbumName" layoutX="14.0" layoutY="10.0" prefHeight="27.0" prefWidth="289.0"
+                           promptText="Album name"
                            style="-fx-background-color: #2c2c2c; -fx-border-color: #f98012; -fx-border-radius: 5px;"
-                           styleClass="albumName" text="Album name"/>
+                           styleClass="albumName"/>
                 <TextArea fx:id="txtAlbumDescription" layoutX="14.0" layoutY="58.0" maxHeight="-Infinity"
-                          maxWidth="-Infinity" prefHeight="56.0" prefWidth="289.0"
+                          maxWidth="-Infinity" prefHeight="56.0" prefWidth="289.0" promptText="Album description"
                           style="-fx-background-color: #2c2c2c; -fx-border-color: #f98012; -fx-border-radius: 5px;"
-                          styleClass="albumDescription" text="Album description"/>
+                          styleClass="albumDescription" wrapText="true"/>
                 <Label fx:id="lblErrorText" layoutX="17.0" layoutY="35.0" prefHeight="17.0" prefWidth="383.0"
                        textFill="RED">
                     <font>

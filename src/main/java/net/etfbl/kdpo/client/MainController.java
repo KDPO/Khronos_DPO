@@ -1,6 +1,8 @@
 package net.etfbl.kdpo.client;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -15,6 +17,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -87,6 +90,9 @@ public class MainController {
     @FXML
     private ProgressIndicator treeViewProgressIndicator;
 
+    @FXML
+    private AnchorPane anchorPaneButtonContainer;
+
     private Stage stage;
 
     //Pomocna promjenjliva koja samo pamti stanje da li se do FS doslo preko + dugmeta u VA
@@ -143,6 +149,7 @@ public class MainController {
             if (newValue != null) {
                 setImagesToFlowPane(newValue.getImages());
                 btnAddImages.setVisible(true);
+                lblAlbumDescription.setText(newValue.getDescription());
             }
         }));
         listView.setContextMenu(new ContextMenu(menuRenameListView, menuRemoveListView));
@@ -159,6 +166,7 @@ public class MainController {
         tabPane.getSelectionModel().selectedItemProperty().addListener((ov, oldTab, newTab) -> {
             if (newTab.equals(tabFS)) {
                 treeView.getSelectionModel().clearSelection();
+                lblAlbumDescription.setText("");
                 btnAddImages.setVisible(false);
                 flowPane.getChildren().clear();
                 if (checked != 0) {
@@ -174,6 +182,7 @@ public class MainController {
                     flowPane.getChildren().clear();
                 } else {
                     if (listView.getSelectionModel().getSelectedItem() != null) {
+                        lblAlbumDescription.setText(listView.getSelectionModel().getSelectedItem().getDescription());
                         setImagesToFlowPane(listView.getSelectionModel().getSelectedItem().getImages());
                     } else {
                         flowPane.getChildren().clear();
@@ -294,8 +303,10 @@ public class MainController {
 
         treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             ObservableList<File> images = FXCollections.observableArrayList();
-            if (newValue != null)
+            if (newValue != null) {
                 images.setAll(newValue.getValue().listFiles((dir, name) -> name.endsWith("jpg") || name.endsWith("png") || name.endsWith("jpeg")));
+                lblAlbumDescription.setText(newValue.getValue().toString());
+            }
             setImagesToFlowPane(images);
         });
     }
@@ -362,7 +373,6 @@ public class MainController {
             }
         };
         progressIndicator.visibleProperty().bind(task.runningProperty());
-        progressIndicator.progressProperty().bind(task.progressProperty());
         new Thread(task).start();
     }
 
@@ -515,9 +525,18 @@ public class MainController {
         } */
         if (inputDirectory.isDirectory())
             try {
-                ObjectInputStream object = new ObjectInputStream(new FileInputStream(path + File.separator + "virtualalbums.kva"));
-                listViewData.setAll((ArrayList<VirtualAlbum>) object.readObject());
-                object.close();
+                File file = new File(path + File.separator + "virtualalbums.kva");
+                if (file.exists()) {
+                    ObjectInputStream object = new ObjectInputStream(new FileInputStream(file));
+                    listViewData.setAll((ArrayList<VirtualAlbum>) object.readObject());
+                    object.close();
+                }
+                file = new File(path + File.separator + "screenshot_album.kva");
+                if (file.exists()) {
+                    ObjectInputStream object = new ObjectInputStream(new FileInputStream(file));
+                    screenshotAlbum = (VirtualAlbum) object.readObject();
+                    object.close();
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -543,9 +562,14 @@ public class MainController {
         }).start();
     }
 
+    public static void serializeSSAlbum() {
+        String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "VirtualAlbums";
+
+    }
+
     //ukoliko je potvrdjeno brisanje brise VA i prikazuje slike iz sledeceg
     private void removeVA() {
-        if (!showRemoveVirtualAlbumWindow()) {
+        if (!showRemoveVirtualAlbumWindow("Remove virtual album?")) {
             listViewData.remove(listView.getSelectionModel().getSelectedItem());
             if (listViewData.isEmpty()) {
                 flowPane.getChildren().clear();
@@ -555,13 +579,14 @@ public class MainController {
     }
 
     //metoda koja prikazuje prozor u kojem se potcrdjuje brisanje VA
-    private boolean showRemoveVirtualAlbumWindow() {
+    private boolean showRemoveVirtualAlbumWindow(String text) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/removeVirtualAlbum.fxml"));
             Parent root = loader.load();
             RemoveVirtualAlbumWindowController controller = loader.getController();
             Stage stage = new Stage();
             controller.setStage(stage);
+            controller.setText(text);
             stage.setScene(new Scene(root, 319, 98));
             stage.setResizable(false);
             stage.initStyle(StageStyle.UNDECORATED);
