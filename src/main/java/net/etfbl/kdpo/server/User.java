@@ -21,6 +21,10 @@ public class User implements Serializable {
         this.key = key;
     }
 
+    public String getUsername(){
+        return username;
+    }
+
     public boolean areBlockedAll() {
         return allBlocked;
     }
