@@ -33,7 +33,7 @@ public class Server {
 				}
 			}
 		} catch (IOException e) {
-			//TO DO something
+			//TODO something
 		}
 	}
 

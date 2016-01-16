@@ -63,7 +63,7 @@
                                AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0"/>
                     </children>
                 </AnchorPane>
-                <VBox style="-fx-background-color: #000;" HBox.hgrow="ALWAYS">
+                <VBox focusTraversable="true" style="-fx-background-color: #000;" HBox.hgrow="ALWAYS">
                     <children>
                         <AnchorPane fx:id="anchorPaneButtonContainer" focusTraversable="true" maxHeight="40.0"
                                     minHeight="40.0" prefHeight="40.0" style="-fx-background-color: #2c2c2c;">
