@@ -217,3 +217,7 @@
 .treeViewProgress {
     -fx-progress-color: #ffffff;
 }
+
+.text-field {
+    -fx-background-color: transparent;
+}

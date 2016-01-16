@@ -6,6 +6,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,6 +14,9 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.ComboBoxListCell;
+import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -21,6 +25,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Callback;
+import javafx.util.converter.DefaultStringConverter;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
@@ -106,29 +112,9 @@ public class MainController {
     private Parent imageViewCotrollerRoot;
     private ImageViewController imageViewController;
 
-
-    //menu na desni klik
-    private MenuItem menuNewTreeView;
-    private MenuItem menuCopyTreeView;
-    private MenuItem menuCutTreeView;
-    private MenuItem menuPasteTreeView;
-    private MenuItem menuDeleteTreeView;
-    private MenuItem menuRenameTreeView;
-
-    private MenuItem menuRemoveListView;
-    private MenuItem menuRenameListView;
-
     @FXML
     void initialize() {
         mainController = this;
-        menuNewTreeView = new MenuItem("New");
-        menuCopyTreeView = new MenuItem("Copy");
-        menuCutTreeView = new MenuItem("Cut");
-        menuPasteTreeView = new MenuItem("Paste");
-        menuDeleteTreeView = new MenuItem("Delete");
-        menuRenameTreeView = new MenuItem("Rename");
-        menuRemoveListView = new MenuItem("Remove");
-        menuRenameListView = new MenuItem("Rename");
 
         lblMessages.setVisible(false);
         btnAddImages.setVisible(false);
@@ -144,6 +130,7 @@ public class MainController {
         // lista unutar koje će se nalaziti objekti Virtuelnih albuma za prikaz u ListView i kasnije korišćenje
         listViewData = FXCollections.observableArrayList();
         listView.setEditable(true);
+        treeView.setEditable(true);
         listView.setItems(listViewData);
         listView.getSelectionModel().selectedItemProperty().addListener(((observable, oldValue, newValue) -> {
             if (newValue != null) {
@@ -152,7 +139,32 @@ public class MainController {
                 lblAlbumDescription.setText(newValue.getDescription());
             }
         }));
-        listView.setContextMenu(new ContextMenu(menuRenameListView, menuRemoveListView));
+        listView.setCellFactory(new Callback<ListView<VirtualAlbum>, ListCell<VirtualAlbum>>() {
+            @Override
+            public ListCell<VirtualAlbum> call(ListView<VirtualAlbum> param) {
+                return new TextFieldListCell<VirtualAlbum>() {
+                    MenuItem remove = new MenuItem("Remove");
+                    MenuItem rename = new MenuItem("Rename");
+
+                    {
+                        remove.setOnAction(event -> removeVA());
+                        rename.setOnAction(event -> startEdit());
+                    }
+
+
+                    @Override
+                    public void updateItem(VirtualAlbum item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item != null) {
+                            setText(item.getName());
+                            setContextMenu(new ContextMenu(remove, rename));
+                        }
+                    }
+                };
+            }
+        });
+
+        // listView.setContextMenu(new ContextMenu(menuRenameListView, menuRemoveListView));
 
         //ucitavanje serijalizovanih VA
         readSerializedAlbums();
@@ -202,10 +214,6 @@ public class MainController {
         btnCheck.setOnMouseClicked(event -> addImagesToAlbum());
 
         btnAbort.setOnMouseClicked(event -> abortAddingImages());
-
-        menuRemoveListView.setOnAction(event -> removeVA());
-
-        menuDeleteTreeView.setOnAction(event -> deleteFolder());
 
         btnRemove.setOnMouseClicked(event -> removeImagesFromVA());
 
@@ -272,7 +280,42 @@ public class MainController {
 
     private void setTreeView() {
         /* TreeView initialization */
-        treeView.setContextMenu(new ContextMenu(menuNewTreeView, menuCopyTreeView, menuCutTreeView, menuPasteTreeView, menuDeleteTreeView, menuRenameTreeView));
+        treeView.setCellFactory(new Callback<TreeView<MyFile>, TreeCell<MyFile>>() {
+            @Override
+            public TreeCell<MyFile> call(TreeView<MyFile> param) {
+                return new TextFieldTreeCell<MyFile>() {
+                    MenuItem menuNewTreeView = new MenuItem("New");
+                    MenuItem menuCopyTreeView = new MenuItem("Copy");
+                    MenuItem menuCutTreeView = new MenuItem("Cut");
+                    MenuItem menuPasteTreeView = new MenuItem("Paste");
+                    MenuItem menuDeleteTreeView = new MenuItem("Delete");
+                    MenuItem menuRenameTreeView = new MenuItem("Rename");
+
+                    {
+                        menuRenameTreeView.setOnAction(event -> startEdit());
+                        menuNewTreeView.setOnAction(event -> {
+                            //TODO reakcija na New
+                        });
+                        menuCopyTreeView.setOnAction(event -> {
+                            //TODO reakcija na Copy
+                        });
+                    }
+
+                    @Override
+                    public void updateItem(MyFile item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (!empty && item != null) {
+                            if ("Desktop".equals(item.getName()))
+                                setContextMenu(new ContextMenu(menuNewTreeView, menuCopyTreeView, menuPasteTreeView));
+                            else if ("".equals(item.getName()))
+                                setContextMenu(new ContextMenu(menuNewTreeView, menuPasteTreeView));
+                            else
+                                setContextMenu(new ContextMenu(menuNewTreeView, menuCopyTreeView, menuCutTreeView, menuPasteTreeView, menuDeleteTreeView, menuRenameTreeView));
+                        }
+                    }
+                };
+            }
+        });
         TreeItem<MyFile> root = new TreeItem<>();
         treeView.setRoot(root);
         treeView.setShowRoot(false);

@@ -191,24 +191,28 @@ public class ActivationWindowController {
             @Override
             protected Void call() throws Exception {
                 // ovdje ide konekcija sa serverom i sve ostalo
-				try {
-					Socket socket = new Socket(ClientServicesThread.SERVER_IP, ClientServicesThread.SERVER_PORT);
-					BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-					PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()),true);
-					out.println("TOACTIVATE#" + username + "#" + key);
+                anchorPaneLabels.setDisable(true);
+                try {
+                    Socket socket = new Socket(ClientServicesThread.SERVER_IP, ClientServicesThread.SERVER_PORT);
+                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
+                    out.println("TOACTIVATE#" + username + "#" + key);
                     String response = in.readLine();
                     // očekivani odgovor
-                    // ACTIVATION#OK ili ACTIVATION#NOK
-                    if (response.split("#")[1].equals("OK")){
+                    // ACTIVATION#OK ili ACTIVATION#NOK#poruka
+                    if (response.split("#")[1].equals("OK")) {
                         // prekopiran markov kod ...
+                        activated = true;
                         Platform.runLater(() -> {
-                            activated = true;
                             activationText.setStyle("-fx-text-fill: #2aff05;");
                             activationText.setText("Activated!");
                             anchorPaneLabels.setDisable(false);
                             btnActivate.setDisable(true);
                             btnClose.requestFocus();
                         });
+
+                        // sačuvaj na FS
+                        saveParametars(username, key);
 
                         // nakon što je aktiviran, pokreće se service thread
                         // service thread se još treba pokrenuti negdje u mainu nakon provjere da li je SW aktiviran ili ne
@@ -222,30 +226,39 @@ public class ActivationWindowController {
                         // TODO prikazati grešku grafički
                         // zatim omogućiti ponovni unos
                         // nisam još siguran kako funkcioniše ovaj kontroler
+                        activated = false;
+                        String[] s = response.split("#");
+                        Platform.runLater(() -> {
+                            if ("NOK".equals(s[2])) {
+                                // username already taken
+                                usernameErrorText.setText("Username already taken.");
+                                usernameErrorText.setVisible(true);
+                            }
+
+                            if ("NOK".equals(s[3])) {
+                                // invalid activation key
+                                activationErrorText.setText("Incorrect activation code.");
+                                activationErrorText.setVisible(true);
+                            }
+                        });
                     }
-				} catch (IOException e) {
-					// pukla veza tokom prijave ili aktivacije
-					// treba obrisati ove printStackTraceove kasnije, i pošteno obraditi izuzetke ;)
+                } catch (IOException e) {
+                    // pukla veza tokom prijave ili aktivacije
+                    // treba obrisati ove printStackTraceove kasnije, i pošteno obraditi izuzetke ;)
                     ClientServicesThread.socket = null;
                     ClientServicesThread.in = null;
                     ClientServicesThread.out = null;
-					e.printStackTrace();
-				}
-                anchorPaneLabels.setDisable(true);
-                /* Markov kod ...
-                for (int i = 0; i < 50; i++)
-                    Thread.sleep(100);
-                Platform.runLater(() -> {
-                    activated = true;
-                    activationText.setStyle("-fx-text-fill: #2aff05;");
-                    activationText.setText("Activated!");
-                    anchorPaneLabels.setDisable(false);
-                    btnActivate.setDisable(true);
-                    btnClose.requestFocus();
-                });
-                */
+                    // reakcija na prekinutu vezu
+                    activated = false;
+                    Platform.runLater(() -> {
+                        btnClose.requestFocus();
+                        activationText.setStyle("-fx-text-fill: red;");
+                        activationText.setText("Connection problem!");
+                        anchorPaneLabels.setDisable(false);
+                    });
+                }
+                anchorPaneLabels.setDisable(false);
                 //sacuvaj da je aktivirano
-                saveParametars(username, key);
                 return null;
             }
         };
