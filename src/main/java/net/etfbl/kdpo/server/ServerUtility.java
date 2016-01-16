@@ -11,11 +11,18 @@ import java.util.HashMap;
  * Klasa za sve statičke funkcije ili objekte koje možda budemo imali ili ne imali
  */
 public class ServerUtility {
-    public static int TCP_PORT;
-    public static String address;
+
+	public static String SERVER_IP = "localhost";
+	public static int SERVER_PORT = 10000;
     public static HashMap<String, User> users;
     public static HashMap<String, Socket> username_socket;
     public static KeyGen keyGen;
+
+    static {
+        users = new HashMap<>();
+        username_socket = new HashMap<>();
+        keyGen = new KeyGen();
+    }
 
     public static void saveData() {
     }
@@ -32,9 +39,16 @@ public class ServerUtility {
     }
 
     public static boolean registerUser(User user){
+		if (checkIfUsernameIsAvailable(user.getUsername())) {
+			users.put(user.getUsername(), user);
+			return true;
+		} else {
+			return false;
+		}
+	}
 
-        return false;
-    }
-
+	public static boolean checkIfUsernameIsAvailable(String username) {
+		return users.containsKey(username);
+	}
 
 }

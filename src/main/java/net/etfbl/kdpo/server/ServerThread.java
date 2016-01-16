@@ -24,25 +24,33 @@ public class ServerThread extends Thread {
 			// loggedIn označava da je korisnik prihvaćen
 			boolean loggedIn = false;
 			BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()),true);
+			PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 
 			String fromClient;
-			while(!loggedIn) {
+			while (!loggedIn) {
 				fromClient = in.readLine();
 				// očekivani oblik poruke bez space, | znači "ili"
 				// TOACTIVATE # username # key
 				// provjera autentičnosti
 				if (fromClient.startsWith("TOACTIVATE")) {
 					boolean isKeyValid = ServerUtility.keyGen.checkKey(fromClient.split("#")[2]);
-
-					// TODO provjera postoji li korisnicko ime
 					if (isKeyValid) {
-						out.println("ACTIVATION#OK");
 						thisUser = new User(fromClient.split("#")[1], fromClient.split("#")[2]);
-
-						loggedIn = true;
+						boolean isActivationSuccessful = ServerUtility.registerUser(thisUser);
+						if (isActivationSuccessful) {
+							out.println("ACTIVATION#OK");
+							setUserAsActive();
+							loggedIn = true;
+						} else {
+							out.println("ACTIVATION#NOK#NOK#OK");
+							thisUser = null; // not necessary
+						}
 					} else {
-						out.println("ACTIVATION#NOK");
+						if (ServerUtility.checkIfUsernameIsAvailable(fromClient.split("#")[1])) {
+							out.println("ACTIVATION#NOK#OK#NOK");
+						}
+						out.println("ACTIVATION#NOK#NOK#NOK");
+						thisUser = null;
 					}
 				}
 				// očekivani oblik poruke
@@ -58,31 +66,32 @@ public class ServerThread extends Thread {
 			// opsluživanje klijenta
 			// realno, jedina stvar je da prima sliku, i onda proslijedi dalje, ili sačuva
 			// a nije, treba i da omogućuje blokadu korisnika, to će se provjeravati prilikom prosljeđivanja slike
-			while(loggedIn) {
+			while (loggedIn) {
 				fromClient = in.readLine();
 			}
 
 		} catch (IOException e) {
 			// ovo znači da je pukla veza, server  treba da izbaci klijenta, iz aktivnih
 			e.printStackTrace();
-			setUserAsActive();
+			setUserAsInactive();
 		}
 	}
 
 
-
-	/** postavlja u serverske tabele da je korisnik aktivan, printwriter i još štošta, koristi thisUser objekat
+	/**
+	 * postavlja u serverske tabele da je korisnik aktivan, printwriter i još štošta, koristi thisUser objekat
 	 */
 	private void setUserAsActive() {
-
+		ServerUtility.username_socket.put(thisUser.getUsername(), socket);
 	}
 
-	/** briše što je uradila metoda setUserAsInactive, koristi thisUser objekat
+	/**
+	 * briše što je uradila metoda setUserAsInactive, koristi thisUser objekat
 	 */
-	private void setUserAsInactive(){
+	private void setUserAsInactive() {
 		// pukla veza prije aktivacije, nema šta da se briše
-		if(thisUser != null) {
-
+		if (thisUser != null) {
+			ServerUtility.username_socket.remove(thisUser.getUsername());
 		}
 	}
 
@@ -103,12 +112,12 @@ public class ServerThread extends Thread {
 	TOACTIVATE # username # key - nalazi se na početku poruke kada se klijent aktivira
 	ACTIVATED # username - klijent je aktiviran, i traži konekciju sa serverom
 	IMAGE#RECEIVE#image name#user receiver - klijent će poslati serveru sliku
-	CONTOL#BLOCKUSER#username
+	CONTROL#BLOCKUSER#username
 	CONTROL#UNBLOCKUSER#username
 	CONTROL#BLOCKALL
 
 	server -> klijent
 	ACTIVATION#OK
-	ACTIVATION#NOK - da li je aktivacija prošla ili ne
+	ACTIVATION#NOK#TIP#Poruka - da li je aktivacija prošla ili ne TIP = 1 invalid key ; TIP = 2 username taken
 	IMAGE#RECEIVE#image name#user sender - server će poslati klijentu sliku
  */

@@ -8,13 +8,12 @@ import java.net.ServerSocket;
  */
 public class Server {
 
-	public static String SERVER_IP = "localhost";
-	public static int SERVER_PORT = 10000;
+
 
 	public static void main(String[] args){
 
 		try {
-			ServerSocket ss = new ServerSocket(SERVER_PORT);
+			ServerSocket ss = new ServerSocket(ServerUtility.SERVER_PORT);
 			ServerAcceptThread sat = new ServerAcceptThread(ss);
 			sat.start();
 		} catch (IOException e) {
