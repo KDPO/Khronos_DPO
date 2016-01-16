@@ -1,44 +1,82 @@
 package net.etfbl.kdpo.server;
 
 import javafx.scene.image.Image;
+import net.etfbl.kdpo.client.VirtualAlbum;
 
+import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * Created by User on 12/15/2015.
- *
+ * <p>
  * Klasa za sve statičke funkcije ili objekte koje možda budemo imali ili ne imali
  */
 public class ServerUtility {
 
 	public static String SERVER_IP = "localhost";
 	public static int SERVER_PORT = 10000;
-    public static HashMap<String, User> users;
-    public static HashMap<String, Socket> username_socket;
-    public static KeyGen keyGen;
+	public static HashMap<String, User> users;
+	public static HashMap<String, Socket> username_socket;
+	public static KeyGen keyGen;
 
-    static {
-        users = new HashMap<>();
-        username_socket = new HashMap<>();
-        keyGen = new KeyGen();
-    }
+	static {
+		username_socket = new HashMap<>();
+		loadData();
+	}
 
-    public static void saveData() {
-    }
+	public static void saveData() {
 
-    public static void loadData() {
-    }
+		String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "Server";
+		File outputPath = new File(path);
+		if (!outputPath.exists()) {
+			outputPath.mkdir();
+		}
+		String file = path + File.separator + "server.ser";
+		try {
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(file));
+			oos.writeObject(users);
+			oos.writeObject(keyGen);
+			oos.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 
-    public static void saveImage(String from, String to) {
-    }
+	}
 
-    public static Image[] loadImage() {
-        Image[] images = null;
-        return images;
-    }
+	public static void loadData() {
+		String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "Server";
+		File outputPath = new File(path);
+		if (!outputPath.exists()) {
+			outputPath.mkdir();
+		}
+		String filePath = path + File.separator + "server.ser";
+		File file = new File(path);
+		if(file.exists()) {
+			try {
+				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+				users = (HashMap<String, User>) ois.readObject();
+				keyGen = (KeyGen) ois.readObject();
+				ois.close();
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		} else {
+			users = new HashMap<>();
+			keyGen = new KeyGen();
+		}
+	}
 
-    public static boolean registerUser(User user){
+	public static void saveImage(String from, String to) {
+	}
+
+	public static Image[] loadImage() {
+		Image[] images = null;
+		return images;
+	}
+
+	public static boolean registerUser(User user) {
 		if (checkIfUsernameIsAvailable(user.getUsername())) {
 			users.put(user.getUsername(), user);
 			return true;
