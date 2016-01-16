@@ -112,6 +112,12 @@ public class MainController {
     private Parent imageViewCotrollerRoot;
     private ImageViewController imageViewController;
 
+    //dodatne promjenljive za copy, cut, paste
+    private String clipboard;
+    private String name;
+    private boolean isThereSomethigToPaste = false;
+    private boolean isCutted = false;
+
     @FXML
     void initialize() {
         mainController = this;
@@ -217,6 +223,8 @@ public class MainController {
 
         btnRemove.setOnMouseClicked(event -> removeImagesFromVA());
 
+
+
         // Notification test
         menu.setOnMouseClicked(event -> {
             Main.showNotification("Proba");
@@ -296,8 +304,30 @@ public class MainController {
                         menuNewTreeView.setOnAction(event -> {
                             //TODO reakcija na New
                         });
+                        menuDeleteTreeView.setOnAction(event -> {
+                            if(!showRemoveVirtualAlbumWindow("Deleting \"" + treeView.getSelectionModel().getSelectedItem().getValue().getName() + "\"")){
+                                deleteFolder();
+                            }
+                        });
                         menuCopyTreeView.setOnAction(event -> {
-                            //TODO reakcija na Copy
+                            copyToClipboard();
+                        });
+                        menuCutTreeView.setOnAction(event -> {
+                            isCutted = true;
+                            copyToClipboard();
+                        });
+                        menuPasteTreeView.setOnAction(event -> {
+                            if(isThereSomethigToPaste) {
+                                treeView.getSelectionModel().getSelectedItem().getChildren().add(new TreeItem<>(new MyFile(name)));
+                                pasteFromClipboard(new MyFile(clipboard), new MyFile(treeView.getSelectionModel().getSelectedItem().getValue().getAbsolutePath() + File.separator + name));
+                                if (isCutted) {
+                                    isCutted = false;
+                                    deleteFromDisk(new File(clipboard));
+                                }
+                                isThereSomethigToPaste = false;
+                            }else{
+                                Main.showNotification("Nothing to paste.");
+                            }
                         });
                     }
 
@@ -666,5 +696,44 @@ public class MainController {
         }
         if (!file.delete())
             file.deleteOnExit();
+    }
+
+    private void copyToClipboard(){
+        clipboard = treeView.getSelectionModel().getSelectedItem().getValue().getAbsolutePath();
+        name = treeView.getSelectionModel().getSelectedItem().getValue().getName();
+        isThereSomethigToPaste = true;
+    }
+
+    private void pasteFromClipboard(File sourceLocation, File targetLocation){
+        if (sourceLocation.isDirectory()) {
+            copyDirectory(sourceLocation, targetLocation);
+        } else {
+            copyFile(sourceLocation, targetLocation);
+        }
+    }
+
+    private void copyDirectory(File source, File target){
+        if(!target.exists()){
+            target.mkdir();
+        }
+        for(String f : source.list()){
+            pasteFromClipboard(new File(source, f), new File (target, f));
+        }
+    }
+
+    private void copyFile(File source, File target){
+        try{
+            InputStream in = new FileInputStream(source);
+            OutputStream out = new FileOutputStream(target);
+            byte[] buf = new byte[1024];
+            int length;
+            while ((length = in.read(buf)) > 0) {
+                out.write(buf, 0, length);
+            }
+            in.close();
+            out.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 }
