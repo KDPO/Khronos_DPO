@@ -12,7 +12,7 @@ public class KeyGen {
     private HashMap<String, Boolean> keyList;
 
 
-    public boolean checkKey() {
+    public boolean checkKey(String key) {
         return false;
     }
 

@@ -128,6 +128,7 @@ public class ScreenShotSendWindowController {
             lblErrorText.setText("You need to select some user!");
             lblErrorText.setVisible(true);
         } else {
+            // slanje slike serveru
 
         }
     }

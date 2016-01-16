@@ -8,7 +8,7 @@ import java.net.ServerSocket;
  */
 public class Server {
 
-	public static String SERVER_IP = "localhos";
+	public static String SERVER_IP = "localhost";
 	public static int SERVER_PORT = 10000;
 
 	public static void main(String[] args){
@@ -23,3 +23,4 @@ public class Server {
 	}
 
 }
+
