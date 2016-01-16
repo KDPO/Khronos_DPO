@@ -223,7 +223,7 @@ public class ActivationWindowController {
                         ClientServicesThread.clientServicesThread.start();
 
                     } else {
-                        // TODO prikazati grešku grafički
+                        // TOD prikazati grešku grafički
                         // zatim omogućiti ponovni unos
                         // nisam još siguran kako funkcioniše ovaj kontroler
                         activated = false;

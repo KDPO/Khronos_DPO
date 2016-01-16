@@ -14,7 +14,7 @@ public class KeyGen {
 
     public boolean checkKey(String key) {
 
-        return false;
+        return true;
     }
 
     public boolean setKeyAsUsed() {

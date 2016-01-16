@@ -48,8 +48,9 @@ public class ServerThread extends Thread {
 					} else {
 						if (ServerUtility.checkIfUsernameIsAvailable(fromClient.split("#")[1])) {
 							out.println("ACTIVATION#NOK#OK#NOK");
+						} else {
+							out.println("ACTIVATION#NOK#NOK#NOK");
 						}
-						out.println("ACTIVATION#NOK#NOK#NOK");
 						thisUser = null;
 					}
 				}

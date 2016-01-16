@@ -48,7 +48,7 @@ public class ServerUtility {
 	}
 
 	public static boolean checkIfUsernameIsAvailable(String username) {
-		return users.containsKey(username);
+		return !users.containsKey(username);
 	}
 
 }
