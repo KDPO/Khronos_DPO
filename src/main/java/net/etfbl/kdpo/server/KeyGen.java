@@ -10,7 +10,7 @@ import java.util.Random;
 public class KeyGen {
     private HashMap<String, Boolean> keyList;
 
-    private static final int KEY_LENGTH = 19;
+    private static final int KEY_LENGTH = 16;
 
     public KeyGen() {
         keyList = new HashMap<>();
@@ -67,44 +67,40 @@ public class KeyGen {
         }else{
             key[3] = (char) (random.nextInt(26) + 'a');
         }
-        key[4] = '-';
 
-        key[5] = (char) (random.nextInt(9) + '0');
+        key[4] = (char) (random.nextInt(9) + '0');
+        if(random.nextBoolean()) {
+            key[5] = (char) (random.nextInt(26) + 'A');
+        }else{
+            key[5] = (char) (random.nextInt(26) + 'a');
+        }
         if(random.nextBoolean()) {
             key[6] = (char) (random.nextInt(26) + 'A');
         }else{
             key[6] = (char) (random.nextInt(26) + 'a');
         }
+        key[7] = (char) (random.nextInt(3) + 6 + '0');
+
+        key[8] = (char) (random.nextInt(9) + '0');
         if(random.nextBoolean()) {
-            key[7] = (char) (random.nextInt(26) + 'A');
+            key[9] = (char) (random.nextInt(26) + 'A');
         }else{
-            key[7] = (char) (random.nextInt(26) + 'a');
+            key[9] = (char) (random.nextInt(26) + 'a');
         }
-        key[8] = (char) (random.nextInt(3) + 6 + '0');
-        key[9] = '-';
-
-
-        key[10] = (char) (random.nextInt(9) + '0');
+        key[10] = (char) (random.nextInt(4) + '0');
         if(random.nextBoolean()) {
             key[11] = (char) (random.nextInt(26) + 'A');
         }else{
             key[11] = (char) (random.nextInt(26) + 'a');
         }
-        key[12] = (char) (random.nextInt(4) + '0');
-        if(random.nextBoolean()) {
-            key[13] = (char) (random.nextInt(26) + 'A');
-        }else{
-            key[13] = (char) (random.nextInt(26) + 'a');
-        }
-        key[14] = '-';
 
-        key[15] = (char) (random.nextInt(5) + 4 + '0');
-        key[16] = (char) (random.nextInt(2) + '0');
-        key[17] = (char) (random.nextInt(9) + '0');
+        key[12] = (char) (random.nextInt(5) + 4 + '0');
+        key[13] = (char) (random.nextInt(2) + '0');
+        key[14] = (char) (random.nextInt(9) + '0');
         if(random.nextBoolean()) {
-            key[18] = (char) (random.nextInt(26) + 'A');
+            key[15] = (char) (random.nextInt(26) + 'A');
         }else{
-            key[18] = (char) (random.nextInt(26) + 'a');
+            key[15] = (char) (random.nextInt(26) + 'a');
         }
 
         return String.valueOf(key);
