@@ -64,11 +64,30 @@ public class ServerThread extends Thread {
 				}
 			}
 
+			// TODO provjera da li mu treba poslati slike
+
 			// opsluživanje klijenta
 			// realno, jedina stvar je da prima sliku, i onda proslijedi dalje, ili sačuva
 			// a nije, treba i da omogućuje blokadu korisnika, to će se provjeravati prilikom prosljeđivanja slike
+			String[] fromClientArray;
 			while (loggedIn) {
 				fromClient = in.readLine();
+
+				if(fromClient.startsWith("CONTROL")) {
+					fromClientArray = fromClient.split("#");
+					if("BLOCKUSER".equals(fromClientArray[1])){
+						thisUser.blockUser(fromClientArray[2]);
+					}
+					if("UNBLOCKUSER".equals(fromClientArray[1])){
+						thisUser.unblockUser(fromClientArray[2]);
+					}
+					if("BLOCKALL".equals(fromClientArray[1])){
+						thisUser.blockAll();
+					}
+					if("UNBLOCKALL".equals(fromClientArray[1])){
+						thisUser.unblockAll();
+					}
+				}
 			}
 
 		} catch (IOException e) {
@@ -116,6 +135,7 @@ public class ServerThread extends Thread {
 	CONTROL#BLOCKUSER#username
 	CONTROL#UNBLOCKUSER#username
 	CONTROL#BLOCKALL
+	CONTROL#UNBLOCKALL
 
 	server -> klijent
 	ACTIVATION#OK
