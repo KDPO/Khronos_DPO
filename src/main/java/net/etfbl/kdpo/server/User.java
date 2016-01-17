@@ -59,7 +59,7 @@ public class User implements Serializable {
 	/**
 	 *  Dodaje identifikator slike u korisnikov red slika, koje će mu biti poslane nakon što se prijavi
 	 *  i zatim obrisane
-	 * @param ImageID prijedlog "userSender UserReceiver yyyyMMddhhmmss"
+	 * @param ImageID prijedlog "userSender userReceiver imageName yyyyMMddhhmmss"
 	 * @return true ako je uspješno izvršeno
 	 */
     public boolean addImageToImageQueue(String ImageID){

@@ -4,6 +4,13 @@ import javafx.scene.image.Image;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by Stijak on 12.12.2015..
@@ -122,6 +129,19 @@ public class ServerThread extends Thread {
 	public static void saveImage(Image image) {
 		//malo je bezveze ovo pisati
 		//jer nisu metode, već funkcionalnosti koje će obaljati run
+	}
+
+	public static void saveImage(String userSender, String userReceiver, String imageName, byte[] data) throws IOException {
+		DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
+		String pathString = new StringBuilder().append(System.getProperty("user.home")).append(File.separator).append("Khronos_DPO").append(File.separator).append("Server").append(File.separator).append(userSender).append(" ").append(userReceiver).append(" ").append(imageName).append(" ").append(df.format(Calendar.getInstance().getTime())).toString();
+		//File outputFile = new File(pathString);
+		//outputFile.createNewFile();
+		//OutputStream os = new FileOutputStream(outputFile);
+		//os.write(data);
+
+		// pokušaj sa Path
+		Path path = Paths.get(pathString);
+		Files.write(path, data, StandardOpenOption.CREATE_NEW);
 	}
 }
 
