@@ -1,6 +1,8 @@
 package net.etfbl.kdpo.client;
 
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -44,7 +46,7 @@ public class MainController {
     private Button btnAddImages;
 
     @FXML
-    private Label lblMessages;
+    private Label copyText;
 
     @FXML
     private FlowPane flowPane;
@@ -93,6 +95,9 @@ public class MainController {
     private ProgressIndicator treeViewProgressIndicator;
 
     @FXML
+    private ProgressIndicator copyProgress;
+
+    @FXML
     private AnchorPane anchorPaneButtonContainer;
 
     private Stage stage;
@@ -111,22 +116,23 @@ public class MainController {
     //dodatne promjenljive za copy, cut, paste
     private String clipboard;
     private String name;
-    private boolean isThereSomethigToPaste = false;
+    private BooleanProperty isThereSomethigToPaste;
     private boolean isCutted = false;
+    // kada će delete i rename biti prikazano
+    private BooleanProperty isDisabled;
+    //task za ubacivanje slika u flowPane
+    private Task<Void> task;
 
     @FXML
     void initialize() {
         mainController = this;
 
-        lblMessages.setVisible(false);
         btnAddImages.setVisible(false);
         btnCheck.setVisible(false);
         btnAbort.setVisible(false);
         btnRemove.setVisible(false);
         btnDelete.setVisible(false);
         progressIndicator.setVisible(false);
-        progressIndicator.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
-        treeViewProgressIndicator.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
         treeViewProgressIndicator.setVisible(false);
 
         // lista unutar koje će se nalaziti objekti Virtuelnih albuma za prikaz u ListView i kasnije korišćenje
@@ -145,22 +151,70 @@ public class MainController {
             @Override
             public ListCell<VirtualAlbum> call(ListView<VirtualAlbum> param) {
                 return new TextFieldListCell<VirtualAlbum>() {
-                    MenuItem remove = new MenuItem("Remove");
+                    private TextField textField;
+                    private MenuItem remove = new MenuItem("Remove");
                     MenuItem rename = new MenuItem("Rename");
 
                     {
                         remove.setOnAction(event -> removeVA());
-                        rename.setOnAction(event -> startEdit());
+                        rename.setOnAction(event -> {
+                            setEditable(true);
+                            startEdit();
+                        });
+                        setConverter(new StringConverter<VirtualAlbum>() {
+                            @Override
+                            public String toString(VirtualAlbum object) {
+                                return object.getName();
+                            }
+
+                            @Override
+                            public VirtualAlbum fromString(String string) {
+                                // promjena imena albuma i čuvanje na FS
+                                getItem().setName(string);
+                                serializeAlbums();
+                                return getItem();
+                            }
+                        });
                     }
 
+                    @Override
+                    public void startEdit() {
+                        if (isEditable()) {
+                            super.startEdit();
+                            if (textField == null) {
+                                textField = (TextField) getGraphic();
+                                textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+                                    if (!textField.isFocused())
+                                        commitEdit(getItem());
+                                });
+                            }
+                        }
+                    }
 
                     @Override
                     public void updateItem(VirtualAlbum item, boolean empty) {
                         super.updateItem(item, empty);
                         if (item != null) {
+                            setEditable(false);
                             setText(item.getName());
                             setContextMenu(new ContextMenu(remove, rename));
                         }
+                    }
+
+                    @Override
+                    public void commitEdit(VirtualAlbum newValue) {
+                        super.commitEdit(newValue);
+                        if (isEditable())
+                            setEditable(false);
+                        // TODO provjeriti da li je novi naziv ispravan (dostupan) i ako jeste promijeniti ime VA
+                        // ako ime već postoji ja bih dodao broj (koji može) kraj toga imena
+                    }
+
+                    @Override
+                    public void cancelEdit() {
+                        super.cancelEdit();
+                        if (isEditable())
+                            setEditable(false);
                     }
                 };
             }
@@ -173,7 +227,14 @@ public class MainController {
 
         setFirstElementOfListViewSelected();
 
-        new Thread(this::setTreeView).start();
+        //new Thread(this::setTreeView).start();
+        new Thread(new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                setTreeView();
+                return null;
+            }
+        }).start();
 
         menuSendSS.setOnAction(event -> showScreenShotSendWindow());
 
@@ -286,11 +347,13 @@ public class MainController {
 
     private void setTreeView() {
         /* TreeView initialization */
+        isThereSomethigToPaste = new SimpleBooleanProperty(false);
+        isDisabled = new SimpleBooleanProperty(true);
         treeView.setCellFactory(new Callback<TreeView<MyFile>, TreeCell<MyFile>>() {
             @Override
             public TreeCell<MyFile> call(TreeView<MyFile> param) {
                 return new TextFieldTreeCell<MyFile>() {
-                    MenuItem menuNewFolderTreeView = new MenuItem("New Folder");
+                    MenuItem menuNewFolderTreeView = new MenuItem("New folder");
                     MenuItem menuCopyTreeView = new MenuItem("Copy");
                     MenuItem menuCutTreeView = new MenuItem("Cut");
                     MenuItem menuPasteTreeView = new MenuItem("Paste");
@@ -306,11 +369,21 @@ public class MainController {
 
                             @Override
                             public MyFile fromString(String string) {
-                                return getItem();
+                                MyFile file = new MyFile(getItem().getParent(), string);
+                                new Thread(() -> {
+                                    try {
+                                        Files.move(getItem().toPath(), getItem().toPath().resolveSibling(string));
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }).start();
+                                return file;
                             }
                         });
+                        menuRenameTreeView.disableProperty().bind(isDisabled.not());
                         menuRenameTreeView.setOnAction(event -> startEdit());
                         menuNewFolderTreeView.setOnAction(event -> newFolderButtonFunction());
+                        menuDeleteTreeView.disableProperty().bind(isDisabled.not());
                         menuDeleteTreeView.setOnAction(event -> {
                             if (!showRemoveVirtualAlbumWindow("Deleting \"" + treeView.getSelectionModel().getSelectedItem().getValue().getName() + "\"")) {
                                 deleteFolder();
@@ -324,34 +397,40 @@ public class MainController {
                             isCutted = true;
                             copyToClipboard();
                         });
+                        menuPasteTreeView.disableProperty().bind(isThereSomethigToPaste.not());
                         menuPasteTreeView.setOnAction(event -> {
-                            if (isThereSomethigToPaste) {
+                            if (isThereSomethigToPaste.getValue()) {
                                 treeView.getSelectionModel().getSelectedItem().getChildren().add(new TreeItem<>(new MyFile(name)));
                                 pasteFromClipboard(new MyFile(clipboard), new MyFile(treeView.getSelectionModel().getSelectedItem().getValue().getAbsolutePath() + File.separator + name));
                                 if (isCutted) {
                                     isCutted = false;
                                     deleteFromDisk(new File(clipboard));
                                 }
-                                isThereSomethigToPaste = false;
+                                isThereSomethigToPaste.set(false);
                             }
                             /* najbolje ako nema ništa da se pastuje da se ništa i ne desi
                             else {
                                 Main.showNotification("Nothing to paste.");
                             } */
                         });
+                        // onemogući rename ukoliko ima slika unutar foldera
+                        // isDisabled može da kontroliše i ovo
+                        setEditable(false);
                     }
 
                     @Override
                     public void updateItem(MyFile item, boolean empty) {
                         super.updateItem(item, empty);
                         if (!empty && item != null) {
-                            if ("Desktop".equals(item.getName())) {
-                                setContextMenu(new ContextMenu(menuNewFolderTreeView, menuCopyTreeView, menuPasteTreeView));
-                            } else if ("".equals(item.getName())) {
+                            if ("".equals(item.getName()) || "Desktop".equals(item.getName())) {
                                 setContextMenu(new ContextMenu(menuNewFolderTreeView, menuPasteTreeView));
                             } else {
+                                editableProperty().bind(isDisabled);
                                 setContextMenu(new ContextMenu(menuNewFolderTreeView, menuCopyTreeView, menuCutTreeView, menuPasteTreeView, menuDeleteTreeView, menuRenameTreeView));
                             }
+                        }
+                        if (empty) {
+                            setContextMenu(null);
                         }
                     }
                 };
@@ -371,6 +450,7 @@ public class MainController {
         root.addEventHandler(TreeItem.branchExpandedEvent(), new EventHandler<TreeItem.TreeModificationEvent<MyFile>>() {
             public void handle(TreeItem.TreeModificationEvent<MyFile> event) {
                 TreeItem<MyFile> item = event.getTreeItem();
+                treeView.getSelectionModel().select(item);
                 Task<Void> task = new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
@@ -390,6 +470,10 @@ public class MainController {
             ObservableList<File> images = FXCollections.observableArrayList();
             if (newValue != null) {
                 images.setAll(newValue.getValue().listFiles((dir, name) -> name.endsWith("jpg") || name.endsWith("png") || name.endsWith("jpeg")));
+                if (images.isEmpty())
+                    isDisabled.set(true);
+                else
+                    isDisabled.set(false);
                 lblAlbumDescription.setText(newValue.getValue().toString());
             }
             setImagesToFlowPane(images);
@@ -427,7 +511,6 @@ public class MainController {
                 return null;
             }
         };
-        treeViewProgressIndicator.progressProperty().bind(task.progressProperty());
         treeViewProgressIndicator.visibleProperty().bind(task.runningProperty());
         new Thread(task).start();
     }
@@ -436,7 +519,7 @@ public class MainController {
     private void findChilds(File file, TreeItem<MyFile> node) {
         if (file.isDirectory()) {
             node.getChildren().clear();
-            for (File var : file.listFiles((File pathname) -> pathname.isDirectory() && !pathname.isHidden() && Files.isReadable(pathname.toPath()) && !Files.isSymbolicLink(pathname.toPath())))
+            for (File var : file.listFiles((File pathname) -> pathname.isDirectory() && !pathname.isHidden() && Files.isReadable(pathname.toPath()) && !Files.isSymbolicLink(pathname.toPath()) && !"Windows".equals(pathname.getName())))
                 setChild(node, new TreeItem<>(new MyFile(var.getAbsolutePath())));
         }
     }
@@ -451,7 +534,7 @@ public class MainController {
     private void setImagesToFlowPane(ObservableList<File> images) {
         ObservableList<Node> childs = flowPane.getChildren();
         childs.clear();
-        Task<Void> task = new Task<Void>() {
+        task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 /* code start here  */
@@ -495,6 +578,8 @@ public class MainController {
             }
         };
         progressIndicator.visibleProperty().bind(task.runningProperty());
+        //problem kada učitava mnogo slika
+        //treeView.disableProperty().bind(task.runningProperty());
         new Thread(task).start();
     }
 
@@ -757,15 +842,30 @@ public class MainController {
     private void copyToClipboard() {
         clipboard = treeView.getSelectionModel().getSelectedItem().getValue().getAbsolutePath();
         name = treeView.getSelectionModel().getSelectedItem().getValue().getName();
-        isThereSomethigToPaste = true;
+        isThereSomethigToPaste.set(true);
     }
 
     private void pasteFromClipboard(File sourceLocation, File targetLocation) {
-        if (sourceLocation.isDirectory()) {
-            copyDirectory(sourceLocation, targetLocation);
-        } else {
-            copyFile(sourceLocation, targetLocation);
-        }
+        //TODO reakcija na folder/file already exist, ne daj Bože nema mjesta i slične greške
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                if (sourceLocation.isDirectory()) {
+                    copyDirectory(sourceLocation, targetLocation);
+                } else {
+                    copyFile(sourceLocation, targetLocation);
+                }
+                return null;
+            }
+        };
+        if (isCutted)
+            copyText.setText("Moving...");
+        else
+            copyText.setText("Copying...");
+        copyProgress.visibleProperty().bind(task.runningProperty());
+        copyText.visibleProperty().bind(task.runningProperty());
+        treeView.disableProperty().bind(task.runningProperty());
+        new Thread(task).start();
     }
 
     private void copyDirectory(File source, File target) {

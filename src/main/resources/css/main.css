@@ -205,6 +205,10 @@
     -fx-background-color: #f98012;
 }
 
+.menu-item:focused:disabled {
+    -fx-background-color: transparent;
+}
+
 .menu-item .label {
     -fx-text-fill: white;
     -fx-font-size: 13px;

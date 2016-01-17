@@ -23,6 +23,10 @@ public class MyFile extends File {
         super(f);
     }
 
+    public MyFile(String parent, String string) {
+        super(parent, string);
+    }
+
     @Override
     public String toString() {
         if (!super.getName().equals("")) {

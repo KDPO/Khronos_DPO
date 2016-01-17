@@ -50,17 +50,28 @@
                                                                    prefWidth="20.0" styleClass="treeViewProgress"
                                                                    AnchorPane.rightAnchor="20.0"
                                                                    AnchorPane.topAnchor="6.5"/>
+                                                <ProgressIndicator fx:id="copyProgress" layoutX="95.0"
+                                                                   maxHeight="-Infinity" maxWidth="-Infinity"
+                                                                   prefHeight="60.0" prefWidth="60.0"
+                                                                   styleClass="progressIndicator" visible="false"
+                                                                   AnchorPane.bottomAnchor="20.0"
+                                                                   AnchorPane.topAnchor="0.0"/>
+                                                <Label fx:id="copyText" alignment="CENTER" layoutX="10.0"
+                                                       layoutY="185.0" maxHeight="-Infinity" prefHeight="30.0"
+                                                       style="-fx-progress-color: #f98012;" text="Copying..."
+                                                       textAlignment="CENTER" textFill="WHITE" visible="false"
+                                                       AnchorPane.bottomAnchor="105.0" AnchorPane.leftAnchor="10.0"
+                                                       AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="185.0">
+                                                    <font>
+                                                        <Font size="16.0"/>
+                                                    </font>
+                                                </Label>
                                             </children>
                                         </AnchorPane>
                                     </content>
                                 </Tab>
                             </tabs>
                         </TabPane>
-                        <Label fx:id="lblMessages" alignment="CENTER" maxHeight="35.0" minHeight="35.0"
-                               prefHeight="35.0"
-                               style="-fx-background-color: #000000; -fx-text-fill: #ffffff; -fx-background-radius: 30;"
-                               text="Messages" textAlignment="CENTER" AnchorPane.bottomAnchor="10.0"
-                               AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="3.0"/>
                     </children>
                 </AnchorPane>
                 <VBox focusTraversable="true" style="-fx-background-color: #000;" HBox.hgrow="ALWAYS">

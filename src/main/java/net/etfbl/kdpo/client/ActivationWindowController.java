@@ -191,7 +191,6 @@ public class ActivationWindowController {
             @Override
             protected Void call() throws Exception {
                 // ovdje ide konekcija sa serverom i sve ostalo
-                anchorPaneLabels.setDisable(true);
                 try {
                     Socket socket = new Socket(ClientServicesThread.SERVER_IP, ClientServicesThread.SERVER_PORT);
                     BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -257,12 +256,11 @@ public class ActivationWindowController {
                         anchorPaneLabels.setDisable(false);
                     });
                 }
-                anchorPaneLabels.setDisable(false);
-                //sacuvaj da je aktivirano
                 return null;
             }
         };
         progressIndicator.visibleProperty().bind(task.runningProperty());
+        anchorPaneLabels.disableProperty().bind(task.runningProperty());
         new Thread(task).start();
     }
 }
