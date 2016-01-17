@@ -32,11 +32,13 @@ public class ClientServicesThread extends Thread {
 						receiveImage(fromServer.split("#")[2], socket);
 						Platform.runLater(() -> {
 							// TODO prikaz obavještenje da je stigla slika , napraviti funciju?
+							//	Main.showNotification("Stigla slika");
 						});
 					}
 				}
 			}
 		} catch (IOException e) {
+			System.out.println("Services ended");
 
 		} catch (NullPointerException e) {
 

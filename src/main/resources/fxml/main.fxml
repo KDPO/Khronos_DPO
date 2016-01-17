@@ -8,11 +8,13 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane minHeight="360.0" minWidth="640.0" stylesheets="@../css/main.css" xmlns="http://javafx.com/javafx/8"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.etfbl.kdpo.client.MainController">
+<AnchorPane fx:id="mainAnchorPain" minHeight="360.0" minWidth="640.0" stylesheets="@../css/main.css"
+            xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="net.etfbl.kdpo.client.MainController">
     <children>
-        <HBox layoutX="200.0" layoutY="136.0" prefHeight="100.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0"
-              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <HBox fx:id="hBoxMainContainer" layoutX="200.0" layoutY="136.0" prefHeight="100.0" prefWidth="200.0"
+              AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+              AnchorPane.topAnchor="0.0">
             <children>
                 <AnchorPane maxWidth="250.0" minWidth="250.0" prefWidth="250.0">
                     <children>
@@ -74,7 +76,8 @@
                         </TabPane>
                     </children>
                 </AnchorPane>
-                <VBox focusTraversable="true" style="-fx-background-color: #000;" HBox.hgrow="ALWAYS">
+                <VBox fx:id="vBoxFlowPane" focusTraversable="true" style="-fx-background-color: #000;"
+                      HBox.hgrow="ALWAYS">
                     <children>
                         <AnchorPane fx:id="anchorPaneButtonContainer" focusTraversable="true" maxHeight="40.0"
                                     minHeight="40.0" prefHeight="40.0" style="-fx-background-color: #2c2c2c;">
@@ -126,8 +129,8 @@
                                         AnchorPane.rightAnchor="70.0" AnchorPane.topAnchor="0.0"/>
                             </children>
                         </AnchorPane>
-                        <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER"
-                                    style="-fx-background-color: #000;" styleClass="scrollPane">
+                        <ScrollPane fx:id="scrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER"
+                                    style="-fx-background-color: #000;" styleClass="scrollPane" VBox.vgrow="ALWAYS">
                             <VBox.margin>
                                 <Insets left="5.0" top="5.0"/>
                             </VBox.margin>

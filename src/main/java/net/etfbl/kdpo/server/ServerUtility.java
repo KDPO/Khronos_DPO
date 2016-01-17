@@ -55,7 +55,7 @@ public class ServerUtility {
 			folderPath.mkdir();
 		}
 		String filePath = path + File.separator + "server.ser";
-		File file = new File(path);
+		File file = new File(filePath);
 		Path pathFilePath = Paths.get(filePath);
 		//if(file.exists()) {
 		if(Files.exists(pathFilePath)) {

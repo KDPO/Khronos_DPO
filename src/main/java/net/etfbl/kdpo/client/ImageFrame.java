@@ -1,8 +1,10 @@
 package net.etfbl.kdpo.client;
 
+import javafx.css.PseudoClass;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -45,7 +47,7 @@ public class ImageFrame extends AnchorPane {
         label.setAlignment(Pos.CENTER);
         label.setBackground(new Background(new BackgroundImage(new Image("/images/pozadina.png"), BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, BackgroundSize.DEFAULT)));
         label.setVisible(false);
-        checkBox.setVisible(false);
+        checkBox.setVisible(true);
         this.setAnchor(checkBox, -1, 5, 5, -1);
         this.setAnchor(label, 0, -1, 0, 0);
         this.setAnchor(hBox, 0, 0, 0, 0);
@@ -66,27 +68,22 @@ public class ImageFrame extends AnchorPane {
     }
 
     public void setEffect() {
-        this.setOnMouseEntered((MouseEvent) -> {
-            this.checkBox.setVisible(true);
-            this.label.setVisible(true);
-            if (!checkBox.isSelected())
-                this.setStyle("-fx-border-color: #2c2c2c;");
+        checkBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue)
+                this.pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), true);
+            else
+                this.pseudoClassStateChanged(PseudoClass.getPseudoClass("selected"), false);
         });
 
-        this.setOnMouseExited((MouseEvent) -> {
-            if (!checkBox.isSelected()) {
-                this.checkBox.setVisible(false);
-                this.label.setVisible(false);
-                this.setStyle("-fx-border-color: transparent;");
-            }
+        this.hoverProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue)
+                this.pseudoClassStateChanged(PseudoClass.getPseudoClass("hover"), true);
+            else
+                this.pseudoClassStateChanged(PseudoClass.getPseudoClass("hover"), false);
         });
 
-        checkBox.setOnMouseClicked((MouseEvent) -> {
-            if (checkBox.isSelected())
-                this.setStyle("-fx-border-color: #f98026;");
-            if (!checkBox.isSelected())
-                this.setStyle("-fx-border-color: #2c2c2c;");
-        });
+        this.checkBox.visibleProperty().bind(this.hoverProperty().or(this.checkBox.selectedProperty()));
+        this.label.visibleProperty().bind(this.hoverProperty().or(this.checkBox.selectedProperty()));
     }
 
     public File getFile() {

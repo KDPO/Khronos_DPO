@@ -3,6 +3,8 @@ package net.etfbl.kdpo.client;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -21,8 +23,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
@@ -38,6 +42,9 @@ import java.util.ArrayList;
 public class MainController {
     public static MainController mainController;
     public static VirtualAlbum screenshotAlbum;
+
+    @FXML
+    private ScrollPane scrollPane;
 
     @FXML
     private Label lblAlbumDescription;
@@ -100,6 +107,9 @@ public class MainController {
     @FXML
     private AnchorPane anchorPaneButtonContainer;
 
+    @FXML
+    private HBox hBoxMainContainer;
+
     private Stage stage;
 
     //Pomocna promjenjliva koja samo pamti stanje da li se do FS doslo preko + dugmeta u VA
@@ -112,6 +122,12 @@ public class MainController {
 
     private Parent imageViewCotrollerRoot;
     private ImageViewController imageViewController;
+    private ContextMenu iFrameContextMenu;
+    private ContextMenu flowPaneContextMenu;
+    private MenuItem copy;
+    private MenuItem cut;
+    private MenuItem delete;
+    private MenuItem paste;
 
     //dodatne promjenljive za copy, cut, paste
     private String clipboard;
@@ -122,18 +138,67 @@ public class MainController {
     private BooleanProperty isDisabled;
     //task za ubacivanje slika u flowPane
     private Task<Void> task;
+    private boolean canAdd = true;
 
     @FXML
     void initialize() {
         mainController = this;
-
+        //TODO dodati Tooltip na svkai btn
+        menu.setTooltip(new Tooltip("Menu"));
         btnAddImages.setVisible(false);
+        btnAddImages.setTooltip(new Tooltip("Add new images"));
         btnCheck.setVisible(false);
         btnAbort.setVisible(false);
+        btnAbort.setTooltip(new Tooltip("Abort"));
         btnRemove.setVisible(false);
         btnDelete.setVisible(false);
         progressIndicator.setVisible(false);
         treeViewProgressIndicator.setVisible(false);
+
+        copy = new MenuItem("Copy");
+        copy.setOnAction(event -> {
+            System.out.println(event.getSource());
+            //TODO kopiranje slika
+            // obratiti pažnju na kopiranje između tabAlbumi i tabFS
+            // obratiti pažnju kada je više slika čakirano i kada nije ni jedna
+            // implementirati po želji :D
+        });
+        cut = new MenuItem("Cut");
+        cut.setOnAction(event -> {
+            //TODO premještanje slika
+            // obratiti pažnju na premještanje između tabAlbumi i tabFS
+            // obratiti pažnju kada je više slika čakirano i kada nije ni jedna
+            // implementirati po želji :D
+        });
+        delete = new MenuItem("Delete");
+        delete.setOnAction(event -> {
+            //TODO brisanje slika
+            // iz albuma se izbacuju slike
+            // sa FS se skroz brišu
+            // dodati popup za ok
+            // obratiti pažnju kada je više slika čakirano i kada nije ni jedna
+            //implementirati po želji
+        });
+        iFrameContextMenu = new ContextMenu(copy, cut, delete);
+        iFrameContextMenu.setAutoHide(true);
+        paste = new MenuItem("Paste");
+        paste.setOnAction(event -> {
+            //TODO paste
+            // obratiti pažnju na kopiranje između tabAlbumi i tabFS
+            // obratiti pažnju na duplikate
+            // implementirati disableProperty()
+            // implementirati po želji :D
+        });
+        flowPaneContextMenu = new ContextMenu(paste);
+        flowPaneContextMenu.setAutoHide(true);
+        scrollPane.setOnContextMenuRequested(event -> {
+            if (!iFrameContextMenu.isShowing())
+                flowPaneContextMenu.show(scrollPane, event.getScreenX(), event.getScreenY());
+        });
+        scrollPane.setOnMousePressed(event -> {
+            if (flowPaneContextMenu.isShowing())
+                flowPaneContextMenu.hide();
+        });
 
         // lista unutar koje će se nalaziti objekti Virtuelnih albuma za prikaz u ListView i kasnije korišćenje
         listViewData = FXCollections.observableArrayList();
@@ -219,8 +284,6 @@ public class MainController {
                 };
             }
         });
-
-        // listView.setContextMenu(new ContextMenu(menuRenameListView, menuRemoveListView));
 
         //ucitavanje serijalizovanih VA
         readSerializedAlbums();
@@ -541,11 +604,27 @@ public class MainController {
                 for (File file : images) {
                     ImageFrame iFrame = new ImageFrame(file);
                     Platform.runLater(() -> childs.add(iFrame));
-
                     iFrame.setOnMouseClicked((MouseEvent event) -> {
                         if (event.getButton().equals(MouseButton.PRIMARY)) {
-                            showImageViewController(getImagesFromFlowPane(), flowPane.getChildren().indexOf(iFrame));
+                            if (checked == 0) {
+                                showImageViewController(getImagesFromFlowPane(), flowPane.getChildren().indexOf(iFrame));
+                                iFrameContextMenu.hide();
+                            } else {
+                                if (!iFrame.getCheckBox().isSelected()) {
+                                    iFrame.getCheckBox().setSelected(true);
+                                    checked++;
+                                } else {
+                                    iFrame.getCheckBox().setSelected(false);
+                                    checked--;
+                                }
+                            }
                         }
+                    });
+
+                    iFrame.setOnContextMenuRequested(event -> {
+                        //TODO napraviti nekako vezu sa ovim iFrame ako ni jedan nije čekiran
+                        iFrameContextMenu.show(iFrame, event.getScreenX(), event.getScreenY());
+                        //iFrame.getCheckBox().setSelected(true);
                     });
 
                     iFrame.getCheckBox().setOnAction(event -> {
@@ -740,14 +819,11 @@ public class MainController {
                 if (file.exists()) {
                     ObjectInputStream object = new ObjectInputStream(new FileInputStream(file));
                     listViewData.setAll((ArrayList<VirtualAlbum>) object.readObject());
-                    object.close();
-                }
-                file = new File(path + File.separator + "screenshot_album.kva");
-                if (file.exists()) {
-                    ObjectInputStream object = new ObjectInputStream(new FileInputStream(file));
+                    //ako nema sačuvanog ovog albuma onda baca izuzetak, neće se dešavati nakon prvog čuvanja
                     screenshotAlbum = (VirtualAlbum) object.readObject();
                     object.close();
-                }
+                } else
+                    screenshotAlbum = new VirtualAlbum("", "");
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -767,16 +843,12 @@ public class MainController {
                 ArrayList<VirtualAlbum> list = new ArrayList<>(listViewData);
                 ObjectOutputStream object = new ObjectOutputStream(new FileOutputStream(file));
                 object.writeObject(list);
+                object.writeObject(screenshotAlbum);
                 object.close();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }).start();
-    }
-
-    public static void serializeSSAlbum() {
-        String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "VirtualAlbums";
-
     }
 
     //ukoliko je potvrdjeno brisanje brise VA i prikazuje slike iz sledeceg

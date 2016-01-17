@@ -1,5 +1,10 @@
 package net.etfbl.kdpo.client;
 
+import javafx.animation.PauseTransition;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,6 +20,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.File;
 
@@ -77,9 +83,11 @@ public class ImageViewController {
     private double x = 0;
     private double y = 0;
     private final double STEP = 0.2;
+    private BooleanProperty clickControl;
 
     @FXML
     void initialize() {
+        clickControl = new SimpleBooleanProperty(true);
         images = FXCollections.observableArrayList();
         imageView = new ImageView();
         imageView.setPreserveRatio(true);
@@ -134,33 +142,44 @@ public class ImageViewController {
             imageView.setTranslateY(event.getScreenY() + this.y);
         });
 
+        Duration maxTimeBetweenSequentialClicks = Duration.millis(200);
+        PauseTransition clickTimer = new PauseTransition(maxTimeBetweenSequentialClicks);
+        final IntegerProperty sequentialClickCount = new SimpleIntegerProperty(0);
+
+        controlLine.visibleProperty().bind(clickControl);
         imageView.setOnDragDetected(event -> hide = false);
 
-        anchorPaneImageContainer.setOnMouseReleased(event -> {
-            if (hide && event.getButton().equals(MouseButton.PRIMARY)) {
+        clickTimer.setOnFinished(event -> {
+            int count = sequentialClickCount.get();
+            if (count == 1 && hide) {
                 if (CONTROL_LINE_COUNTER == 0) {
-                    controlLine.setVisible(false);
+                    clickControl.set(false);
                     CONTROL_LINE_COUNTER = 1;
                 } else {
-                    controlLine.setVisible(true);
+                    clickControl.set(true);
                     CONTROL_LINE_COUNTER = 0;
                 }
             }
             hide = true;
+            sequentialClickCount.set(0);
         });
 
-        imageView.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
-                if (imageView.getScaleX() == 1 && imageView.getScaleY() == 1 && imageView.getTranslateX() == 0 && imageView.getTranslateY() == 0) {
-                    imageView.setScaleX(2);
-                    imageView.setScaleY(2);
-                    canZoomOut = true;
-                } else {
-                    imageView.setTranslateX(0);
-                    imageView.setTranslateY(0);
-                    imageView.setScaleX(1);
-                    imageView.setScaleY(1);
-                    canZoomOut = false;
+        anchorPaneImageContainer.setOnMouseReleased(event -> {
+            if (event.getButton().equals(MouseButton.PRIMARY)) {
+                sequentialClickCount.set(event.getClickCount());
+                clickTimer.playFromStart();
+                if (event.getClickCount() >= 2) {
+                    if (imageView.getScaleX() == 1 && imageView.getScaleY() == 1 && imageView.getTranslateX() == 0 && imageView.getTranslateY() == 0) {
+                        imageView.setScaleX(2);
+                        imageView.setScaleY(2);
+                        canZoomOut = true;
+                    } else {
+                        imageView.setTranslateX(0);
+                        imageView.setTranslateY(0);
+                        imageView.setScaleX(1);
+                        imageView.setScaleY(1);
+                        canZoomOut = false;
+                    }
                 }
             }
         });
@@ -182,8 +201,8 @@ public class ImageViewController {
     public void setVirtualAlbum(VirtualAlbum virtualAlbum, int index) {
         this.virtualAlbum = virtualAlbum;
         setImages(virtualAlbum.getImages(), index);
-        if (virtualAlbum.isTemporary())
-            btnRemove.setVisible(false);
+        if (!clickControl.get())
+            clickControl.set(true);
     }
 
     public void initParams(Stage stage, Parent root) {
@@ -283,7 +302,7 @@ public class ImageViewController {
             fsc.setPreviousStageStage(stage);
             fsc.setImages(images, INDEX);
             fsc.setImageViewController(this);
-            fsc.setStuff(stage.getWidth(),stage.getHeight(),stage.getX(),stage.getY());
+            fsc.setStuff(stage.getWidth(), stage.getHeight(), stage.getX(), stage.getY());
             stage.hide();
             fsc.show();
 

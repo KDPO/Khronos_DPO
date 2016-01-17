@@ -1,6 +1,8 @@
 package net.etfbl.kdpo.client;
 
 import javafx.application.Platform;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -61,7 +63,7 @@ public class ActivationWindowController {
     private Stage stage;
     private String key;
     private String username;
-    private boolean activated = false;
+    private BooleanProperty activated;
 
     private double x = 0;
     private double y = 0;
@@ -69,6 +71,8 @@ public class ActivationWindowController {
     @FXML
     void initialize() {
 
+        activated = new SimpleBooleanProperty(false);
+        btnActivate.disableProperty().bind(activated);
         activationErrorText.setVisible(false);
         usernameErrorText.setVisible(false);
         progressIndicator.setVisible(false);
@@ -177,7 +181,7 @@ public class ActivationWindowController {
     }
 
     public boolean isActivated() {
-        return activated;
+        return activated.get();
     }
 
     private boolean checkKeyValidation() {
@@ -201,12 +205,10 @@ public class ActivationWindowController {
                     // ACTIVATION#OK ili ACTIVATION#NOK#poruka
                     if (response.split("#")[1].equals("OK")) {
                         // prekopiran markov kod ...
-                        activated = true;
+                        activated.set(true);
                         Platform.runLater(() -> {
                             activationText.setStyle("-fx-text-fill: #2aff05;");
                             activationText.setText("Activated!");
-                            anchorPaneLabels.setDisable(false);
-                            btnActivate.setDisable(true);
                             btnClose.requestFocus();
                         });
 
@@ -225,7 +227,7 @@ public class ActivationWindowController {
                         // TOD prikazati grešku grafički
                         // zatim omogućiti ponovni unos
                         // nisam još siguran kako funkcioniše ovaj kontroler
-                        activated = false;
+                        activated.set(false);
                         String[] s = response.split("#");
                         Platform.runLater(() -> {
                             if ("NOK".equals(s[2])) {
@@ -248,12 +250,11 @@ public class ActivationWindowController {
                     ClientServicesThread.in = null;
                     ClientServicesThread.out = null;
                     // reakcija na prekinutu vezu
-                    activated = false;
+                    activated.set(false);
                     Platform.runLater(() -> {
                         btnClose.requestFocus();
                         activationText.setStyle("-fx-text-fill: red;");
                         activationText.setText("Connection problem!");
-                        anchorPaneLabels.setDisable(false);
                     });
                 }
                 return null;
