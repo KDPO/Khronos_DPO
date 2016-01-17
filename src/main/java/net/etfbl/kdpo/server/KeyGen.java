@@ -1,5 +1,6 @@
 package net.etfbl.kdpo.server;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -7,7 +8,7 @@ import java.util.Random;
 /**
  * Created by User on 12/15/2015.
  */
-public class KeyGen {
+public class KeyGen implements Serializable {
     private HashMap<String, Boolean> keyList;
 
     private static final int KEY_LENGTH = 16;

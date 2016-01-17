@@ -68,6 +68,7 @@ public class ServerThread extends Thread {
 					thisUser = ServerUtility.users.get(fromClient.split("#")[1]);
 					setUserAsActive();
 					loggedIn = true;
+					out.println("ACTIVATION#OK");
 				}
 			}
 

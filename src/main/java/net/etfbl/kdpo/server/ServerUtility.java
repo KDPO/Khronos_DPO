@@ -5,6 +5,9 @@ import net.etfbl.kdpo.client.VirtualAlbum;
 
 import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -47,13 +50,15 @@ public class ServerUtility {
 
 	public static void loadData() {
 		String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "Server";
-		File outputPath = new File(path);
-		if (!outputPath.exists()) {
-			outputPath.mkdir();
+		File folderPath = new File(path);
+		if (!folderPath.exists()) {
+			folderPath.mkdir();
 		}
 		String filePath = path + File.separator + "server.ser";
 		File file = new File(path);
-		if(file.exists()) {
+		Path pathFilePath = Paths.get(filePath);
+		//if(file.exists()) {
+		if(Files.exists(pathFilePath)) {
 			try {
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
 				users = (HashMap<String, User>) ois.readObject();

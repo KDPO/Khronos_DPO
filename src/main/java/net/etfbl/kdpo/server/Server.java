@@ -31,7 +31,11 @@ public class Server {
 					ServerUtility.saveData();
 					notEnd=false;
 				}
+				if(command.startsWith("generate keys")) {
+					ServerUtility.keyGen.generateNewKeys(Integer.parseInt(command.split(" ")[2]));
+				}
 			}
+			System.exit(0);
 		} catch (IOException e) {
 			//TODO something
 		}

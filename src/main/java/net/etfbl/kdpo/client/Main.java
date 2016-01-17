@@ -15,6 +15,7 @@ import org.controlsfx.control.Notifications;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.nio.charset.Charset;
 
 /**
@@ -51,6 +52,16 @@ public class Main extends Application {
         stage.setMinWidth(600);
         stage.setMinHeight(360);
         stage.show();
+		Thread startCST = new Thread(() -> {
+			try {
+				ClientServicesThread.startClientServicesThread();
+				System.out.println("Services started");
+			} catch (IOException e) {
+				// ako nije uspjela konekcija
+				e.printStackTrace();
+			}
+		});
+		startCST.start();
     }
 
     private boolean showActivationWindow(Stage stage) throws Exception {
