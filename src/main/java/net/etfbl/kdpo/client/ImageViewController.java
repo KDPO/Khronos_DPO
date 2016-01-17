@@ -113,22 +113,11 @@ public class ImageViewController {
         btnFullScreen.setOnMouseClicked(event -> showFullScreenControler());
 
         btnRemove.setOnMouseClicked(event -> {
-            // izbacivanje slike iz Virtuelnog Albuma
-            File file = images.get(INDEX);
-            nextImage();
-            new Thread(() -> {
-                images.remove(file);
-            }).start();
+            // TODO izbaciti sliku iz VA
         });
 
         btnDelete.setOnMouseClicked(event -> {
-            // brisanje slike sa diska
-            File file = images.get(INDEX);
-            nextImage();
-            new Thread(() -> {
-                images.remove(file);
-                file.deleteOnExit();
-            }).start();
+            // TODO nekako obrisati sliku sa FS
         });
 
         // za pomijeranje prozora
@@ -200,6 +189,13 @@ public class ImageViewController {
 
     public void setVirtualAlbum(VirtualAlbum virtualAlbum, int index) {
         this.virtualAlbum = virtualAlbum;
+        if (virtualAlbum.isTemporary()) {
+            btnDelete.setVisible(true);
+            btnRemove.setVisible(false);
+        } else {
+            btnDelete.setVisible(false);
+            btnRemove.setVisible(true);
+        }
         setImages(virtualAlbum.getImages(), index);
         if (!clickControl.get())
             clickControl.set(true);

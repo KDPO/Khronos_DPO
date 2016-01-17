@@ -3,6 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import java.lang.*?>
+
 <VBox fx:id="vBox" minHeight="360.0" minWidth="640.0" styleClass="vBoxMain" stylesheets="@../css/imageView.css"
       xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="net.etfbl.kdpo.client.ImageViewController">
@@ -73,8 +74,7 @@
                         <Button id="buttonRemove" fx:id="btnRemove" alignment="CENTER" maxHeight="-Infinity"
                                 maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
                                 prefHeight="50.0" prefWidth="70.0" styleClass="buttonRemove"
-                                AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="305.0"
-                                AnchorPane.topAnchor="0.0"/>
+                                AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="0.0"/>
                         <Button fx:id="btnBack" focusTraversable="false" maxHeight="-Infinity" maxWidth="-Infinity"
                                 minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0"
                                 prefWidth="70.0" styleClass="buttonBack" AnchorPane.bottomAnchor="0.0"
