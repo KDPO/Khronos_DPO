@@ -616,6 +616,13 @@ public class MainController {
                                 } else {
                                     iFrame.getCheckBox().setSelected(false);
                                     checked--;
+                                    if (checked == 0) {
+                                        if (tabPane.getSelectionModel().getSelectedItem().equals(tabFS)) {
+                                            btnAddImages.setVisible(false);
+                                        }
+                                        btnDelete.setVisible(false);
+                                        btnRemove.setVisible(false);
+                                    }
                                 }
                             }
                         }
