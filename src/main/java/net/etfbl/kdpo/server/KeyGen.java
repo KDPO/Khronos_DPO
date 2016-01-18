@@ -18,7 +18,7 @@ public class KeyGen implements Serializable {
     }
 
     //provjerava da li je Key zauzet i validan
-    public boolean checkKey(String key) {
+    public synchronized boolean checkKey(String key) {
         boolean valid = false;
         if (keyList.containsKey(key)) {
             if (keyList.get(key).equals(false)) {
@@ -29,7 +29,7 @@ public class KeyGen implements Serializable {
     }
 
     //metoda koja postavlja kljuc za koristen i vraca da li je uspjesno izvrsena
-    public boolean setKeyAsUsed(String key) {
+    public synchronized boolean setKeyAsUsed(String key) {
         boolean flag = false;
         if (keyList.containsKey(key)) {
             if (keyList.get(key).equals(false)) {
@@ -41,7 +41,7 @@ public class KeyGen implements Serializable {
     }
 
     //metoda koja generise i ubacuje u listu kljuceva
-    public void generateNewKeys(int numberOfKeys) {
+    public synchronized void generateNewKeys(int numberOfKeys) {
         for (int i = 0; i < numberOfKeys; ) {
             String key = generateKey();
             if (!keyList.containsKey(key)) {
@@ -108,7 +108,7 @@ public class KeyGen implements Serializable {
     }
 
     //metoda koja vraca jedan slobodan kljuc iz liste kljuceva
-    public String getKey() {
+    public synchronized String getKey() {
         String key = null;
         for (Map.Entry<String, Boolean> entry : keyList.entrySet()) {
             if (entry.getValue().equals(false)) {

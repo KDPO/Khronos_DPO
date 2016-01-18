@@ -902,6 +902,8 @@ public class MainController {
     private void removeImagesFromVA() {
         ObservableList<File> temp = listView.getSelectionModel().getSelectedItem().getImages();
         temp.removeAll(getCheckedImagesFromFlowPane());
+        checked=0;
+        btnRemove.setVisible(false);
         setImagesToFlowPane(temp);
     }
 
