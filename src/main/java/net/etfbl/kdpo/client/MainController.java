@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
@@ -93,6 +94,12 @@ public class MainController {
     private Button btnDelete;
 
     @FXML
+    private MenuItem menuAcceptSS;
+
+    @FXML
+    private MenuItem menuPreferences;
+
+    @FXML
     private MenuItem menuSendSS;
 
     @FXML
@@ -154,6 +161,8 @@ public class MainController {
         btnDelete.setVisible(false);
         progressIndicator.setVisible(false);
         treeViewProgressIndicator.setVisible(false);
+
+        menuPreferences.setOnAction(event -> showPreferencesWindow());
 
         copy = new MenuItem("Copy");
         copy.setOnAction(event -> {
@@ -968,6 +977,20 @@ public class MainController {
             in.close();
             out.close();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void showPreferencesWindow() {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/preferences.fxml"));
+            Stage stage = new Stage(StageStyle.UNIFIED);
+            stage.setScene(new Scene(root, 600, 400));
+            stage.getIcons().add(new Image("/images/khronos.png"));
+            stage.setTitle("Preferences");
+            stage.setResizable(false);
+            stage.showAndWait();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

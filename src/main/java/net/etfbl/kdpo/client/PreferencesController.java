@@ -16,5 +16,6 @@ public class PreferencesController {
 
     @FXML
     void initialize() {
+        //TODO sve što treba :D
     }
 }
