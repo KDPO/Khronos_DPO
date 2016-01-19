@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * Created by Stijak on 12.12.2015..
@@ -61,6 +62,7 @@ public class Main extends Application {
                 e.printStackTrace();
             }
         });
+        startCST.start();
     }
 
     private boolean showActivationWindow(Stage stage) throws Exception {
