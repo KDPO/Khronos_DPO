@@ -116,6 +116,7 @@ public class ClientServicesThread extends Thread {
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException ex) {
+			ex.printStackTrace();
 		}
 		while ((lengthThatIsRead = fis.read(buffer)) > 0) {
 			System.out.println("saljem " + lengthThatIsRead);
@@ -126,7 +127,6 @@ public class ClientServicesThread extends Thread {
 			}
 		}
 		fis.close();
-
 	}
 
 	/**

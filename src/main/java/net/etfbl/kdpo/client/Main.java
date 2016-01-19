@@ -12,10 +12,9 @@ import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import org.controlsfx.control.Notifications;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.nio.charset.Charset;
 
 /**
@@ -25,6 +24,7 @@ import java.nio.charset.Charset;
 public class Main extends Application {
 
     public static Stage primaryStage;
+    public static FileInputStream inputStream;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -39,7 +39,13 @@ public class Main extends Application {
         else Platform.exit();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {/*
+        String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "License" + File.separator + "license.txt";
+        File file = new File(path);
+        if (file.exists()){
+            inputStream = new FileInputStream(file);
+        }
+        if (inputStream == null)*/
         launch();//args);
     }
 
@@ -84,7 +90,8 @@ public class Main extends Application {
         try {
             Notifications notifications = Notifications.create();
             notifications.onAction(event -> {
-                MainController.mainController.showImageViewController(MainController.screenshotAlbum, 0);
+                if (MainController.screenshotAlbum.getImages().size() > 0)
+                    MainController.mainController.showImageViewController(MainController.screenshotAlbum, 0);
             });
             notifications.hideAfter(Duration.seconds(10)).title("Khronos DPO").text(message).position(Pos.BOTTOM_RIGHT).darkStyle().showInformation();
         } catch (Exception e) {

@@ -363,8 +363,7 @@ public class MainController {
 	private void acceptSSButtonFunction() {
 		try {
 			if (!screenshotAlbum.getImages().isEmpty()) {
-				System.out.println(screenshotAlbum.getImages().size());
-				showImageViewController(screenshotAlbum);
+				showImageViewController(screenshotAlbum, 0);
 			} else {
 				Main.showNotification("There are no images");
 			}
