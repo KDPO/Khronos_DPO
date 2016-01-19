@@ -161,14 +161,21 @@ public class PreferencesController {
 					toServer.append("#").append(username);
 				}
 				ClientServicesThread.out.println(toServer.toString());
+				System.out.println(toServer.toString());
 			}
 		});
 		btnBlockAll.setOnMouseClicked( event -> {
-			ClientServicesThread.out.println("CONTROL#BLOCKALL");
+			if (ClientServicesThread.clientServicesThread != null) {
+				ClientServicesThread.out.println("CONTROL#BLOCKALL");
+				System.out.println("CONTROL#BLOCKALL");
+			}
 		});
 
 		btnUnblockAll.setOnMouseClicked( event -> {
-			ClientServicesThread.out.println("CONTROL#UNBLOCKALL");
+			if (ClientServicesThread.clientServicesThread != null) {
+				System.out.println("CONTROL#UNBLOCKALL");
+				ClientServicesThread.out.println("CONTROL#UNBLOCKALL");
+			}
 		});
 
 	}

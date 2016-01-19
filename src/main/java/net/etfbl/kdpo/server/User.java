@@ -10,12 +10,12 @@ import java.util.HashSet;
 public class User implements Serializable {
     private String username;
     private String key;
-    private HashSet<String> blockedUsersList;
+    private ArrayList<String> blockedUsersList;
     private boolean allBlocked;
     private ArrayList<String> imageQueue;
 
 	{
-		blockedUsersList = new HashSet<>();
+		blockedUsersList = new ArrayList<>();
 		imageQueue = new ArrayList<>();
 	}
 
@@ -74,7 +74,7 @@ public class User implements Serializable {
 		return key;
     }
 
-	public HashSet<String> getBlockedUsersList() {
+	public ArrayList<String> getBlockedUsersList() {
 		return blockedUsersList;
 	}
 }

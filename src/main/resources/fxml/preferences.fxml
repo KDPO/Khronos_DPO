@@ -33,7 +33,6 @@
                 </Tab>
             </tabs>
         </TabPane>
-        <Button fx:id="btnCancel" layoutX="524.0" layoutY="361.0" mnemonicParsing="false" prefWidth="60.0" text="Cancel" AnchorPane.bottomAnchor="10.0" />
-        <Button fx:id="btnOK" layoutX="448.0" layoutY="361.0" mnemonicParsing="false" prefWidth="60.0" text="OK" AnchorPane.bottomAnchor="10.0" />
+        <Button fx:id="btnCancel" layoutX="524.0" layoutY="361.0" mnemonicParsing="false" prefWidth="60.0" text="OK" AnchorPane.bottomAnchor="10.0" />
     </children>
 </AnchorPane>
