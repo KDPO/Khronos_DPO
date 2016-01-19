@@ -132,6 +132,10 @@ public class ServerThread extends Thread {
 				}
 				if (fromClient.startsWith("SCREENSHOT")) {
 					File imageFile = receiveImage(socket, thisUser.getUsername(), fromClient.split("#")[1]);
+					if( ServerUtility.users.get(fromClient.split("#")[1]).areBlockedAll() ||ServerUtility.users.get(fromClient.split("#")[1]).getBlockedUsersList().contains(thisUser.getUsername())) {
+						imageFile.delete();
+						continue;
+					}
 					if (ServerUtility.username_socket.containsKey(fromClient.split("#")[1])) {
 						try {
 							(new PrintWriter(new OutputStreamWriter(ServerUtility.username_socket.get(fromClient.split("#")[1]).getOutputStream()),true)).println("SCREENSHOT#" + thisUser.getUsername());

@@ -153,7 +153,7 @@ public class PreferencesController {
 			stage.close();
 		});
 
-		btnBlockAll.setOnMouseClicked(event -> {
+		btnBlock.setOnMouseClicked(event -> {
 			if (ClientServicesThread.clientServicesThread != null) {
 				StringBuilder toServer = new StringBuilder();
 				toServer.append("CONTROL#BLOCKUSER");
@@ -163,8 +163,18 @@ public class PreferencesController {
 				ClientServicesThread.out.println(toServer.toString());
 			}
 		});
+		btnBlockAll.setOnMouseClicked( event -> {
+			ClientServicesThread.out.println("CONTROL#BLOCKALL");
+		});
+
+		btnUnblockAll.setOnMouseClicked( event -> {
+			ClientServicesThread.out.println("CONTROL#UNBLOCKALL");
+		});
 
 	}
+
+	@FXML
+	Button btnUnblockAll;
 
 	public void setStage(Stage stage) {
 		this.stage = stage;
