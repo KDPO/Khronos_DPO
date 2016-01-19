@@ -47,6 +47,8 @@ public class ServerThread extends Thread {
 						if (isActivationSuccessful) {
 							out.println("ACTIVATION#OK");
 							setUserAsActive();
+							//postavlja kljuc na iskoristen
+							ServerUtility.keyGen.setKeyAsUsed(fromClient.split("#")[2]);
 							loggedIn = true;
 						} else {
 							out.println("ACTIVATION#NOK#NOK#OK");
@@ -94,6 +96,16 @@ public class ServerThread extends Thread {
 					}
 					if("UNBLOCKALL".equals(fromClientArray[1])){
 						thisUser.unblockAll();
+					}
+				}
+				else if(fromClient.equals("USERS")){
+					//vraca listu korisnika kojima je moguce poslati SS, nije moguce sebi poslati SS
+					String users=ServerUtility.getUsers(thisUser.getUsername());
+					if(users!=null){
+						out.println("USERS#"+users);
+					}
+					else{
+						out.println("USERS");
 					}
 				}
 			}
@@ -157,9 +169,11 @@ public class ServerThread extends Thread {
 	CONTROL#UNBLOCKUSER#username
 	CONTROL#BLOCKALL
 	CONTROL#UNBLOCKALL
+	USERS - korisnik trazi listu korisnika kojima moze slati sliku
 
 	server -> klijent
 	ACTIVATION#OK
 	ACTIVATION#NOK#TIP#Poruka - da li je aktivacija prošla ili ne TIP = 1 invalid key ; TIP = 2 username taken
 	IMAGE#RECEIVE#image name#user sender - server će poslati klijentu sliku
+	USERS#user1#user2...
  */

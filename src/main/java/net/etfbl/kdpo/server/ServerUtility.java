@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Created by User on 12/15/2015.
@@ -92,6 +93,20 @@ public class ServerUtility {
 
 	public static boolean checkIfUsernameIsAvailable(String username) {
 		return !users.containsKey(username);
+	}
+
+	public static String getUsers(String user){
+		Set<String> usersSet=users.keySet();
+		String result="";
+		for(String s:usersSet){
+			if(!s.equals(user)) {
+				result += s + "#";
+			}
+		}
+		if(result.equals("")){
+			return null;
+		}
+		return result.substring(0, result.length()-1);
 	}
 
 }

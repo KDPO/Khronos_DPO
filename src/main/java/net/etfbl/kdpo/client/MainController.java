@@ -392,7 +392,13 @@ public class MainController {
         });
 
         //poziva metodu za serijalizovanje albuma pri gasenju aplikacije
-        stage.setOnCloseRequest(we -> serializeAlbums());
+        stage.setOnCloseRequest(we -> {
+            serializeAlbums();
+            try {
+                //pri gasenju aplikacije potrebno je ugasiti konekciju na server
+                ClientServicesThread.socket.close();
+            }catch (IOException ex){}
+        });
     }
 
     // prelazak na ImageViewController

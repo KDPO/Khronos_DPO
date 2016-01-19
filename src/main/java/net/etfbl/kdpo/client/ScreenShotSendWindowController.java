@@ -55,7 +55,7 @@ public class ScreenShotSendWindowController {
     @FXML
     void initialize() {
         ObservableList<String> data = FXCollections.observableArrayList();
-        data.addAll("Marko", "Nenad", "Nemanja", "Duško", "Vladan");
+        //data.addAll("Marko", "Nenad", "Nemanja", "Duško", "Vladan");
         dropDownList.setItems(data);
         progressBar.setVisible(false);
         lblErrorText.setVisible(false);
@@ -70,8 +70,12 @@ public class ScreenShotSendWindowController {
             @Override
             protected Void call() throws Exception {
                 dropDownList.setDisable(true);
-                for (int i = 0; i < 100; i++)
-                    Thread.sleep(100);
+                String response=ClientServicesThread.displayUsers();
+                String[] users=response.split("#");
+                //preskacemo prvi jer je on kontrola USERS
+                for(int i=1;i<users.length;++i){
+                    data.add(users[i]);
+                }
                 dropDownList.setDisable(false);
                 return null;
             }

@@ -17,6 +17,8 @@ public class ClientServicesThread extends Thread {
 	public static int SERVER_PORT = 10000;
 	public static ClientServicesThread clientServicesThread; // zlu ne trebalo
 
+	private static String users;
+
 	// ako je konektovan, čeka server da mu pošalje sliku
 	// ako nije konektovan, i ne postoji
 	public void run() {
@@ -36,6 +38,9 @@ public class ClientServicesThread extends Thread {
 						});
 					}
 				}
+				else if(fromServer.startsWith("USERS")){
+					users=fromServer;
+				}
 			}
 		} catch (IOException e) {
 			System.out.println("Services ended");
@@ -49,7 +54,12 @@ public class ClientServicesThread extends Thread {
 	public void saveImage(Image image) {
 	}
 
-	public void displayUsers() {
+	public static String displayUsers() {
+		out.println("USERS");
+		while(users==null){}
+		String result=users;
+		users=null;
+		return result;
 	}
 
 	public static void sendImage(File image, Socket socket) {
