@@ -22,6 +22,7 @@ public class Server {
 
 			boolean notEnd = true;
 			BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+			System.out.println("Server started...");
 			while(notEnd) {
 				String command = in.readLine();
 				if("get key".equals(command)) {
