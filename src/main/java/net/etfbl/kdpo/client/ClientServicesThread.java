@@ -151,7 +151,8 @@ public class ClientServicesThread extends Thread {
 				reader.close();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			// inače bi napravili rekonekciju ali nismo stigli
+			//e.printStackTrace();
 		}
 		out.println("ACTIVATED#" + username);
 		//System.out.println(in.readLine());

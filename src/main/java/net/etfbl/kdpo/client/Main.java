@@ -24,7 +24,6 @@ import java.nio.charset.Charset;
 public class Main extends Application {
 
     public static Stage primaryStage;
-    public static FileInputStream inputStream;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -39,14 +38,8 @@ public class Main extends Application {
         else Platform.exit();
     }
 
-    public static void main(String[] args) throws Exception {/*
-        String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "License" + File.separator + "license.txt";
-        File file = new File(path);
-        if (file.exists()){
-            inputStream = new FileInputStream(file);
-        }
-        if (inputStream == null)*/
-        launch();//args);
+    public static void main(String[] args) throws Exception {
+        launch();
     }
 
     private void showMainWindow(Stage stage, boolean activated) throws Exception {
@@ -64,8 +57,8 @@ public class Main extends Application {
                     ClientServicesThread.startClientServicesThread();
                     System.out.println("Services started");
                 } catch (IOException e) {
-                    // ako nije uspjela konekcija
-                    e.printStackTrace();
+                    // u pozadini bi se trebala pokušavati rekonekcija
+                    //e.printStackTrace();
                 }
             });
             startCST.start();
