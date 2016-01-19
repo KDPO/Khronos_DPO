@@ -36,6 +36,7 @@ public class ServerThread extends Thread {
 			String fromClient;
 			while (!loggedIn) {
 				fromClient = in.readLine();
+				System.out.println(fromClient);
 				// očekivani oblik poruke bez space, | znači "ili"
 				// TOACTIVATE # username # key
 				// provjera autentičnosti
@@ -70,7 +71,7 @@ public class ServerThread extends Thread {
 					thisUser = ServerUtility.users.get(fromClient.split("#")[1]);
 					setUserAsActive();
 					loggedIn = true;
-					//out.println("ACTIVATION#OK");
+					out.println("ACTIVATION#OK");
 				}
 				else if(fromClient.equals("EXIT")){
 					//setUserAsInactive();
