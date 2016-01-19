@@ -110,9 +110,11 @@ public class ImageFrame extends AnchorPane {
         this.imageView.setImage(new Image(file.getAbsolutePath()));
     }
 
-    @Override
     public boolean equals(Object o) {
-        return this.file.equals(o);
+        return super.equals(o);
     }
 
+    public boolean equals(File file) {
+        return file.equals(this.file);
+    }
 }
