@@ -52,16 +52,15 @@ public class Main extends Application {
         stage.setMinWidth(600);
         stage.setMinHeight(360);
         stage.show();
-		Thread startCST = new Thread(() -> {
-			try {
-				ClientServicesThread.startClientServicesThread();
-				System.out.println("Services started");
-			} catch (IOException e) {
-				// ako nije uspjela konekcija
-				e.printStackTrace();
-			}
-		});
-		startCST.start();
+        Thread startCST = new Thread(() -> {
+            try {
+                ClientServicesThread.startClientServicesThread();
+                System.out.println("Services started");
+            } catch (IOException e) {
+                // ako nije uspjela konekcija
+                e.printStackTrace();
+            }
+        });
     }
 
     private boolean showActivationWindow(Stage stage) throws Exception {

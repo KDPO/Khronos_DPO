@@ -1,5 +1,6 @@
 package net.etfbl.kdpo.client;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -69,18 +70,23 @@ public class ScreenShotSendWindowController {
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                dropDownList.setDisable(true);
-                String response=ClientServicesThread.displayUsers();
-                String[] users=response.split("#");
-                //preskacemo prvi jer je on kontrola USERS
-                for(int i=1;i<users.length;++i){
-                    data.add(users[i]);
+                try {
+                    String response = ClientServicesThread.displayUsers();
+                    String[] users = response.split("#");
+                    //preskacemo prvi jer je on kontrola USERS
+                    for (int i = 1; i < users.length; ++i)
+                        data.add(users[i]);
+                } catch (Exception e) {
+                    Platform.runLater(() -> {
+                        lblErrorText.setText("Connection problem!");
+                        lblErrorText.setVisible(true);
+                    });
                 }
-                dropDownList.setDisable(false);
                 return null;
             }
         };
         progressBar.visibleProperty().bind(task.runningProperty());
+        dropDownList.disableProperty().bind(task.runningProperty());
         new Thread(task).start();
         // za pomijeranje prozora
         anchorPane.setOnMousePressed(event -> {

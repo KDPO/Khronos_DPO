@@ -29,8 +29,12 @@ public class ImageFrame extends AnchorPane {
         this.file = file;
         this.label = new Label(file.getName().substring(0, file.getName().indexOf(".")));
         try {
-            imageView = new ImageView(new Image(new FileInputStream(file), 500, 500, true, false));
-        } catch (FileNotFoundException e) {
+            FileInputStream iStream = new FileInputStream(file);
+            Image image = new Image(iStream, 500, 500, true, true);
+            imageView = new ImageView(image);
+            iStream.close();
+            image = null;
+        } catch (Exception e) {
             e.printStackTrace();
         }
         checkBox = new CheckBox();
@@ -105,4 +109,10 @@ public class ImageFrame extends AnchorPane {
     public void setImage(File file) {
         this.imageView.setImage(new Image(file.getAbsolutePath()));
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return this.file.equals(o);
+    }
+
 }

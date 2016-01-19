@@ -3,8 +3,6 @@ package net.etfbl.kdpo.client;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -27,13 +25,13 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.WindowEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 /**
@@ -142,7 +140,6 @@ public class MainController {
     private BooleanProperty isThereSomethigToPaste;
     private boolean isCutted = false;
     // kada će delete i rename biti prikazano
-    private BooleanProperty isDisabled;
     //task za ubacivanje slika u flowPane
     private Task<Void> task;
     private boolean canAdd = true;
@@ -397,7 +394,8 @@ public class MainController {
             try {
                 //pri gasenju aplikacije potrebno je ugasiti konekciju na server
                 ClientServicesThread.socket.close();
-            }catch (IOException ex){}
+            } catch (IOException ex) {
+            }
         });
     }
 
@@ -426,7 +424,6 @@ public class MainController {
     private void setTreeView() {
         /* TreeView initialization */
         isThereSomethigToPaste = new SimpleBooleanProperty(false);
-        isDisabled = new SimpleBooleanProperty(true);
         treeView.setCellFactory(new Callback<TreeView<MyFile>, TreeCell<MyFile>>() {
             @Override
             public TreeCell<MyFile> call(TreeView<MyFile> param) {
@@ -447,21 +444,23 @@ public class MainController {
 
                             @Override
                             public MyFile fromString(String string) {
+                                if (string.isEmpty())
+                                    return getItem();
+                                Path path = getItem().toPath();
                                 MyFile file = new MyFile(getItem().getParent(), string);
                                 new Thread(() -> {
                                     try {
-                                        Files.move(getItem().toPath(), getItem().toPath().resolveSibling(string));
-                                    } catch (IOException e) {
+                                        Files.move(path, path.resolveSibling(string));
+                                    } catch (Exception e) {
+                                        //TODO FileAlreadyExistsException
                                         e.printStackTrace();
                                     }
                                 }).start();
                                 return file;
                             }
                         });
-                        menuRenameTreeView.disableProperty().bind(isDisabled.not());
                         menuRenameTreeView.setOnAction(event -> startEdit());
                         menuNewFolderTreeView.setOnAction(event -> newFolderButtonFunction());
-                        menuDeleteTreeView.disableProperty().bind(isDisabled.not());
                         menuDeleteTreeView.setOnAction(event -> {
                             if (!showRemoveVirtualAlbumWindow("Deleting \"" + treeView.getSelectionModel().getSelectedItem().getValue().getName() + "\"")) {
                                 deleteFolder();
@@ -492,7 +491,6 @@ public class MainController {
                             } */
                         });
                         // onemogući rename ukoliko ima slika unutar foldera
-                        // isDisabled može da kontroliše i ovo
                         setEditable(false);
                     }
 
@@ -503,7 +501,7 @@ public class MainController {
                             if ("".equals(item.getName()) || "Desktop".equals(item.getName())) {
                                 setContextMenu(new ContextMenu(menuNewFolderTreeView, menuPasteTreeView));
                             } else {
-                                editableProperty().bind(isDisabled);
+                                setEditable(true);
                                 setContextMenu(new ContextMenu(menuNewFolderTreeView, menuCopyTreeView, menuCutTreeView, menuPasteTreeView, menuDeleteTreeView, menuRenameTreeView));
                             }
                         }
@@ -549,10 +547,7 @@ public class MainController {
             if (newValue != null) {
                 images.setAll(newValue.getValue().listFiles((dir, name) -> name.endsWith("jpg") || name.endsWith("png") || name.endsWith("jpeg")));
                 if (images.isEmpty())
-                    isDisabled.set(true);
-                else
-                    isDisabled.set(false);
-                lblAlbumDescription.setText(newValue.getValue().toString());
+                    lblAlbumDescription.setText(newValue.getValue().toString());
             }
             setImagesToFlowPane(images);
         });
@@ -908,7 +903,7 @@ public class MainController {
     private void removeImagesFromVA() {
         ObservableList<File> temp = listView.getSelectionModel().getSelectedItem().getImages();
         temp.removeAll(getCheckedImagesFromFlowPane());
-        checked=0;
+        checked = 0;
         btnRemove.setVisible(false);
         setImagesToFlowPane(temp);
     }
