@@ -37,6 +37,7 @@ public class ClientServicesThread extends Thread {
 					Platform.runLater(() -> {
 						Main.showNotification("Stigla slika od korisnika " + fromServer.split("#")[1]);
 					});
+					MainController.screenshotAlbum.addImage(imageFile);
 				}
 				else if(fromServer.startsWith("USERS")){
 					users=fromServer;
@@ -56,13 +57,7 @@ public class ClientServicesThread extends Thread {
 
 	public static String displayUsers() {
 		out.println("USERS");
-		while(users==null){
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		while(users==null){ }
 		String result=users;
 		users=null;
 		return result;
