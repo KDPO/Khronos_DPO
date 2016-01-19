@@ -13,14 +13,21 @@
                  tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0"
                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <tabs>
-                <Tab closable="false" text="Untitled Tab 1">
+                <Tab id="tabConnection" closable="false" styleClass="tabConnection" text="Connection">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Button id="btnConnectToServer" fx:id="btnConnectToServer" layoutX="44.0" layoutY="43.0" mnemonicParsing="false" styleClass="btnConnection" text="Connect To Server" AnchorPane.leftAnchor="44.0" AnchorPane.topAnchor="101.0" style="-fx-border-radius: 5px; -fx-background-color: #f98012; -fx-border-color: #000;"
+                                textFill="WHITE"/>
+                        <Button id="btnDisconnectFromServer" fx:id="btnDisconnectFromServer" layoutX="44.0" layoutY="40.0" mnemonicParsing="false" styleClass="btnConnection" text="Disconnect From Server" AnchorPane.leftAnchor="44.0" AnchorPane.topAnchor="40.0"
+                                style="-fx-border-radius: 5px; -fx-background-color: #f98012; -fx-border-color: #000;"
+                                textFill="WHITE"/>
+                     </children></AnchorPane>
                     </content>
                 </Tab>
                 <Tab closable="false" text="Untitled Tab 2">
                     <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                     </content>
                 </Tab>
                 <Tab text="Untitled Tab 3">
