@@ -31,16 +31,16 @@ public class ClientServicesThread extends Thread {
 			// možda ubacimo u settings dugme connect, disconnect, connect automaticaly i slično
 			while (true) {
 				String fromServer = in.readLine();
+				System.out.println(fromServer);
 
-				if (fromServer.startsWith("IMAGE")) {
-					if (fromServer.split("#")[1].equals("RECEIVE")) {
-						File imageFile = receiveImage(socket, fromServer.split("#")[2]);
-						MainController.screenshotAlbum.addImage(imageFile);
-						Platform.runLater(() -> {
-								// TODO prikaz obavještenje da je stigla slika , napraviti funciju?
-								//	Main.showNotification("Stigla slika");
-						});
-					}
+				if (fromServer.startsWith("SCREENSHOT")) {
+					File imageFile = receiveImage(socket, fromServer.split("#")[1]);
+					MainController.screenshotAlbum.addImage(imageFile);
+					Platform.runLater(() -> {
+						// TODO prikaz obavještenje da je stigla slika , napraviti funciju?
+						Main.showNotification("Stigla slika");
+					});
+
 				} else if (fromServer.startsWith("USERS")) {
 					users = fromServer;
 				}

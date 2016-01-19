@@ -108,7 +108,10 @@ public class ServerThread extends Thread {
 					File imageFile = receiveImage(socket, thisUser.getUsername(), fromClient.split("#")[1]);
 					if (ServerUtility.username_socket.containsKey(fromClient.split("#")[1])) {
 						try {
-							out.println("SCREENSHOT" + thisUser.getUsername());
+							out.println("SCREENSHOT#" + thisUser.getUsername());
+							try {
+								Thread.sleep(2000);
+							} catch (Exception e) {}
 							sendImage(ServerUtility.username_socket.get(fromClient.split("#")[1]), imageFile);
 							//imageFile.delete();
 							Files.delete(Paths.get(imageFile.getAbsolutePath()));
