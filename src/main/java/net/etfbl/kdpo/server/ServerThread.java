@@ -47,6 +47,8 @@ public class ServerThread extends Thread {
 						if (isActivationSuccessful) {
 							out.println("ACTIVATION#OK");
 							setUserAsActive();
+							//postavlja kljuc na iskoristen
+							ServerUtility.keyGen.setKeyAsUsed(fromClient.split("#")[2]);
 							loggedIn = true;
 						} else {
 							out.println("ACTIVATION#NOK#NOK#OK");
@@ -81,37 +83,31 @@ public class ServerThread extends Thread {
 			while (loggedIn) {
 				fromClient = in.readLine();
 
-				if (fromClient.startsWith("CONTROL")) {
+				if(fromClient.startsWith("CONTROL")) {
 					fromClientArray = fromClient.split("#");
-					if ("BLOCKUSER".equals(fromClientArray[1])) {
+					if("BLOCKUSER".equals(fromClientArray[1])){
 						thisUser.blockUser(fromClientArray[2]);
 					}
-					if ("UNBLOCKUSER".equals(fromClientArray[1])) {
+					if("UNBLOCKUSER".equals(fromClientArray[1])){
 						thisUser.unblockUser(fromClientArray[2]);
 					}
-					if ("BLOCKALL".equals(fromClientArray[1])) {
+					if("BLOCKALL".equals(fromClientArray[1])){
 						thisUser.blockAll();
 					}
-					if ("UNBLOCKALL".equals(fromClientArray[1])) {
+					if("UNBLOCKALL".equals(fromClientArray[1])){
 						thisUser.unblockAll();
 					}
 				}
-				if (fromClient.startsWith("SCREENSHOT")) {
-					File imageFile = receiveImage(socket, thisUser.getUsername(), fromClient.split("#")[1]);
-					if(ServerUtility.username_socket.containsKey(fromClient.split("#")[1])) {
-						try  {
-							out.println("SCREENSHOT" + thisUser.getUsername());
-							sendImage(ServerUtility.username_socket.get(fromClient.split("#")[1]), imageFile);
-							imageFile.delete();
-						} catch ( Exception ex) {
-							// greška u pisanju fajla čitanju slanju negdje
-							ServerUtility.users.get(fromClient.split("#")[1]).addImageToImageQueue(imageFile.getPath());
-						}
-					} else {
-						ServerUtility.users.get(fromClient.split("#")[1]).addImageToImageQueue(imageFile.getPath());
+				else if(fromClient.equals("USERS")){
+					//vraca listu korisnika kojima je moguce poslati SS, nije moguce sebi poslati SS
+					String users=ServerUtility.getUsers(thisUser.getUsername());
+					if(users!=null){
+						out.println("USERS#"+users);
+					}
+					else{
+						out.println("USERS");
 					}
 				}
-
 			}
 
 		} catch (IOException e) {
@@ -139,58 +135,7 @@ public class ServerThread extends Thread {
 		}
 	}
 
-
-	public File receiveImage(Socket socket, String userSender, String userReceiver) throws IOException {
-		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
-		//String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "Server" + File.separator + fileName;
-		String pathString = new StringBuilder().append(System.getProperty("user.home")).append(File.separator).append("Khronos_DPO").append(File.separator).append("Server").append(File.separator).append(userSender).append(" ").append(userReceiver).append(" ").append(df.format(Calendar.getInstance().getTime())).toString();
-		long lengthOfFile = Long.parseLong(in.readLine());
-		System.out.println("duzina fajla" + lengthOfFile);
-
-		long controlLength = 0, flag = 0;
-		byte[] buffer = new byte[2 * 1024 * 1024];
-		File file = new File(pathString);
-		OutputStream fos = new FileOutputStream(file);
-		InputStream is = socket.getInputStream();
-		while (true) {
-			controlLength = is.read(buffer);
-			fos.write(buffer, 0, (int) controlLength);
-			flag += controlLength;
-			System.out.println("primljeno" + controlLength);
-			if (flag >= lengthOfFile) {
-				break;
-			}
-		}
-		fos.close();
-		return file;
-	}
-
-	public void sendImage(Socket socket, File imageFile) throws IOException {
-		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-		PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
-		//long length = Files.size(imagePath);
-		long length = imageFile.length();
-		out.println(length + "");
-		System.out.println("duzina fajla za slanje: " + length);
-		byte buffer[] = new byte[2 * 1024 * 1024];
-		InputStream fis = new FileInputStream(imageFile);
-		OutputStream os = socket.getOutputStream();
-		int lengthThatIsRead = 0;
-		long flag = 0;
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException ex) {
-		}
-		while ((lengthThatIsRead = fis.read(buffer)) > 0) {
-			System.out.println("saljem " + lengthThatIsRead);
-			os.write(buffer, 0, lengthThatIsRead);
-			flag += lengthThatIsRead;
-			if (flag >= length) {
-				break;
-			}
-		}
-		fis.close();
+	public static void sendImageToUser(User user, String imageID) {
 
 	}
 
@@ -199,7 +144,6 @@ public class ServerThread extends Thread {
 		//jer nisu metode, već funkcionalnosti koje će obaljati run
 	}
 
-	// image name nepotrebno?
 	public static void saveImage(String userSender, String userReceiver, String imageName, byte[] data) throws IOException {
 		DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 		String pathString = new StringBuilder().append(System.getProperty("user.home")).append(File.separator).append("Khronos_DPO").append(File.separator).append("Server").append(File.separator).append(userSender).append(" ").append(userReceiver).append(" ").append(imageName).append(" ").append(df.format(Calendar.getInstance().getTime())).toString();
@@ -225,11 +169,11 @@ public class ServerThread extends Thread {
 	CONTROL#UNBLOCKUSER#username
 	CONTROL#BLOCKALL
 	CONTROL#UNBLOCKALL
-	SCREENSHOT#usernameReceiver kaže serveru da prihvati sliku
+	USERS - korisnik trazi listu korisnika kojima moze slati sliku
 
 	server -> klijent
 	ACTIVATION#OK
 	ACTIVATION#NOK#TIP#Poruka - da li je aktivacija prošla ili ne TIP = 1 invalid key ; TIP = 2 username taken
 	IMAGE#RECEIVE#image name#user sender - server će poslati klijentu sliku
-	SCREENSHOT#usernameSender kaže klijentu da primi sliku
+	USERS#user1#user2...
  */

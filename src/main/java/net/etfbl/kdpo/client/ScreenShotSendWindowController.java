@@ -1,5 +1,6 @@
 package net.etfbl.kdpo.client;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
@@ -10,21 +11,14 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 
 /**
  * Created by Stijak on 12.01.2016.
@@ -59,8 +53,6 @@ public class ScreenShotSendWindowController {
     private double x = 0;
     private double y = 0;
 
-    File imageFile;
-
     @FXML
     void initialize() {
         ObservableList<String> data = FXCollections.observableArrayList();
@@ -78,23 +70,24 @@ public class ScreenShotSendWindowController {
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                dropDownList.setDisable(true);
-                String response=ClientServicesThread.displayUsers();
-                String[] users=response.split("#");
-                //preskacemo prvi jer je on kontrola USERS
-                for(int i=1;i<users.length;++i){
-                    data.add(users[i]);
+                try {
+                    String response = ClientServicesThread.displayUsers();
+                    String[] users = response.split("#");
+                    //preskacemo prvi jer je on kontrola USERS
+                    for (int i = 1; i < users.length; ++i)
+                        data.add(users[i]);
+                } catch (Exception e) {
+                    Platform.runLater(() -> {
+                        lblErrorText.setText("Connection problem!");
+                        lblErrorText.setVisible(true);
+                    });
                 }
-                dropDownList.setDisable(false);
                 return null;
             }
         };
-        if(ClientServicesThread.socket != null ) {
-            progressBar.visibleProperty().bind(task.runningProperty());
-            new Thread(task).start();
-        } else {
-            Main.showNotification("Not Connected!");
-        }
+        progressBar.visibleProperty().bind(task.runningProperty());
+        dropDownList.disableProperty().bind(task.runningProperty());
+        new Thread(task).start();
         // za pomijeranje prozora
         anchorPane.setOnMousePressed(event -> {
             this.x = anchorPane.getScene().getWindow().getX() - event.getScreenX();
@@ -106,13 +99,7 @@ public class ScreenShotSendWindowController {
             stage.setY(event.getScreenY() + this.y);
         });
 
-        btnSend.setOnMouseClicked(event -> {
-            if(ClientServicesThread.socket != null ) {
-                sendSS();
-            } else {
-                Main.showNotification("Not Connected!");
-            }
-        });
+        btnSend.setOnMouseClicked(event -> sendSS());
 
         btnCancel.setOnMouseClicked(event -> {
             task.cancel();
@@ -139,12 +126,6 @@ public class ScreenShotSendWindowController {
             WritableImage image = new WritableImage(width, height);
             SwingFXUtils.toFXImage(im, image);
             imageView.setImage(image);
-            //ImageIO.write(bImage, format, file);
-
-            String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "License" + File.separator + "tmp.png";
-            imageFile = new File(path);
-			RenderedImage renderedImage = SwingFXUtils.fromFXImage(image,null);
-			ImageIO.write(renderedImage, "png", imageFile);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -158,14 +139,7 @@ public class ScreenShotSendWindowController {
             lblErrorText.setVisible(true);
         } else {
             // slanje slike serveru
-            //String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "License" + File.separator + "tmp.jpg";
-            //File file = new File(path);
-			ClientServicesThread.out.println("SCREENSHOT#" + dropDownList.getSelectionModel().getSelectedItem());
-            try {
-                ClientServicesThread.sendImage(ClientServicesThread.socket, imageFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
         }
     }
 }
