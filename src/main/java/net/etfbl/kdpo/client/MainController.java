@@ -358,11 +358,6 @@ public class MainController {
 
 		btnRemove.setOnMouseClicked(event -> removeImagesFromVA());
 
-
-		// Notification test
-		menu.setOnMouseClicked(event -> {
-			Main.showNotification("Proba");
-		});
 	}
 
 	private void acceptSSButtonFunction() {
@@ -414,6 +409,7 @@ public class MainController {
 			try {
 				//pri gasenju aplikacije potrebno je ugasiti konekciju na server
 				if ((ClientServicesThread.socket != null) && ClientServicesThread.socket.isConnected()) {
+					ClientServicesThread.ACTIVE = false;
 					ClientServicesThread.out.println("EXIT");
 					ClientServicesThread.out.close();
 					ClientServicesThread.in.close();
@@ -425,7 +421,7 @@ public class MainController {
 	}
 
 	// prelazak na ImageViewController
-	public void showImageViewController(ObservableList<File> images, int index) {
+	public void showImageViewController(VirtualAlbum va, int index) {
 		try {
 			if (imageViewCotrollerRoot == null) {
 				FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/imageView.fxml"));
@@ -433,28 +429,7 @@ public class MainController {
 				imageViewController = loader.getController();
 				imageViewController.initParams(stage, stage.getScene().getRoot());
 			}
-			if (tabPane.getSelectionModel().getSelectedItem().equals(tabAlbumi)) {
-				imageViewController.setVirtualAlbum(listView.getSelectionModel().getSelectedItem(), index);
-			} else {
-				VirtualAlbum va = new VirtualAlbum("", "", true);
-				va.getImages().setAll(images);
-				imageViewController.setVirtualAlbum(va, index);
-			}
-			stage.getScene().setRoot(imageViewCotrollerRoot);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	public void showImageViewController(VirtualAlbum album) {
-		try {
-			if (imageViewCotrollerRoot == null) {
-				FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/imageView.fxml"));
-				imageViewCotrollerRoot = loader.load();
-				imageViewController = loader.getController();
-				imageViewController.initParams(stage, stage.getScene().getRoot());
-			}
-			imageViewController.setVirtualAlbum(album , album.getImages().size()-1);
-
+			imageViewController.setVirtualAlbum(va, index);
 			stage.getScene().setRoot(imageViewCotrollerRoot);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -659,7 +634,14 @@ public class MainController {
 					iFrame.setOnMouseClicked((MouseEvent event) -> {
 						if (event.getButton().equals(MouseButton.PRIMARY)) {
 							if (checked == 0) {
-								showImageViewController(getImagesFromFlowPane(), flowPane.getChildren().indexOf(iFrame));
+								if (tabPane.getSelectionModel().getSelectedItem().equals(tabAlbumi))
+									showImageViewController(listView.getSelectionModel().getSelectedItem(), flowPane.getChildren().indexOf(iFrame));
+
+								else {
+									VirtualAlbum va = new VirtualAlbum("", "", true);
+									va.getImages().setAll(getImagesFromFlowPane());
+									showImageViewController(va, flowPane.getChildren().indexOf(iFrame));
+								}
 								iFrameContextMenu.hide();
 							} else {
 								if (!iFrame.getCheckBox().isSelected()) {
@@ -881,9 +863,8 @@ public class MainController {
 					//ako nema sačuvanog ovog albuma onda baca izuzetak, neće se dešavati nakon prvog čuvanja
 					screenshotAlbum = (VirtualAlbum) object.readObject();
 					object.close();
-				} else {
-					screenshotAlbum = new VirtualAlbum("", "");
-				}
+				} else
+					screenshotAlbum = new VirtualAlbum("screenshotAlbum", "", true);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
@@ -1030,12 +1011,15 @@ public class MainController {
 
 	private void showPreferencesWindow() {
 		try {
-			Parent root = FXMLLoader.load(getClass().getResource("/fxml/preferences.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/preferences.fxml"));
+			Parent root = loader.load();
+			PreferencesController controller = loader.getController();
 			Stage stage = new Stage(StageStyle.UNIFIED);
 			stage.setScene(new Scene(root, 600, 400));
 			stage.getIcons().add(new Image("/images/khronos.png"));
 			stage.setTitle("Preferences");
 			stage.setResizable(false);
+			controller.setStage(stage);
 			stage.showAndWait();
 		} catch (Exception e) {
 			e.printStackTrace();

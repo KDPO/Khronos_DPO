@@ -19,26 +19,26 @@ public class ClientServicesThread extends Thread {
 	public static String SERVER_IP = "localhost";
 	public static int SERVER_PORT = 10000;
 	public static ClientServicesThread clientServicesThread; // zlu ne trebalo
+	public static boolean ACTIVE = true;
 
 	private static String users;
 
 	// ako je konektovan, čeka server da mu pošalje sliku
 	// ako nije konektovan, i ne postoji
 	public void run() {
-		super.run();
+		//super.run();
 		try {
 			// beskonačna petlja, prekida se prilikom pucanja konekcije
 			// možda ubacimo u settings dugme connect, disconnect, connect automaticaly i slično
-			while (true) {
+			while (ACTIVE) {
 				String fromServer = in.readLine();
 				System.out.println(fromServer);
 
 				if (fromServer.startsWith("SCREENSHOT")) {
 					File imageFile = receiveImage(socket, fromServer.split("#")[1]);
-					MainController.screenshotAlbum.addImage(imageFile);
+					MainController.screenshotAlbum.getImages().add(0, imageFile);
 					Platform.runLater(() -> {
-						// TODO prikaz obavještenje da je stigla slika , napraviti funciju?
-						Main.showNotification("Stigla slika");
+						Main.showNotification("New screenshot is recieved.");
 					});
 
 				} else if (fromServer.startsWith("USERS")) {
@@ -46,10 +46,11 @@ public class ClientServicesThread extends Thread {
 				}
 			}
 		} catch (IOException e) {
+			e.printStackTrace();
 			System.out.println("Services ended");
 
 		} catch (NullPointerException e) {
-
+			e.printStackTrace();
 		}
 
 	}
@@ -75,13 +76,16 @@ public class ClientServicesThread extends Thread {
 		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 		//String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "Server" + File.separator + fileName;
-		String pathString = new StringBuilder().append(System.getProperty("user.home")).append(File.separator).append("Khronos_DPO").append(File.separator).append("Screenshots").append(File.separator).append(userSender).append(" ").append(df.format(Calendar.getInstance().getTime())).append(".png").toString();
+		String pathString = new StringBuilder().append(System.getProperty("user.home")).append(File.separator).append("Khronos_DPO").append(File.separator).append("Screenshots").append(File.separator).append(userSender).append(" ").toString();
+		File dirs = new File(pathString);
+		if (!dirs.exists())
+			dirs.mkdirs();
 		long lengthOfFile = Long.parseLong(in.readLine());
-		System.out.println("duzina fajla" + lengthOfFile);
+		System.out.println("duzina fajla " + lengthOfFile);
 
 		long controlLength = 0, flag = 0;
 		byte[] buffer = new byte[2 * 1024 * 1024];
-		File file = new File(pathString);
+		File file = new File(df.format(Calendar.getInstance().getTime()) + ".png");
 		OutputStream fos = new FileOutputStream(file);
 		InputStream is = socket.getInputStream();
 		while (true) {
@@ -136,8 +140,20 @@ public class ClientServicesThread extends Thread {
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 		// get username
-		out.println("ACTIVATED#" + Main.myUsername);
-		//System.out.println(in.readLine());
+		String username = null;
+		try {
+			String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "License" + File.separator + "license.txt";
+			File file = new File(path);
+			if (file.exists()) {
+				BufferedReader reader = new BufferedReader(new FileReader(file));
+				username = reader.readLine().split("<.*?>")[1];
+				reader.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		out.println("ACTIVATED#" + username);
+		System.out.println(in.readLine());
 		clientServicesThread = new ClientServicesThread();
 		clientServicesThread.start();
 	}

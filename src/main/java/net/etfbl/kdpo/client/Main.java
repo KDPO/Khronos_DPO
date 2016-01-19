@@ -17,8 +17,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by Stijak on 12.12.2015..
@@ -54,7 +52,7 @@ public class Main extends Application {
         stage.setMinWidth(600);
         stage.setMinHeight(360);
         stage.show();
-        if(activated) {
+        if (activated) {
             Thread startCST = new Thread(() -> {
                 try {
                     ClientServicesThread.startClientServicesThread();
@@ -86,8 +84,7 @@ public class Main extends Application {
         try {
             Notifications notifications = Notifications.create();
             notifications.onAction(event -> {
-                //MainController.mainController.showImageViewController(MainController.screenshotAlbum.getImages(), 0);
-                System.out.println("You clicked me!");
+                MainController.mainController.showImageViewController(MainController.screenshotAlbum, 0);
             });
             notifications.hideAfter(Duration.seconds(10)).title("Khronos DPO").text(message).position(Pos.BOTTOM_RIGHT).darkStyle().showInformation();
         } catch (Exception e) {
@@ -131,5 +128,5 @@ public class Main extends Application {
         return false;
     }
 
-	public static String myUsername;
+    public static String myUsername;
 }

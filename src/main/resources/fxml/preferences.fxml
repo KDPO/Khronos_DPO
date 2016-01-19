@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -8,9 +9,9 @@
             prefWidth="600.0" style="-fx-background-color: #000;" xmlns="http://javafx.com/javafx/8"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="net.etfbl.kdpo.client.PreferencesController">
     <children>
-        <TabPane layoutX="215.0" layoutY="100.0" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE"
-                 AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-                 AnchorPane.topAnchor="0.0">
+        <TabPane fx:id="tabPane" layoutX="215.0" layoutY="100.0" prefHeight="400.0" prefWidth="600.0"
+                 tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0"
+                 AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <tabs>
                 <Tab closable="false" text="Untitled Tab 1">
                     <content>
@@ -22,11 +23,28 @@
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
                     </content>
                 </Tab>
+                <Tab text="Untitled Tab 3">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
+                    </content>
+                </Tab>
+                <Tab fx:id="tabHelp" text="Help">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <TextFlow fx:id="textFlow" layoutX="200.0" layoutY="61.0"
+                                          style="-fx-background-color: #f9f9f9;" textAlignment="JUSTIFY"
+                                          AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                                          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </Tab>
             </tabs>
         </TabPane>
-        <Button layoutX="524.0" layoutY="361.0" mnemonicParsing="false" prefWidth="60.0" text="Cancel"
+        <Button fx:id="btnCancel" layoutX="524.0" layoutY="361.0" mnemonicParsing="false" prefWidth="60.0" text="Cancel"
                 AnchorPane.bottomAnchor="10.0"/>
-        <Button layoutX="448.0" layoutY="361.0" mnemonicParsing="false" prefWidth="60.0" text="OK"
+        <Button fx:id="btnOK" layoutX="448.0" layoutY="361.0" mnemonicParsing="false" prefWidth="60.0" text="OK"
                 AnchorPane.bottomAnchor="10.0"/>
     </children>
 </AnchorPane>

@@ -94,6 +94,7 @@ public class ScreenShotSendWindowController {
 		};
 		if (ClientServicesThread.socket != null) {
 			progressBar.visibleProperty().bind(task.runningProperty());
+			dropDownList.disableProperty().bind(task.runningProperty());
 			new Thread(task).start();
 		} else {
 			Main.showNotification("Not Connected!");

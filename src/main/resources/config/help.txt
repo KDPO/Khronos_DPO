@@ -1,0 +1,26 @@
+Aktivacija softvera
+
+Softver se aktivira unošenjem proizvoljnog imena od minimalno osam karaktera i aktivacijonog ključa koji korisnik dobija uz softver. Nakon toga kliknite na dugme Activate ako želite da aktivirate softver, ukoliko želite kliknite na dugme Close.
+
+Dodavanje novog albuma
+
+U prozoru Albumi nalazi se lista već postojećih virtuelnih albuma i dugme Add new album klikom na to dugme otvara vam se prozor New album properties u polju Album name možete unijeti ima albuma koji želite dodati dok u polju Album description možete dodati opis albuma dodavanje novog albuma se vrši klikom na dugme Save, a ukoliko želite otkazati dodavanje klikom na dugme  Cancel.
+
+Brisanje virtuelnog albuma
+
+Brisanje virtuelnog albuma se vršim desnim klikom na dugme sa imenom albuma i klikom na Remove otvara vam se prozor Remove virtual album klikom na Ok brišete virtuelni album, klikom na Cancel.
+Dodavanje  slika u novi virtuelni album
+Dodavanje slika u novi album se vrši klikom na dugme sa imenom albuma u koji želimo dodati slike, u gornjem desnom uglu nalazi se dugme + klikom na to tugme otvara nam se prozor File system u tom prozoru je prikaz svih vaših Foldera klikom da određeni folder biće prikazane sve slike koje se nalaze u tom folderu ukolko želite dodati sliku u folder u gornjem desnom uglu slike nalazi se Check box klikom na taj Check box pojaviće se kvakica u Check box-u i vi ste oznacili sliku za dodavanje u virtuelni album, sa ostalim slikama u tom folderu ukoliko želite otkazati dodavanje određene slike u album ponovnim klikom na Check box kvačica nestaje, ukoliko želite otkazati dodavanje slika u album kliknite na dugme X koje se nalazi u gornjem desnom uglu, bićete vraćeni nazad u virtuelni album. Ako želite dodati slike u album kliknite na kvačicu koja se nalazi u gornjem desnom uglu sve čekiranje slike će biti dodane u vaš virtuelni album.
+
+Pregled slika
+
+Slike mogu biti prikazane u preview modu, standardom modu i u fullscreen modu. Prilikom pregleda File system ili virtuelnih albuma i ukoliko oni nisu prazni, u panelu za prikaz slika u preview modu će biti prikazane sve slike iz tog direktorijuma ili albuma. Za prikaz slika u standardnom modu potrebno je kliknuti na sliku u panelnu za prikaz slika u preview modu, klikom na sliku otvara se prozor sa slikom u sredini u gornjem desnom uglu su dugmad za prikaz slike u fullscreen modu za rotaciju desno i lijevo i dugme u obliku kante za smeće za brisanje slike sa File system-a. . U donjem desnom uglu dalaze se dugmad za zoom in i zoom out. U gornjem lijevom uglu nalazi se strelica, klikom na nju vraćamo se u preview mod. Lijevo i desno nalaze se strelice za prelazak na prethodnu i na sledeću sliku u albumu ili na file system-u.  Klikom na duge za fullscrean mod otvara se slika u fullscreen modu za prelazak na sledeću sliku ili prethodnu sliku koristi strelice na tastaturi pri čemu su strelice za gore i lijevo za prethodnu sliku dok dole i desno za sledeću sliku, takođe prelazak na sledeću sliku je i klik bilo gdje na sliku u fullsceen modu, za izlazak iz fullscreen mododa na tastaturi pritisnuti Escape dugme.
+
+Dodavanje, brisanje, koprianje i promijena imena  foldera u file system-u
+
+Otvaranjem prozora file system prikazana vam je lista foldera na file systemu desnim klikom na određeni folder omogućene su vam opcije New folder,Copy, Cut, Paste, Delete i Rename.
+
+Brisanje slika iz virtuelnog albuma
+
+Brisanje slika iz virtuelnog albuma vrši se na taj način što se klikom na ime virtuelnog albuma prikazuju sve sklike koje se nalaze u albumu klikon na Check box selektujete sve slike koje želite izbrisati iz albuma klikom na ikonicu fajla sa minusom u gornjem desnom uglu sve čekirane slike će biti izbrisane.
+Slanje screen shot-a
