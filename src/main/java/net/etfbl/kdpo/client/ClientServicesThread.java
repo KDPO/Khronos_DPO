@@ -48,6 +48,7 @@ public class ClientServicesThread extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("Services ended");
+			clientServicesThread = null;
 
 		} catch (NullPointerException e) {
 			e.printStackTrace();
@@ -156,5 +157,6 @@ public class ClientServicesThread extends Thread {
 		System.out.println(in.readLine());
 		clientServicesThread = new ClientServicesThread();
 		clientServicesThread.start();
+		System.out.println("Services started");
 	}
 }

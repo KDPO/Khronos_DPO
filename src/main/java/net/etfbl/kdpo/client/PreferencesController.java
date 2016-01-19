@@ -14,15 +14,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 
+import java.io.IOException;
+
 /**
  * Created by Stijak on 16.12.2015..
  */
 public class PreferencesController {
-    @FXML
-    private Button btnOK;
+	@FXML
+	private Button btnOK;
 
-    @FXML
-    private Button btnCancel;
+	@FXML
+	private Button btnCancel;
 
     @FXML
     private TabPane tabPane;
@@ -57,9 +59,38 @@ public class PreferencesController {
 
             }
         }).start();
+		btnConnectToServer.setOnMouseClicked(event -> btnConnectToServerFunction());
+		btnDisconnectFromServer.setOnMouseClicked(event -> btnDisconnectFromServer());
     }
 
     public void setStage(Stage stage) {
         this.stage = stage;
     }
+
+
+	@FXML
+	private Button btnConnectToServer;
+
+	@FXML
+	private Button btnDisconnectFromServer;
+
+	private void btnConnectToServerFunction() {
+		if (ClientServicesThread.clientServicesThread == null || ClientServicesThread.socket == null || ClientServicesThread.socket.isClosed()) {
+			try {
+				ClientServicesThread.startClientServicesThread();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private void btnDisconnectFromServer() {
+		if(ClientServicesThread.clientServicesThread != null ) {
+			try {
+				ClientServicesThread.socket.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }
