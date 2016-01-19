@@ -393,7 +393,7 @@ public class MainController {
             serializeAlbums();
             try {
                 //pri gasenju aplikacije potrebno je ugasiti konekciju na server
-                if(ClientServicesThread.socket.isConnected()) {
+                if(ClientServicesThread.socket != null && ClientServicesThread.socket.isConnected()) {
                     ClientServicesThread.out.println("EXIT");
                     ClientServicesThread.out.close();
                     ClientServicesThread.in.close();
