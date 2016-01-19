@@ -70,7 +70,7 @@ public class ClientServicesThread extends Thread {
 		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		DateFormat df = new SimpleDateFormat("yyyyMMddhhmmss");
 		//String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "Server" + File.separator + fileName;
-		String pathString = new StringBuilder().append(System.getProperty("user.home")).append(File.separator).append("Khronos_DPO").append(File.separator).append("Screenshots").append(File.separator).append(userSender).append(" ").append(df.format(Calendar.getInstance().getTime())).toString();
+		String pathString = new StringBuilder().append(System.getProperty("user.home")).append(File.separator).append("Khronos_DPO").append(File.separator).append("Screenshots").append(File.separator).append(userSender).append(" ").append(df.format(Calendar.getInstance().getTime())).append(".png").toString();
 		long lengthOfFile = Long.parseLong(in.readLine());
 		System.out.println("duzina fajla" + lengthOfFile);
 
