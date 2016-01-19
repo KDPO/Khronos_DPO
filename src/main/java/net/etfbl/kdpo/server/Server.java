@@ -15,6 +15,7 @@ public class Server {
 
 	public static void main(String[] args){
 
+
 		try {
 			ServerSocket ss = new ServerSocket(ServerUtility.SERVER_PORT);
 			ServerAcceptThread sat = new ServerAcceptThread(ss);

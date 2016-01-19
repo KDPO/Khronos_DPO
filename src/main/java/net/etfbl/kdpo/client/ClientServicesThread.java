@@ -60,6 +60,11 @@ public class ClientServicesThread extends Thread {
 	public static String displayUsers() {
 		out.println("USERS");
 		while (users == null) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		String result = users;
 		users = null;
@@ -131,20 +136,8 @@ public class ClientServicesThread extends Thread {
 		in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 		// get username
-		String username = null;
-		try {
-			String path = System.getProperty("user.home") + File.separator + "Khronos_DPO" + File.separator + "License" + File.separator + "license.txt";
-			File file = new File(path);
-			if (file.exists()) {
-				BufferedReader reader = new BufferedReader(new FileReader(file));
-				username = reader.readLine().split("<.*?>")[1];
-				reader.close();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		out.println("ACTIVATED#" + username);
-		System.out.println(in.readLine());
+		out.println("ACTIVATED#" + Main.myUsername);
+		//System.out.println(in.readLine());
 		clientServicesThread = new ClientServicesThread();
 		clientServicesThread.start();
 	}

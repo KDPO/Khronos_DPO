@@ -70,7 +70,7 @@ public class ServerThread extends Thread {
 					thisUser = ServerUtility.users.get(fromClient.split("#")[1]);
 					setUserAsActive();
 					loggedIn = true;
-					out.println("ACTIVATION#OK");
+					//out.println("ACTIVATION#OK");
 				}
 				else if(fromClient.equals("EXIT")){
 					//setUserAsInactive();
@@ -79,8 +79,30 @@ public class ServerThread extends Thread {
 					socket.close();
 				}
 			}
-
+			/*
 			// TODO provjera da li mu treba poslati slike
+			if(!thisUser.getImageQueue().isEmpty()) {
+				for(String path : thisUser.getImageQueue()) {
+					try {
+						File file = new File(path);
+						String name = file.getName();
+						String from = name.split(" ")[0];
+						boolean filef = file.exists();
+						out.println("SCREENSHOT#" + from);
+						try {
+							Thread.sleep(4000);
+						} catch (Exception e) {}
+						sendImage(socket, file);
+						//imageFile.delete();
+						Files.delete(Paths.get(file.getAbsolutePath()));
+						thisUser.getImageQueue().remove(path);
+
+					} catch (Exception ex) {
+						// greška u pisanju fajla čitanju slanju negdje
+						ex.printStackTrace();
+					}
+				}
+			}*/
 
 			// opsluživanje klijenta
 			// realno, jedina stvar je da prima sliku, i onda proslijedi dalje, ili sačuva
@@ -110,7 +132,7 @@ public class ServerThread extends Thread {
 						try {
 							(new PrintWriter(new OutputStreamWriter(ServerUtility.username_socket.get(fromClient.split("#")[1]).getOutputStream()),true)).println("SCREENSHOT#" + thisUser.getUsername());
 							try {
-								Thread.sleep(4000);
+								Thread.sleep(2000);
 							} catch (Exception e) {}
 							sendImage(ServerUtility.username_socket.get(fromClient.split("#")[1]), imageFile);
 							//imageFile.delete();
