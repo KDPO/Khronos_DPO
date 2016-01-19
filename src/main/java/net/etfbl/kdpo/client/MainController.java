@@ -144,6 +144,10 @@ public class MainController {
 	private Task<Void> task;
 	private boolean canAdd = true;
 
+	private boolean isThereSomethigToPasteImages;
+	private boolean isCuttedImages;
+	private ObservableList<File> checkedImages;
+
 	@FXML
 	void initialize() {
 		mainController = this;
@@ -162,39 +166,18 @@ public class MainController {
 		menuPreferences.setOnAction(event -> showPreferencesWindow());
 
 		copy = new MenuItem("Copy");
-		copy.setOnAction(event -> {
-			System.out.println(event.getSource());
-			//TODO kopiranje slika
-			// obratiti pažnju na kopiranje između tabAlbumi i tabFS
-			// obratiti pažnju kada je više slika čakirano i kada nije ni jedna
-			// implementirati po želji :D
-		});
+		copy.setOnAction(event -> copyMenu());
 		cut = new MenuItem("Cut");
 		cut.setOnAction(event -> {
-			//TODO premještanje slika
-			// obratiti pažnju na premještanje između tabAlbumi i tabFS
-			// obratiti pažnju kada je više slika čakirano i kada nije ni jedna
-			// implementirati po želji :D
+			copyMenu();
+			isCuttedImages = true;
 		});
 		delete = new MenuItem("Delete");
-		delete.setOnAction(event -> {
-			//TODO brisanje slika
-			// iz albuma se izbacuju slike
-			// sa FS se skroz brišu
-			// dodati popup za ok
-			// obratiti pažnju kada je više slika čakirano i kada nije ni jedna
-			//implementirati po želji
-		});
+		delete.setOnAction(event -> deleteMenu());
 		iFrameContextMenu = new ContextMenu(copy, cut, delete);
 		iFrameContextMenu.setAutoHide(true);
 		paste = new MenuItem("Paste");
-		paste.setOnAction(event -> {
-			//TODO paste
-			// obratiti pažnju na kopiranje između tabAlbumi i tabFS
-			// obratiti pažnju na duplikate
-			// implementirati disableProperty()
-			// implementirati po želji :D
-		});
+		paste.setOnAction(event -> pasteMenu());
 		flowPaneContextMenu = new ContextMenu(paste);
 		flowPaneContextMenu.setAutoHide(true);
 		scrollPane.setOnContextMenuRequested(event -> {
@@ -1023,5 +1006,68 @@ public class MainController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void copyMenu(){
+		if(checked>0){
+			checkedImages = getCheckedImagesFromFlowPane();
+			isThereSomethigToPasteImages = true;
+			isCuttedImages = false;
+			paste.setDisable(false);
+			for(Node n :flowPane.getChildren()){
+				((ImageFrame)n).getCheckBox().setSelected(false);
+			}
+		}
+	}
+
+	private void pasteMenu(){
+		Task<Void> task = new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				Platform.runLater(() -> {
+					if(isThereSomethigToPasteImages){
+						for(File f : checkedImages){
+							System.out.println(f.getName());
+							copyFile(f, new File(treeView.getSelectionModel().getSelectedItem().getValue().getAbsolutePath() + File.separator + f.getName()));
+						}
+					}
+					if(isCuttedImages){
+						for(File f : checkedImages){
+							if(!f.delete()){
+								f.deleteOnExit();
+							}
+						}
+						isCuttedImages = false;
+					}
+					isThereSomethigToPasteImages = false;
+					paste.setDisable(true);
+				});
+				return null;
+			}
+		};
+		copyProgress.visibleProperty().bind(task.runningProperty());
+		copyText.visibleProperty().bind(task.runningProperty());
+		treeView.disableProperty().bind(task.runningProperty());
+		new Thread(task).start();
+	}
+
+	private void deleteMenu(){
+		Task<Void> task = new Task<Void>() {
+			@Override
+			protected Void call() throws Exception {
+				Platform.runLater(() -> {
+					if(checked>0){
+						for(File f : getCheckedImagesFromFlowPane()){
+							flowPane.getChildren().remove(f);
+							if(!f.delete()){
+								f.deleteOnExit();
+							}
+						}
+					}
+				});
+				return null;
+			}
+		};
+		new Thread(task).start();
 	}
 }

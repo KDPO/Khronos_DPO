@@ -61,10 +61,10 @@ public class AddImagesToAlbumWindowController {
             selectAlbum();
         });
 
-        albums.setOnAction(event -> {
+        /*albums.setOnAction(event -> {
             if (lblErrorText.isVisible())
                 lblErrorText.setVisible(false);
-        });
+        });*/
     }
 
     public void setStage(Stage stage) {
