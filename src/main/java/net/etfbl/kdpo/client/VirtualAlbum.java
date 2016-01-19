@@ -79,6 +79,10 @@ public class VirtualAlbum implements Serializable {
         this.images.addAll(images);
     }
 
+    public void addImage(File image) {
+        images.add(image);
+    }
+
     public void setName(String name) {
         this.name = name;
     }

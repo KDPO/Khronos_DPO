@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * Created by Stijak on 12.12.2015..
@@ -53,16 +52,16 @@ public class Main extends Application {
         stage.setMinWidth(600);
         stage.setMinHeight(360);
         stage.show();
-        Thread startCST = new Thread(() -> {
-            try {
-                ClientServicesThread.startClientServicesThread();
-                System.out.println("Services started");
-            } catch (IOException e) {
-                // ako nije uspjela konekcija
-                e.printStackTrace();
-            }
-        });
-        startCST.start();
+		Thread startCST = new Thread(() -> {
+			try {
+				ClientServicesThread.startClientServicesThread();
+				System.out.println("Services started");
+			} catch (IOException e) {
+				// ako nije uspjela konekcija
+				e.printStackTrace();
+			}
+		});
+		startCST.start();
     }
 
     private boolean showActivationWindow(Stage stage) throws Exception {
@@ -116,15 +115,17 @@ public class Main extends Application {
             File file = new File(path);
             if (file.exists()) {
                 BufferedReader reader = new BufferedReader(new FileReader(file));
-                String username = reader.readLine().split("<.*?>")[1];
+                myUsername = reader.readLine().split("<.*?>")[1];
                 String key = reader.readLine().split("<.*?>")[1];
                 String hash = reader.readLine().split("<.*?>")[1];
                 reader.close();
-                return hash.equals(Main.getHashCode(username, key));
+                return hash.equals(Main.getHashCode(myUsername, key));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
+
+    public static String myUsername;
 }
