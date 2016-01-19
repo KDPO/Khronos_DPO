@@ -114,6 +114,7 @@ public class ServerThread extends Thread {
 			// ovo znači da je pukla veza, server  treba da izbaci klijenta, iz aktivnih
 			e.printStackTrace();
 			setUserAsInactive();
+			//asdf
 		}
 	}
 
