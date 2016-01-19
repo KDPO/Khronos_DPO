@@ -72,6 +72,12 @@ public class ServerThread extends Thread {
 					loggedIn = true;
 					out.println("ACTIVATION#OK");
 				}
+				else if(fromClient.equals("EXIT")){
+					//setUserAsInactive();
+					out.close();
+					in.close();
+					socket.close();
+				}
 			}
 
 			// TODO provjera da li mu treba poslati slike
@@ -120,6 +126,13 @@ public class ServerThread extends Thread {
 					} else {
 						out.println("USERS");
 					}
+				}
+				else if(fromClient.equals("EXIT")){
+					setUserAsInactive();
+					loggedIn=false;
+					out.close();
+					in.close();
+					socket.close();
 				}
 			}
 

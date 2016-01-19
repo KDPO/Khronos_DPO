@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * Created by Stijak on 12.12.2015..
@@ -34,9 +33,9 @@ public class Main extends Application {
         //koristi se za onemogucenje mjenjanja pozadinskog prozora iz popup
         Main.primaryStage = primaryStage;
         if (checkActivation())
-            showMainWindow(primaryStage);
+            showMainWindow(primaryStage, true);
         else if (showActivationWindow(new Stage()))
-            showMainWindow(primaryStage);
+            showMainWindow(primaryStage, false);
         else Platform.exit();
     }
 
@@ -44,7 +43,7 @@ public class Main extends Application {
         launch();//args);
     }
 
-    private void showMainWindow(Stage stage) throws Exception {
+    private void showMainWindow(Stage stage, boolean activated) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
         Parent root = loader.load();
         MainController controller = loader.getController();
@@ -53,16 +52,18 @@ public class Main extends Application {
         stage.setMinWidth(600);
         stage.setMinHeight(360);
         stage.show();
-        Thread startCST = new Thread(() -> {
-            try {
-                ClientServicesThread.startClientServicesThread();
-                System.out.println("Services started");
-            } catch (IOException e) {
-                // ako nije uspjela konekcija
-                e.printStackTrace();
-            }
-        });
-        startCST.start();
+        if(activated) {
+            Thread startCST = new Thread(() -> {
+                try {
+                    ClientServicesThread.startClientServicesThread();
+                    System.out.println("Services started");
+                } catch (IOException e) {
+                    // ako nije uspjela konekcija
+                    e.printStackTrace();
+                }
+            });
+            startCST.start();
+        }
     }
 
     private boolean showActivationWindow(Stage stage) throws Exception {
