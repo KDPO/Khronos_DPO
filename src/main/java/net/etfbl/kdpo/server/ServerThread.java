@@ -110,9 +110,11 @@ public class ServerThread extends Thread {
 						try {
 							out.println("SCREENSHOT" + thisUser.getUsername());
 							sendImage(ServerUtility.username_socket.get(fromClient.split("#")[1]), imageFile);
-							imageFile.delete();
+							//imageFile.delete();
+							Files.delete(Paths.get(imageFile.getAbsolutePath()));
 						} catch (Exception ex) {
 							// greška u pisanju fajla čitanju slanju negdje
+							ex.printStackTrace();
 							ServerUtility.users.get(fromClient.split("#")[1]).addImageToImageQueue(imageFile.getPath());
 						}
 					} else {
@@ -193,7 +195,6 @@ public class ServerThread extends Thread {
 
 
 	public void sendImage(Socket socket, File imageFile) throws IOException {
-		BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()), true);
 		//long length = Files.size(imagePath);
 		long length = imageFile.length();

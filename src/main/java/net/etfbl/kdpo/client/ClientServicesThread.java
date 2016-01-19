@@ -35,10 +35,10 @@ public class ClientServicesThread extends Thread {
 				if (fromServer.startsWith("IMAGE")) {
 					if (fromServer.split("#")[1].equals("RECEIVE")) {
 						File imageFile = receiveImage(socket, fromServer.split("#")[2]);
+						MainController.screenshotAlbum.addImage(imageFile);
 						Platform.runLater(() -> {
 								// TODO prikaz obavještenje da je stigla slika , napraviti funciju?
 								//	Main.showNotification("Stigla slika");
-								MainController.screenshotAlbum.addImage(imageFile);
 						});
 					}
 				} else if (fromServer.startsWith("USERS")) {
