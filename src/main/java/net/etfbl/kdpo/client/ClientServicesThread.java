@@ -46,7 +46,7 @@ public class ClientServicesThread extends Thread {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 			System.out.println("Services ended");
 			clientServicesThread = null;
 
@@ -154,7 +154,7 @@ public class ClientServicesThread extends Thread {
 			e.printStackTrace();
 		}
 		out.println("ACTIVATED#" + username);
-		System.out.println(in.readLine());
+		//System.out.println(in.readLine());
 		clientServicesThread = new ClientServicesThread();
 		clientServicesThread.start();
 		System.out.println("Services started");

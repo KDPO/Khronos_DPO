@@ -79,7 +79,6 @@ public class ServerThread extends Thread {
 					socket.close();
 				}
 			}
-			/*
 			// TODO provjera da li mu treba poslati slike
 			if(!thisUser.getImageQueue().isEmpty()) {
 				for(String path : thisUser.getImageQueue()) {
@@ -102,7 +101,7 @@ public class ServerThread extends Thread {
 						ex.printStackTrace();
 					}
 				}
-			}*/
+			}
 
 			// opsluživanje klijenta
 			// realno, jedina stvar je da prima sliku, i onda proslijedi dalje, ili sačuva

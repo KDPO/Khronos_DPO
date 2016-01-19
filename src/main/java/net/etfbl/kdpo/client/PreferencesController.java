@@ -87,6 +87,9 @@ public class PreferencesController {
 	private void btnDisconnectFromServer() {
 		if(ClientServicesThread.clientServicesThread != null ) {
 			try {
+                ClientServicesThread.out.println("EXIT");
+                ClientServicesThread.out.close();
+                ClientServicesThread.in.close();
 				ClientServicesThread.socket.close();
 			} catch (IOException e) {
 				e.printStackTrace();
