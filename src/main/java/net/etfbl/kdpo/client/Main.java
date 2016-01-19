@@ -116,15 +116,17 @@ public class Main extends Application {
             File file = new File(path);
             if (file.exists()) {
                 BufferedReader reader = new BufferedReader(new FileReader(file));
-                String username = reader.readLine().split("<.*?>")[1];
+                myUsername = reader.readLine().split("<.*?>")[1];
                 String key = reader.readLine().split("<.*?>")[1];
                 String hash = reader.readLine().split("<.*?>")[1];
                 reader.close();
-                return hash.equals(Main.getHashCode(username, key));
+                return hash.equals(Main.getHashCode(myUsername, key));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
+
+	public static String myUsername;
 }
