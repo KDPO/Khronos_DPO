@@ -73,4 +73,8 @@ public class User implements Serializable {
 	public String getKey() {
 		return key;
     }
+
+	public HashSet<String> getBlockedUsersList() {
+		return blockedUsersList;
+	}
 }

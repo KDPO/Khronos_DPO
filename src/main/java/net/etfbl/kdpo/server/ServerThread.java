@@ -113,11 +113,16 @@ public class ServerThread extends Thread {
 				if (fromClient.startsWith("CONTROL")) {
 					fromClientArray = fromClient.split("#");
 					if ("BLOCKUSER".equals(fromClientArray[1])) {
-						thisUser.blockUser(fromClientArray[2]);
+						thisUser.getBlockedUsersList().clear();
+						String[] array = fromClient.split("#");
+						for(int i = 2; i< array.length ; i++ ) {
+							thisUser.getBlockedUsersList().add(array[i]);
+						}
 					}
+					/*
 					if ("UNBLOCKUSER".equals(fromClientArray[1])) {
 						thisUser.unblockUser(fromClientArray[2]);
-					}
+					}*/
 					if ("BLOCKALL".equals(fromClientArray[1])) {
 						thisUser.blockAll();
 					}
