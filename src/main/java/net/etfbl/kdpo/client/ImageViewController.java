@@ -113,11 +113,26 @@ public class ImageViewController {
         btnFullScreen.setOnMouseClicked(event -> showFullScreenControler());
 
         btnRemove.setOnMouseClicked(event -> {
-            // TODO izbaciti sliku iz VA
+            int i = INDEX;
+            images.remove(i);
+            if (images.size() > 0) {
+                nextImage();
+            } else {
+                back();
+            }
         });
 
         btnDelete.setOnMouseClicked(event -> {
-            // TODO nekako obrisati sliku sa FS
+            int i = INDEX;
+            File file = images.get(INDEX);
+            if (file.delete())
+                file.deleteOnExit();
+            images.remove(i);
+            if (images.size() > 0) {
+                nextImage();
+            } else {
+                back();
+            }
         });
 
         // za pomijeranje prozora
